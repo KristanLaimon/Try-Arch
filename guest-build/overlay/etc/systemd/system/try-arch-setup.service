@@ -1,0 +1,18 @@
+[Unit]
+Description=Try Arch account setup and disk growth
+After=systemd-remount-fs.service systemd-networkd.service
+Before=getty@tty1.service
+
+[Service]
+Type=oneshot
+Environment=TERM=linux
+ExecStart=/usr/local/bin/try-arch-setup
+StandardInput=tty
+StandardOutput=tty
+StandardError=tty
+TTYPath=/dev/tty1
+TimeoutStartSec=infinity
+RemainAfterExit=yes
+
+[Install]
+WantedBy=multi-user.target

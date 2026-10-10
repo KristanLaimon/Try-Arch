@@ -14,7 +14,7 @@ func validHelloRequest() helloRequest {
 		Operation: "sudo", GuestID: strings.Repeat("a", 64),
 		RequestID: "c1d0243d-705e-4b64-a5c3-458d4e2b1f9d",
 		Challenge: strings.Repeat("b", 64), User: "root",
-		RequestingUser: "omarchy", Service: "sudo", TTY: "/dev/pts/3",
+		RequestingUser: "arch", Service: "sudo", TTY: "/dev/pts/3",
 		CredentialID: base64.StdEncoding.EncodeToString(bytes.Repeat([]byte{7}, 32)),
 	}
 }
@@ -33,7 +33,7 @@ func TestHelloRequestRejectsSpoofedOrAmbiguousContext(t *testing.T) {
 	for name, mutate := range map[string]func(*helloRequest){
 		"foreign service":     func(r *helloRequest) { r.Service = "login" },
 		"nonlocal tty":        func(r *helloRequest) { r.TTY = "/dev/ttyUSB0" },
-		"spoofed account":     func(r *helloRequest) { r.RequestingUser = "omarchy;sudo" },
+		"spoofed account":     func(r *helloRequest) { r.RequestingUser = "arch;sudo" },
 		"uppercase id":        func(r *helloRequest) { r.GuestID = strings.ToUpper(r.GuestID) },
 		"missing nonce":       func(r *helloRequest) { r.Challenge = "" },
 		"bad operation":       func(r *helloRequest) { r.Operation = "login" },
@@ -71,9 +71,9 @@ func TestHelloRequestRejectsSpoofedOrAmbiguousContext(t *testing.T) {
 func TestHelloClientDataBindsEveryRequestField(t *testing.T) {
 	request := validHelloRequest()
 	original := helloClientData(request)
-	want := `{"type":"try-omarchy.windows-hello.sudo","version":2,"operation":"sudo","guestId":"` +
+	want := `{"type":"try-arch.windows-hello.sudo","version":2,"operation":"sudo","guestId":"` +
 		request.GuestID + `","requestId":"` + request.RequestID + `","challenge":"` + request.Challenge +
-		`","user":"root","requestingUser":"omarchy","service":"sudo","tty":"/dev/pts/3","credentialId":"` +
+		`","user":"root","requestingUser":"arch","service":"sudo","tty":"/dev/pts/3","credentialId":"` +
 		request.CredentialID + `"}`
 	if string(original) != want {
 		t.Fatalf("client data is not the canonical form the guest rebuilds:\n%s\n%s", original, want)
@@ -82,7 +82,7 @@ func TestHelloClientDataBindsEveryRequestField(t *testing.T) {
 		func(r *helloRequest) { r.GuestID = strings.Repeat("e", 64) },
 		func(r *helloRequest) { r.RequestID = "c1d0243d-705e-4b64-a5c3-458d4e2b1f9e" },
 		func(r *helloRequest) { r.Challenge = strings.Repeat("d", 64) },
-		func(r *helloRequest) { r.User = "omarchy" },
+		func(r *helloRequest) { r.User = "arch" },
 		func(r *helloRequest) { r.RequestingUser = "root" },
 		func(r *helloRequest) { r.TTY = "/dev/pts/4" },
 		func(r *helloRequest) { r.CredentialID = base64.StdEncoding.EncodeToString(bytes.Repeat([]byte{8}, 32)) },
@@ -113,7 +113,7 @@ func TestHelloDenialCarriesNoApprovalMaterial(t *testing.T) {
 func validOnePasswordRequest() helloRequest {
 	request := validHelloRequest()
 	request.Operation, request.Service = "onepassword-unlock", "1password"
-	request.User, request.RequestingUser, request.TTY = "omarchy", "omarchy", ""
+	request.User, request.RequestingUser, request.TTY = "arch", "arch", ""
 	return request
 }
 

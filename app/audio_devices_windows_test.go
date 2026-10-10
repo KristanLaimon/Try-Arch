@@ -13,7 +13,7 @@ import (
 )
 
 func TestNativeAudioDeviceEnumeration(t *testing.T) {
-	qemu := os.Getenv("TRYOMARCHY_AUDIO_TEST_QEMU")
+	qemu := os.Getenv("TRYARCH_AUDIO_TEST_QEMU")
 	if qemu == "" {
 		t.Skip("requires installed runtime and Windows audio endpoints")
 	}
@@ -39,7 +39,7 @@ func TestNativeAudioDeviceEnumeration(t *testing.T) {
 }
 
 func TestNativeStableAudioEndpointEnumeration(t *testing.T) {
-	qemu := os.Getenv("TRYOMARCHY_AUDIO_TEST_QEMU")
+	qemu := os.Getenv("TRYARCH_AUDIO_TEST_QEMU")
 	if qemu == "" {
 		t.Skip("requires installed runtime and Windows audio endpoints")
 	}
@@ -80,8 +80,8 @@ func TestNativeStableAudioEndpointEnumeration(t *testing.T) {
 // Exercise real controls and persistence against the selected test runtime.
 // With v20 the choices must be disabled; with r16 both directions must save.
 func TestAudioSettingsNative(t *testing.T) {
-	qemu, launcher := os.Getenv("TRYOMARCHY_AUDIO_TEST_QEMU"), os.Getenv("TRYOMARCHY_LAUNCHER_TEST_EXE")
-	if os.Getenv("TRYOMARCHY_UI_TEST") != "1" || qemu == "" || launcher == "" {
+	qemu, launcher := os.Getenv("TRYARCH_AUDIO_TEST_QEMU"), os.Getenv("TRYARCH_LAUNCHER_TEST_EXE")
+	if os.Getenv("TRYARCH_UI_TEST") != "1" || qemu == "" || launcher == "" {
 		t.Skip("requires interactive Windows, launcher and runtime")
 	}
 	catalog, err := listAudioDevices(qemu)
@@ -103,7 +103,7 @@ func TestAudioSettingsNative(t *testing.T) {
 		done := make(chan error, 1)
 		go func() { done <- cmd.Wait() }()
 		defer cmd.Process.Kill()
-		class, _ := syscall.UTF16PtrFromString("TryOmarchySettings")
+		class, _ := syscall.UTF16PtrFromString("TryArchSettings")
 		var window uintptr
 		controls := map[uintptr]uintptr{}
 		for deadline := time.Now().Add(15 * time.Second); time.Now().Before(deadline); {

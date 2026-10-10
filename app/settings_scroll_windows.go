@@ -111,7 +111,7 @@ func (s *settingsScroll) revealFocus() {
 const settingsViewportID = 2099
 
 func createSettingsViewport(parent, instance uintptr) uintptr {
-	class, _ := syscall.UTF16PtrFromString("TryOmarchySettingsViewport")
+	class, _ := syscall.UTF16PtrFromString("TryArchSettingsViewport")
 	callback := syscall.NewCallback(func(h, message, w, l uintptr) uintptr {
 		switch message {
 		case wmCommand, 0x002b, 0x0133, 0x0134, 0x0135, wmCtlcolorstatic, 0x020a:

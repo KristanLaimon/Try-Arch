@@ -133,7 +133,7 @@ func TestRunningInstanceWindowsAreRecognised(t *testing.T) {
 		{"SDL_app", appTitle, true},
 		{"SDL_app", appTitle + " display 2", true},
 		{"SDL_app", "QEMU (" + appTitle + "-0) - Press Ctrl-Alt-G to exit grab", true},
-		{"TryOmarchySetup", appTitle, true},
+		{"TryArchSetup", appTitle, true},
 		{"SDL_app", "Some other SDL game", false},
 		{"Chrome_WidgetWin_1", appTitle + " - Chromium", false},
 	} {

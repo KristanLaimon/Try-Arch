@@ -9,11 +9,11 @@ import (
 	"time"
 )
 
-// newCameraFrameSource picks the capture backend. TRYOMARCHY_FAKE_CAMERA makes
+// newCameraFrameSource picks the capture backend. TRYARCH_FAKE_CAMERA makes
 // the bridge emit a moving test pattern instead of touching hardware, so the
 // guest half can be exercised end to end without a camera.
 func newCameraFrameSource() cameraFrameSource {
-	if os.Getenv("TRYOMARCHY_FAKE_CAMERA") != "" {
+	if os.Getenv("TRYARCH_FAKE_CAMERA") != "" {
 		logf("camera: using the synthetic frame source")
 		return &syntheticCameraSource{}
 	}
@@ -98,7 +98,7 @@ func configuredCameraSource(p desktopPreferences) cameraFrameSource {
 	if p.CameraDisabled {
 		return disabledCameraSource{}
 	}
-	if os.Getenv("TRYOMARCHY_FAKE_CAMERA") != "" {
+	if os.Getenv("TRYARCH_FAKE_CAMERA") != "" {
 		return newCameraFrameSource()
 	}
 	return &mfCameraSource{deviceID: p.CameraID}

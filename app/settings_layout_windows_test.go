@@ -14,16 +14,16 @@ import (
 // Exercise actual native control bounds across pages, scrolling and resizing.
 // Settings uses a disposable directory and never starts a guest.
 func TestNativeSettingsActionsStayVisible(t *testing.T) {
-	launcher := os.Getenv("TRYOMARCHY_LAUNCHER_TEST_EXE")
-	if os.Getenv("TRYOMARCHY_UI_TEST") != "1" || launcher == "" {
-		t.Skip("requires interactive Windows and TRYOMARCHY_LAUNCHER_TEST_EXE")
+	launcher := os.Getenv("TRYARCH_LAUNCHER_TEST_EXE")
+	if os.Getenv("TRYARCH_UI_TEST") != "1" || launcher == "" {
+		t.Skip("requires interactive Windows and TRYARCH_LAUNCHER_TEST_EXE")
 	}
 	cmd := exec.Command(launcher, "-dir", t.TempDir(), "-settings")
 	if err := cmd.Start(); err != nil {
 		t.Fatal(err)
 	}
 	defer func() { _ = cmd.Process.Kill(); _ = cmd.Wait() }()
-	class, _ := syscall.UTF16PtrFromString("TryOmarchySettings")
+	class, _ := syscall.UTF16PtrFromString("TryArchSettings")
 	var window uintptr
 	for deadline := time.Now().Add(15 * time.Second); time.Now().Before(deadline); {
 		window, _, _ = user32.NewProc("FindWindowW").Call(uintptr(unsafe.Pointer(class)), 0)

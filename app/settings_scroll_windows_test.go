@@ -17,8 +17,8 @@ import (
 // same position. Run on an isolated native Windows desktop at 150% scaling with
 // enough work area for the full Settings window (e.g. 2560x1600). No guest runs.
 func TestNativeSettingsScrollRepaint(t *testing.T) {
-	launcher := os.Getenv("TRYOMARCHY_LAUNCHER_TEST_EXE")
-	if os.Getenv("TRYOMARCHY_UI_TEST") != "1" || launcher == "" {
+	launcher := os.Getenv("TRYARCH_LAUNCHER_TEST_EXE")
+	if os.Getenv("TRYARCH_UI_TEST") != "1" || launcher == "" {
 		t.Skip("requires interactive Windows and candidate executable")
 	}
 	for _, language := range []string{"en", "zh-Hans"} {
@@ -42,12 +42,12 @@ func TestNativeSettingsScrollRepaint(t *testing.T) {
 				t.Fatal(err)
 			}
 			cmd := exec.Command(launcher, "-dir", dir, "-settings")
-			cmd.Env = append(os.Environ(), "TRY_OMARCHY_UI_LANGUAGE="+language)
+			cmd.Env = append(os.Environ(), "TRY_ARCH_UI_LANGUAGE="+language)
 			if err := cmd.Start(); err != nil {
 				t.Fatal(err)
 			}
 			defer func() { _ = cmd.Process.Kill(); _ = cmd.Wait() }()
-			class, _ := syscall.UTF16PtrFromString("TryOmarchySettings")
+			class, _ := syscall.UTF16PtrFromString("TryArchSettings")
 			var window, viewport uintptr
 			for deadline := time.Now().Add(15 * time.Second); time.Now().Before(deadline); {
 				window, _, _ = user32.NewProc("FindWindowW").Call(uintptr(unsafe.Pointer(class)), 0)

@@ -45,7 +45,7 @@ func growPortableDiskWithTool(disk installationDisk, bytes int64, tool string, p
 	if err := requireDiskSpace(parent, info.Size()+diskSpaceReserve); err != nil {
 		return err
 	}
-	stage, err := os.CreateTemp(parent, ".try-omarchy-grow-*.qcow2")
+	stage, err := os.CreateTemp(parent, ".try-arch-grow-*.qcow2")
 	if err != nil {
 		return err
 	}
@@ -100,7 +100,7 @@ func growPortableDiskWithTool(disk installationDisk, bytes int64, tool string, p
 	return publish(path, disk.Path)
 }
 
-var portableGrowthStage = regexp.MustCompile(`^\.try-omarchy-grow-[0-9]+\.qcow2$`)
+var portableGrowthStage = regexp.MustCompile(`^\.try-arch-grow-[0-9]+\.qcow2$`)
 
 // Called only while the active disk is exclusively locked.
 func cleanupPortableGrowth(parent string) error {

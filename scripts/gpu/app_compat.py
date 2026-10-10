@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Install optional per-user Omarchy application launchers; never edit drivers."""
+"""Install optional per-user Arch application launchers; never edit drivers."""
 
 import argparse
 import json
@@ -96,7 +96,7 @@ def read_config(path):
 
 def atomic_write(path, contents):
     path.parent.mkdir(parents=True, exist_ok=True)
-    fd, temporary = tempfile.mkstemp(prefix=".omarchy-app-", dir=path.parent)
+    fd, temporary = tempfile.mkstemp(prefix=".arch-app-", dir=path.parent)
     try:
         with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as stream:
             stream.write(contents)
@@ -137,7 +137,7 @@ def godot_default_renderer(executable):
     else:
         updated = text.replace('[resource]', '[resource]\n' + line, 1)
     if updated != text:
-        backup = settings.with_suffix(settings.suffix + ".before-omarchy")
+        backup = settings.with_suffix(settings.suffix + ".before-arch")
         if settings.exists() and not backup.exists():
             atomic_write(backup, text)
         atomic_write(settings, updated)
@@ -145,7 +145,7 @@ def godot_default_renderer(executable):
 
 def install(options):
     data = Path(os.environ.get("XDG_DATA_HOME", Path.home() / ".local/share"))
-    root = data / "try-omarchy-apps"
+    root = data / "try-arch-apps"
     config_path = root / "apps.json"
     config = read_config(config_path) if config_path.exists() else {"schemaVersion": 1, "apps": {}}
     selected = {}
@@ -169,8 +169,8 @@ def install(options):
     launcher = root / "app_compat.py"
     launcher_text = Path(__file__).read_text(encoding="utf-8")
     command = " ".join((desktop_argument(sys.executable), desktop_argument(str(launcher)), "run"))
-    names = {"blender": "Blender (Omarchy)", "godot": "Godot (Omarchy)",
-             "supertuxkart": "SuperTuxKart (Omarchy)"}
+    names = {"blender": "Blender (Arch)", "godot": "Godot (Arch)",
+             "supertuxkart": "SuperTuxKart (Arch)"}
     comments = {"blender": "OpenGL editing and rendering; Cycles uses the CPU",
                 "godot": "Godot with the OpenGL Compatibility renderer",
                 "supertuxkart": "Race using the OpenGL renderer"}
@@ -179,7 +179,7 @@ def install(options):
     atomic_write(launcher, launcher_text)
     atomic_write(config_path, json.dumps(config, indent=2) + "\n")
     for application in selected:
-        entry = data / "applications" / f"try-omarchy-{application}.desktop"
+        entry = data / "applications" / f"try-arch-{application}.desktop"
         category = "Game;" if application == "supertuxkart" else "Graphics;3DGraphics;"
         field = " %f" if application == "blender" else ""
         atomic_write(entry, f"[Desktop Entry]\nType=Application\nName={names[application]}\n"
@@ -210,11 +210,11 @@ def main():
             config = read_config(Path(__file__).with_name("apps.json"))
             launch(config, options.application, options.arguments)
     except (OSError, ValueError, subprocess.SubprocessError) as error:
-        message = f"Omarchy application launcher: {error}"
+        message = f"Arch application launcher: {error}"
         print(message, file=sys.stderr)
         if shutil.which("notify-send"):
             try:
-                subprocess.run(["notify-send", "Omarchy", message], timeout=5, check=False)
+                subprocess.run(["notify-send", "Arch", message], timeout=5, check=False)
             except (OSError, subprocess.SubprocessError):
                 pass  # Keep the original launch error if desktop notifications fail.
         return 1

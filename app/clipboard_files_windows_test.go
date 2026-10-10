@@ -12,7 +12,7 @@ import (
 // Opt in only on a disposable Windows desktop. This exercises actual Win32
 // ownership and CF_HDROP publication, without opening Explorer or a Linux VM.
 func TestWindowsFileClipboardNative(t *testing.T) {
-	if os.Getenv("TRY_OMARCHY_TEST_CLIPBOARD") != "1" {
+	if os.Getenv("TRY_ARCH_TEST_CLIPBOARD") != "1" {
 		t.Skip("requires disposable clipboard desktop")
 	}
 	t.Setenv("LOCALAPPDATA", t.TempDir())
@@ -56,7 +56,7 @@ func TestWindowsFileClipboardNative(t *testing.T) {
 }
 
 func TestWindowsStreamingClipboardPaths(t *testing.T) {
-	if os.Getenv("TRY_OMARCHY_TEST_CLIPBOARD") != "1" {
+	if os.Getenv("TRY_ARCH_TEST_CLIPBOARD") != "1" {
 		t.Skip("requires disposable clipboard desktop")
 	}
 	source := filepath.Join(t.TempDir(), "large 世界.txt")

@@ -1,5 +1,5 @@
 # Private filesystem sockets keep QMP outside the guest's network access.
-if (-not ('OmarchyUnixEndPoint' -as [type])) {
+if (-not ('ArchUnixEndPoint' -as [type])) {
 Add-Type @'
 using System;
 using System.Net;
@@ -7,9 +7,9 @@ using System.Net.Sockets;
 using System.Runtime.InteropServices;
 using System.Text;
 using Microsoft.Win32.SafeHandles;
-public class OmarchyUnixEndPoint : EndPoint {
+public class ArchUnixEndPoint : EndPoint {
  readonly string path;
- public OmarchyUnixEndPoint(string value){path=value;}
+ public ArchUnixEndPoint(string value){path=value;}
  public override AddressFamily AddressFamily { get {return AddressFamily.Unix;} }
  public override SocketAddress Serialize(){
   byte[] bytes=Encoding.UTF8.GetBytes(path);
@@ -38,7 +38,7 @@ public class OmarchyUnixEndPoint : EndPoint {
  public static Socket Connect(string path,int timeout){
   var socket=new Socket(AddressFamily.Unix,SocketType.Stream,ProtocolType.Unspecified);
   try {
-   var pending=socket.BeginConnect(new OmarchyUnixEndPoint(path),null,null);
+   var pending=socket.BeginConnect(new ArchUnixEndPoint(path),null,null);
    // Completed async results can share a wait handle on modern .NET. Do not
    // dispose that shared handle between successive private connections.
    var clock=System.Diagnostics.Stopwatch.StartNew();
@@ -53,21 +53,21 @@ public class OmarchyUnixEndPoint : EndPoint {
 }
 '@
 }
-function Get-OmarchyQmpPath([int]$Role=4445) {
+function Get-ArchQmpPath([int]$Role=4445) {
  $name=switch($Role){4445 {'tools.sock'} 4446 {'forward.sock'} 4447 {'supervisor.sock'} default {throw 'Unknown QMP control role'}}
  $cache=[IO.Path]::GetTempPath()
  if([string]::IsNullOrWhiteSpace($cache)){throw 'Windows temporary directory is unavailable'}
- if([Text.Encoding]::UTF8.GetByteCount((Join-Path $cache 'TryOmarchyIPC\supervisor.sock')) -gt 103){$cache=[OmarchyUnixEndPoint]::ShortPath($cache)}
- $path=Join-Path $cache "TryOmarchyIPC\$name"
+ if([Text.Encoding]::UTF8.GetByteCount((Join-Path $cache 'TryArchIPC\supervisor.sock')) -gt 103){$cache=[ArchUnixEndPoint]::ShortPath($cache)}
+ $path=Join-Path $cache "TryArchIPC\$name"
  if([Text.Encoding]::UTF8.GetByteCount($path) -gt 103){throw 'Private control path is too long'}
  return $path
 }
-function New-OmarchyQmpStream([int]$Role=4445) {
- $socket=[OmarchyUnixEndPoint]::Connect((Get-OmarchyQmpPath $Role),3000)
+function New-ArchQmpStream([int]$Role=4445) {
+ $socket=[ArchUnixEndPoint]::Connect((Get-ArchQmpPath $Role),3000)
  return New-Object Net.Sockets.NetworkStream($socket,$true)
 }
-function Initialize-OmarchyQmpControl {
- $paths=@(4445,4446,4447 | ForEach-Object {Get-OmarchyQmpPath $_})
+function Initialize-ArchQmpControl {
+ $paths=@(4445,4446,4447 | ForEach-Object {Get-ArchQmpPath $_})
  $directory=Split-Path $paths[0]
  for($cursor=$directory;$cursor;$cursor=[IO.Path]::GetDirectoryName($cursor)){
   if((Test-Path -LiteralPath $cursor) -and ([IO.File]::GetAttributes($cursor) -band [IO.FileAttributes]::ReparsePoint)){throw "Linked private control directory: $cursor"}
@@ -76,15 +76,15 @@ function Initialize-OmarchyQmpControl {
  $stale=@()
  foreach($path in $paths){
   if(-not (Test-Path -LiteralPath $path)){continue}
-  if(-not [OmarchyUnixEndPoint]::IsSocket($path)){throw "Private control path contains another file: $path"}
+  if(-not [ArchUnixEndPoint]::IsSocket($path)){throw "Private control path contains another file: $path"}
   $socket=$null
-  try {$socket=[OmarchyUnixEndPoint]::Connect($path,1000)}
+  try {$socket=[ArchUnixEndPoint]::Connect($path,1000)}
   catch {
    $cause=$_.Exception
    while($cause.InnerException){$cause=$cause.InnerException}
    if($cause -isnot [Net.Sockets.SocketException] -or $cause.NativeErrorCode -ne 10061){throw}
   }
-  if($socket){$socket.Close();throw 'An Omarchy runtime still owns its private control socket'}
+  if($socket){$socket.Close();throw 'An Arch runtime still owns its private control socket'}
   $stale+=$path
  }
  foreach($path in $stale){Remove-Item -LiteralPath $path -Force}

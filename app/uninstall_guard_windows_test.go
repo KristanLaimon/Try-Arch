@@ -14,7 +14,7 @@ func TestWindowsAppsUninstallLinkedProfileShowsRecoveryGuidance(t *testing.T) {
 	t.Setenv("LOCALAPPDATA", t.TempDir())
 	root := t.TempDir()
 	realProfile := filepath.Join(root, "real-profile")
-	realDir := filepath.Join(realProfile, "TryOmarchy")
+	realDir := filepath.Join(realProfile, "TryArch")
 	if err := os.MkdirAll(realDir, 0700); err != nil {
 		t.Fatal(err)
 	}
@@ -26,7 +26,7 @@ func TestWindowsAppsUninstallLinkedProfileShowsRecoveryGuidance(t *testing.T) {
 	if out, err := exec.Command(system32("cmd.exe"), "/c", "mklink", "/J", junction, realProfile).CombinedOutput(); err != nil {
 		t.Skipf("junction unavailable: %v %s", err, out)
 	}
-	dir := filepath.Join(junction, "TryOmarchy")
+	dir := filepath.Join(junction, "TryArch")
 	resolved, err := prepareMovedLocation(dir, true, true)
 	if err != nil {
 		t.Fatal(err)

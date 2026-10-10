@@ -32,7 +32,7 @@ func qemuStartupFailureTail(vmDir string) string {
 }
 
 // buildQemuArgs selects the native runtime devices and private controls.
-// Rendering follows scripts/launch-omarchy.ps1: GPU mode is WINQ-EMU's stack (patched WHPX survives -cpu host;
+// Rendering follows scripts/launch-arch.ps1: GPU mode is WINQ-EMU's stack (patched WHPX survives -cpu host;
 // virtio-vga-gl IS the VGA device, so no -vga none), CPU mode is stock QEMU
 // with the fastest flags upstream WHPX survives (any XSAVE/AVX feature panics
 // the guest kernel) and the mandatory -vga none for virtio-gpu-pci.
@@ -87,7 +87,7 @@ func buildQemuArgs(cfg *config, cmdline string) []string {
 		"-drive", "file="+qemuOptionValue(cfg.disk)+",format="+cfg.diskFormat+",if=virtio",
 		"-kernel", filepath.Join(cfg.guestDir, "vmlinuz-linux"),
 		"-initrd", filepath.Join(cfg.guestDir, "initramfs-linux.img"),
-		"-append", cmdline+" tryomarchy.render="+render,
+		"-append", cmdline+" tryarch.render="+render,
 		"-device", "virtio-keyboard-pci", "-device", "virtio-tablet-pci",
 		// No option ROM: the guest boots its kernel directly, and iPXE would
 		// only print its banner on the display.
@@ -97,7 +97,7 @@ func buildQemuArgs(cfg *config, cmdline string) []string {
 		// going through slirp. The launcher listens on loopback (as it does
 		// for the clipboard and transfer ports) and QEMU connects to it, with
 		// reconnect so QEMU rejoins if the launcher restarts. The guest reads
-		// the virtio port named dev.tryomarchy.camera.
+		// the virtio port named dev.tryarch.camera.
 		//
 		// reconnect-ms, not the older reconnect: QEMU deprecated reconnect in
 		// 9.2 and dropped it afterwards, and every runtime this app runs (the
@@ -106,16 +106,16 @@ func buildQemuArgs(cfg *config, cmdline string) []string {
 		// before the guest ever booted.
 		"-chardev", fmt.Sprintf("socket,id=cam0,host=127.0.0.1,port=%d,reconnect-ms=1000", cameraPort),
 		"-device", "virtio-serial-pci,id=virtioserial0",
-		"-device", "virtserialport,chardev=cam0,name=dev.tryomarchy.camera",
+		"-device", "virtserialport,chardev=cam0,name=dev.tryarch.camera",
 		// Root-only in the guest. The host sends only bounded responses to a
 		// matching request; enrollment remains opt-in through guest sudo.
 		"-chardev", fmt.Sprintf("socket,id=hello0,host=127.0.0.1,port=%d,reconnect-ms=1000", helloBridgePort),
-		"-device", "virtserialport,chardev=hello0,name=dev.tryomarchy.authentication",
+		"-device", "virtserialport,chardev=hello0,name=dev.tryarch.authentication",
 		// The q35 root bus cannot hotplug a PCIe controller. USB devices
 		// attach to this controller after the guest has started.
 		"-device", "qemu-xhci,id="+usbControllerID,
 		// The guest must not sleep: a suspended VM leaves the window frozen
-		// with no way back from the keyboard, and Omarchy's power menu
+		// with no way back from the keyboard, and Arch's power menu
 		// offers suspend whenever the kernel advertises it. With S3 and S4
 		// off the kernel reports no such state and systemd refuses cleanly.
 		"-global", "ICH9-LPC.disable_s3=1", "-global", "ICH9-LPC.disable_s4=1",
@@ -137,12 +137,12 @@ func buildQemuArgs(cfg *config, cmdline string) []string {
 		args = append(args, "-qmp", "unix:"+qemuOptionValue(filepath.Join(cfg.qmpDir, qmpControlName(role)))+",server=on,wait=off")
 	}
 	if cfg.followHostTimeZone {
-		args = append(args, "-chardev", fmt.Sprintf("socket,id=timezone0,host=127.0.0.1,port=%d,reconnect-ms=1000", timeZoneBridgePort), "-device", "virtserialport,chardev=timezone0,name=dev.tryomarchy.timezone")
+		args = append(args, "-chardev", fmt.Sprintf("socket,id=timezone0,host=127.0.0.1,port=%d,reconnect-ms=1000", timeZoneBridgePort), "-device", "virtserialport,chardev=timezone0,name=dev.tryarch.timezone")
 	}
 	if cfg.audio == "sdl" && audioRuntimeSupportsLiveRouting(cfg.qemu) {
 		args = append(args,
 			"-chardev", fmt.Sprintf("socket,id=audio0,host=127.0.0.1,port=%d,reconnect-ms=1000", audioBridgePort),
-			"-device", "virtserialport,chardev=audio0,name=dev.tryomarchy.audio",
+			"-device", "virtserialport,chardev=audio0,name=dev.tryarch.audio",
 		)
 	}
 	// The bundled r19 runtime replaces reported free pages with demand-zero

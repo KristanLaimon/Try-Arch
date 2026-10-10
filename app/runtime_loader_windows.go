@@ -23,7 +23,7 @@ func loadRuntime(ctx context.Context, executable string) error {
 		runtimeLoaderPreparing.Store(false)
 		refreshRuntimeLoaderTray()
 		if !setupCancelled() && !windowsSessionEnding.Load() {
-			getUI().setStatus("%s", uiText("status.starting_omarchy"))
+			getUI().setStatus("%s", uiText("status.starting_arch"))
 		}
 	}()
 

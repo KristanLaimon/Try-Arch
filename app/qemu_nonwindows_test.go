@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	appTitle = "Try Omarchy"
+	appTitle = "Try Arch"
 )
 
 type config struct {
@@ -316,7 +316,7 @@ func TestBuildQemuArgsUsesReconnectMSForTheCameraChardev(t *testing.T) {
 		t.Fatalf("camera chardev missing %q: %s", want, args)
 	}
 	hello := fmt.Sprintf("socket,id=hello0,host=127.0.0.1,port=%d,reconnect-ms=1000", helloBridgePort)
-	if !strings.Contains(args, hello) || !strings.Contains(args, "virtserialport,chardev=hello0,name=dev.tryomarchy.authentication") {
+	if !strings.Contains(args, hello) || !strings.Contains(args, "virtserialport,chardev=hello0,name=dev.tryarch.authentication") {
 		t.Fatalf("authentication chardev missing: %s", args)
 	}
 }
@@ -379,11 +379,11 @@ func TestBuildQemuArgsUsesTheChosenCPUCountAndHostMem(t *testing.T) {
 
 func TestBuildQemuArgsTellsTheGuestTheRenderingPath(t *testing.T) {
 	cfg := &config{vmDir: "/vm", guestDir: "/guest", disk: "/vm/disk.raw", diskFormat: "raw", memMiB: 4096, audio: "none", useGpu: true}
-	if args := strings.Join(buildQemuArgs(cfg, "root=/dev/vda"), " "); !strings.Contains(args, "root=/dev/vda tryomarchy.render=gpu ") {
+	if args := strings.Join(buildQemuArgs(cfg, "root=/dev/vda"), " "); !strings.Contains(args, "root=/dev/vda tryarch.render=gpu ") {
 		t.Fatalf("gpu marker missing: %s", args)
 	}
 	cfg.useGpu = false
-	if args := strings.Join(buildQemuArgs(cfg, "root=/dev/vda"), " "); !strings.Contains(args, "tryomarchy.render=cpu ") {
+	if args := strings.Join(buildQemuArgs(cfg, "root=/dev/vda"), " "); !strings.Contains(args, "tryarch.render=cpu ") {
 		t.Fatalf("cpu marker missing: %s", args)
 	}
 }

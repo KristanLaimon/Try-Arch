@@ -1,8 +1,8 @@
 param(
     [Parameter(Mandatory = $true)][string]$Tag,
     [switch]$Latest,
-    [ValidateSet('omacom/try-omarchy-windows', 'tsouth89/try-omarchy-windows')]
-    [string]$Repository = 'omacom/try-omarchy-windows',
+    [ValidateSet('KristanLaimon/Try-Arch')]
+    [string]$Repository = 'KristanLaimon/Try-Arch',
     [ValidateRange(1, 18)][int]$Attempts = 18,
     [ValidateRange(0, 60)][int]$RetryDelaySeconds = 10
 )
@@ -10,7 +10,7 @@ param(
 $ErrorActionPreference = 'Stop'
 $releasePath = if ($Latest) { 'latest/download' } else { "download/$Tag" }
 $base = "https://github.com/$repository/releases/$releasePath"
-$work = Join-Path $env:RUNNER_TEMP "try-omarchy-public-$([guid]::NewGuid())"
+$work = Join-Path $env:RUNNER_TEMP "try-arch-public-$([guid]::NewGuid())"
 New-Item -ItemType Directory -Path $work | Out-Null
 
 function Get-PublicAsset([string]$Name, [int]$Attempt) {
@@ -23,11 +23,11 @@ function Get-PublicAsset([string]$Name, [int]$Attempt) {
 try {
     $matched = $false
     for ($attempt = 1; $attempt -le $Attempts; $attempt++) {
-        $launcherOK = Get-PublicAsset 'TryOmarchy.exe' $attempt
-        $checksumOK = Get-PublicAsset 'TryOmarchy.exe.sha256' $attempt
+        $launcherOK = Get-PublicAsset 'TryArch.exe' $attempt
+        $checksumOK = Get-PublicAsset 'TryArch.exe.sha256' $attempt
         if ($launcherOK -and $checksumOK) {
-            $expected = ((Get-Content "$work/TryOmarchy.exe.sha256" -Raw).Trim() -split '\s+')[0]
-            $actual = (Get-FileHash "$work/TryOmarchy.exe" -Algorithm SHA256).Hash.ToLowerInvariant()
+            $expected = ((Get-Content "$work/TryArch.exe.sha256" -Raw).Trim() -split '\s+')[0]
+            $actual = (Get-FileHash "$work/TryArch.exe" -Algorithm SHA256).Hash.ToLowerInvariant()
             if ($expected -cmatch '^[0-9a-f]{64}$' -and $actual -eq $expected) {
                 $matched = $true
                 break

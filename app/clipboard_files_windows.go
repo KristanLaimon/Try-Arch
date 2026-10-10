@@ -24,7 +24,7 @@ func clipboardFilesCache() (string, error) {
 	if err != nil {
 		return "", err
 	}
-	return filepath.Join(dir, "TryOmarchy", "Clipboard"), nil
+	return filepath.Join(dir, "TryArch", "Clipboard"), nil
 }
 
 func clipboardGetFilePaths() ([]string, bool) {
@@ -80,7 +80,7 @@ func clipboardSetFiles(item clipItem) bool {
 	}
 	paths, err := unpackClipboardFiles(item.Data, cache)
 	if err != nil {
-		reportTransferError(uiError(uiTextWith("transfer.from_omarchy_failed", map[string]string{"error": err.Error()}), err))
+		reportTransferError(uiError(uiTextWith("transfer.from_arch_failed", map[string]string{"error": err.Error()}), err))
 		return false
 	}
 	keep := false

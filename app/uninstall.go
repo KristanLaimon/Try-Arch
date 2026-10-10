@@ -12,17 +12,17 @@ const uninstallRegistryParent = `Software\Microsoft\Windows\CurrentVersion\Unins
 
 func uninstallKeyName(dir, defaultDir string) string {
 	if pathsEqual(dir, defaultDir) {
-		return "TryOmarchy"
+		return "TryArch"
 	}
 	sum := sha256.Sum256([]byte(strings.ToLower(strings.TrimRight(dir, `\/`))))
-	return "TryOmarchy-" + hex.EncodeToString(sum[:4])
+	return "TryArch-" + hex.EncodeToString(sum[:4])
 }
 
 func uninstallDisplayName(dir, defaultDir string) string {
 	if pathsEqual(dir, defaultDir) {
-		return "Try Omarchy"
+		return "Try Arch"
 	}
-	return "Try Omarchy (" + dir + ")"
+	return "Try Arch (" + dir + ")"
 }
 
 // uninstallCommand is the string Windows runs from Apps & features. Paths

@@ -8,7 +8,7 @@ import (
 
 func TestCreateRecommendedSharedFolder(t *testing.T) {
 	home := t.TempDir()
-	want := filepath.Join(home, recommendedSharedFolderName)
+	want := filepath.Join(home, "Arch Shared")
 	got, err := createRecommendedSharedFolder(home)
 	if err != nil || got != want {
 		t.Fatalf("created path = %q, %v; want %q", got, err, want)

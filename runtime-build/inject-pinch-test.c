@@ -69,7 +69,7 @@ int main(int argc, char **argv)
     HWND focus_window = NULL;
     for (int frame = 0; frame <= 61; frame++) {
         if (frame == 30 && !strcmp(mode, "focus")) {
-            focus_window = CreateWindowExW(0, L"STATIC", L"Try Omarchy input cancellation test",
+            focus_window = CreateWindowExW(0, L"STATIC", L"Try Arch input cancellation test",
                 WS_OVERLAPPEDWINDOW | WS_VISIBLE, 20, 20, 300, 100, NULL, NULL, GetModuleHandleW(NULL), NULL);
             SetForegroundWindow(focus_window);
             Sleep(200);

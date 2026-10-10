@@ -1,10 +1,10 @@
-# QMP driver for the running Omarchy guest over its private socket.
+# QMP driver for the running Arch guest over its private socket.
 # Usage: qmp.ps1 shot NAME | type STRING | key NAME[,NAME...] | status
 param([Parameter(Mandatory)][string]$op, [string]$arg = '')
 $ErrorActionPreference = 'Stop'
 
 . "$PSScriptRoot\qmp-transport.ps1"
-$s = New-OmarchyQmpStream 4445; $s.ReadTimeout = 5000
+$s = New-ArchQmpStream 4445; $s.ReadTimeout = 5000
 $w = New-Object IO.StreamWriter($s); $w.AutoFlush = $true
 $r = New-Object IO.StreamReader($s)
 $r.ReadLine() | Out-Null
@@ -20,10 +20,10 @@ function Send-Keys([string[]]$qcodes) {
 
 switch ($op) {
     'shot' {
-        $w.WriteLine("{`"execute`":`"screendump`",`"arguments`":{`"filename`":`"C:\\tryomarchy\\$arg.ppm`"}}")
+        $w.WriteLine("{`"execute`":`"screendump`",`"arguments`":{`"filename`":`"C:\\tryarch\\$arg.ppm`"}}")
         Start-Sleep -Milliseconds 1500
         try { Write-Host $r.ReadLine() } catch {}
-        Copy-Item "C:\tryomarchy\$arg.ppm" "\\host.lan\Data\tryomarchy\$arg.ppm" -Force
+        Copy-Item "C:\tryarch\$arg.ppm" "\\host.lan\Data\tryarch\$arg.ppm" -Force
         Write-Host "shot $arg"
     }
     'type' {

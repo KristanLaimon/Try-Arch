@@ -25,8 +25,8 @@ type usbBroker struct{ qmp usbQMP }
 var usbHostRow = regexp.MustCompile(`(?m)^\s*Bus (\d+), Addr (\d+), Port ([0-9.]+), Speed [^\r\n]+\r?\n\s*Class ([0-9a-fA-F]{2}): USB device ([0-9a-fA-F]{4}):([0-9a-fA-F]{4})(?:, ([^\r\n]*))?`)
 var usbPort = regexp.MustCompile(`^[0-9]+(?:\.[0-9]+){0,6}$`)
 
-const usbControllerID = "tryomarchy-usb"
-const usbDevicePrefix = "tryomarchy-usb-device-"
+const usbControllerID = "tryarch-usb"
+const usbDevicePrefix = "tryarch-usb-device-"
 
 func (d usbDevice) identity() string {
 	sum := sha256.Sum256([]byte(fmt.Sprintf("%d/%s/%04x/%04x", d.Bus, d.Port, d.Vendor, d.Product)))

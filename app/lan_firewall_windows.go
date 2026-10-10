@@ -16,7 +16,7 @@ import (
 // Only this installation's named rules are reconciled. Unrelated application
 // and enterprise rules are never modified.
 const lanFirewallScript = `$ErrorActionPreference='Stop'
-$p=$env:TRYOMARCHY_FIREWALL | ConvertFrom-Json
+$p=$env:TRYARCH_FIREWALL | ConvertFrom-Json
 try {
  $existing=@(Get-NetFirewallRule -PolicyStore PersistentStore -Group $p.group -ErrorAction Stop)
 } catch {
@@ -33,7 +33,7 @@ for($i=0;$i -lt $p.rules.Count;$i++) {
  if($rule.Enabled -ne 'True' -or $rule.Direction -ne 'Inbound' -or $rule.Action -ne 'Allow' -or [int]$rule.Profile -ne $profile -or $port.Protocol -notin @($wanted.protocol,$protocol) -or [string]$port.LocalPort -ne [string]$wanted.port -or [string]$address.LocalAddress -ne $local -or [string]$address.RemoteAddress -ne 'LocalSubnet' -or $app.Program -ne $p.program){$matches=$false}
 }
 if($matches){exit 0}
-if($env:TRYOMARCHY_FIREWALL_APPLY -ne '1'){exit 3}
+if($env:TRYARCH_FIREWALL_APPLY -ne '1'){exit 3}
 $created=@()
 try {
  for($i=0;$i -lt $p.rules.Count;$i++) {
@@ -42,7 +42,7 @@ try {
   if($current.Count){$current | Remove-NetFirewallRule}
   $local=if($wanted.address -eq '0.0.0.0'){'Any'}else{$wanted.address}
   $profiles=if($p.public){@('Any')}else{@('Domain','Private')}
-  New-NetFirewallRule -PolicyStore PersistentStore -Name $name -DisplayName ('Try Omarchy '+$wanted.protocol.ToUpper()+' '+$wanted.port) -Group $p.group -Direction Inbound -Action Allow -Enabled True -Profile $profiles -Program $p.program -Protocol $wanted.protocol -LocalPort $wanted.port -LocalAddress $local -RemoteAddress LocalSubnet -EdgeTraversalPolicy Block | Out-Null
+  New-NetFirewallRule -PolicyStore PersistentStore -Name $name -DisplayName ('Try Arch '+$wanted.protocol.ToUpper()+' '+$wanted.port) -Group $p.group -Direction Inbound -Action Allow -Enabled True -Profile $profiles -Program $p.program -Protocol $wanted.protocol -LocalPort $wanted.port -LocalAddress $local -RemoteAddress LocalSubnet -EdgeTraversalPolicy Block | Out-Null
   $created+=,$name
  }
  $existing | Where-Object {$_.Name -notin $names} | Remove-NetFirewallRule
@@ -67,7 +67,7 @@ func executeLANFirewall(plan lanFirewallPlan, apply bool) error {
 		return err
 	}
 	cmd := exec.CommandContext(setupContext(), system32("WindowsPowerShell\\v1.0\\powershell.exe"), "-NoProfile", "-NonInteractive", "-Command", lanFirewallScript)
-	cmd.Env = append(os.Environ(), "TRYOMARCHY_FIREWALL="+string(data), fmt.Sprintf("TRYOMARCHY_FIREWALL_APPLY=%d", map[bool]int{false: 0, true: 1}[apply]))
+	cmd.Env = append(os.Environ(), "TRYARCH_FIREWALL="+string(data), fmt.Sprintf("TRYARCH_FIREWALL_APPLY=%d", map[bool]int{false: 0, true: 1}[apply]))
 	configureDiskTool(cmd)
 	var detail diskToolErrors
 	cmd.Stderr = &detail
@@ -168,7 +168,7 @@ func portableFirewallProcessRunning(pid int) bool {
 
 func prepareLANFirewall(cfg *config) error {
 	local := os.Getenv("LOCALAPPDATA")
-	root := filepath.Join(local, "TryOmarchy", "portable-host", "firewall-owners")
+	root := filepath.Join(local, "TryArch", "portable-host", "firewall-owners")
 	notice := func(err error) { firewallCleanupNotice(err.Error(), "") }
 	return ensureLANFirewallAfterCleanup(func() error {
 		if !filepath.IsAbs(local) {

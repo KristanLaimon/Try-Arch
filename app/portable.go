@@ -205,7 +205,7 @@ func portableRecoveryAllowed(action, backup, restore string) bool {
 		return false
 	}
 	return action == "backup" || action == "restore" || action == "snapshots" || action == "portable-create" ||
-		action == "install-omarchy" || action == "" && backup != ""
+		action == "install-arch" || action == "" && backup != ""
 }
 
 func payloadIsLocal(cfg *config, digest string) bool {

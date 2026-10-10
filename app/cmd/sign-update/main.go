@@ -64,7 +64,7 @@ func main() {
 		Schema: 1, Version: *version, Release: strings.TrimRight(*release, "/"),
 		ManifestSHA256: strings.ToLower(*manifestSHA),
 	}
-	manifest.Launcher.Name = "TryOmarchy.exe"
+	manifest.Launcher.Name = "TryArch.exe"
 	manifest.Launcher.SHA256 = hex.EncodeToString(launcherSum[:])
 	data, err := json.MarshalIndent(manifest, "", "  ")
 	if err != nil {
@@ -89,7 +89,7 @@ func main() {
 }
 
 func signingKey() (ed25519.PrivateKey, error) {
-	encoded := strings.TrimSpace(os.Getenv("TRYOMARCHY_UPDATE_SIGNING_KEY"))
+	encoded := strings.TrimSpace(os.Getenv("TRYARCH_UPDATE_SIGNING_KEY"))
 	der, err := base64.StdEncoding.DecodeString(encoded)
 	if err != nil {
 		return nil, err
@@ -136,11 +136,11 @@ func verifyBridge(data, signature []byte, version string, key ed25519.PublicKey)
 	if err := json.Unmarshal(data, &manifest); err != nil {
 		return err
 	}
-	if manifest.Schema != 1 || manifest.Version != version || manifest.Launcher.Name != "TryOmarchy.exe" ||
+	if manifest.Schema != 1 || manifest.Version != version || manifest.Launcher.Name != "TryArch.exe" ||
 		!validSHA256(manifest.ManifestSHA256) || !validSHA256(manifest.Launcher.SHA256) {
 		return fmt.Errorf("invalid bridge metadata")
 	}
-	for _, repo := range []string{"tsouth89/try-omarchy-windows", "omacom/try-omarchy-windows", "omacom/omarchy-win"} {
+	for _, repo := range []string{"KristanLaimon/Try-Arch"} {
 		if manifest.Release == "https://github.com/"+repo+"/releases/download/"+version {
 			return nil
 		}

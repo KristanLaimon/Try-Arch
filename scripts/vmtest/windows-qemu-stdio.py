@@ -3,8 +3,8 @@
 
 Put a symlink named qemu-system-x86_64 to this file on PATH before running
 smoke-guest.py --accel tcg. Required environment: SSHPASS (for sshpass),
-TRYOMARCHY_SMOKE_ARTIFACTS (local directory), TRYOMARCHY_WINDOWS_GUEST and
-TRYOMARCHY_WINDOWS_QEMU (Windows paths). Windows SSH defaults to bts@localhost:2222.
+TRYARCH_SMOKE_ARTIFACTS (local directory), TRYARCH_WINDOWS_GUEST and
+TRYARCH_WINDOWS_QEMU (Windows paths). Windows SSH defaults to bts@localhost:2222.
 """
 import base64
 import os
@@ -26,19 +26,19 @@ def encoded(script):
 
 
 def main():
-    local = os.environ["TRYOMARCHY_SMOKE_ARTIFACTS"].rstrip("/")
-    guest = os.environ["TRYOMARCHY_WINDOWS_GUEST"].rstrip("/\\")
-    executable = os.environ["TRYOMARCHY_WINDOWS_QEMU"]
+    local = os.environ["TRYARCH_SMOKE_ARTIFACTS"].rstrip("/")
+    guest = os.environ["TRYARCH_WINDOWS_GUEST"].rstrip("/\\")
+    executable = os.environ["TRYARCH_WINDOWS_QEMU"]
     arguments = [value.replace(local, guest) for value in sys.argv[1:]]
     with socket.socket() as reservation:
         reservation.bind(("127.0.0.1", 0))
         port = reservation.getsockname()[1]
     arguments[arguments.index("-serial") + 1] = f"tcp:127.0.0.1:{port},server=on,wait=off"
-    identity = "try-omarchy-smoke-" + uuid.uuid4().hex
+    identity = "try-arch-smoke-" + uuid.uuid4().hex
     arguments += ["-name", identity]
     print("Disposable Windows VM: " + identity, file=sys.stderr, flush=True)
-    ssh = ["sshpass", "-e", "ssh", "-T", "-o", "ConnectTimeout=10", "-o", "LogLevel=ERROR", "-p", os.environ.get("TRYOMARCHY_VM_SSH_PORT", "2222")]
-    host = os.environ.get("TRYOMARCHY_VM_SSH_HOST", "bts@127.0.0.1")
+    ssh = ["sshpass", "-e", "ssh", "-T", "-o", "ConnectTimeout=10", "-o", "LogLevel=ERROR", "-p", os.environ.get("TRYARCH_VM_SSH_PORT", "2222")]
+    host = os.environ.get("TRYARCH_VM_SSH_HOST", "bts@127.0.0.1")
     invoke = [host, "powershell", "-NoProfile", "-NonInteractive", "-EncodedCommand"]
     # Windows PowerShell's legacy native argument binding strips the quotes in
     # JSON device arguments. Supply the complete Windows command line directly.

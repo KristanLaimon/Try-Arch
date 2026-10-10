@@ -155,7 +155,7 @@ def probe(backends, godot):
     if vk["status"] == "completed":
         vk["status"] = "query-succeeded" if vk["exitCode"] == 0 else "failed"
     vk["nonConformantWarning"] = "not a conformant" in vk.get("output", "").lower()
-    with tempfile.TemporaryDirectory(prefix="omarchy-gpu-") as directory:
+    with tempfile.TemporaryDirectory(prefix="arch-gpu-") as directory:
         root = Path(directory)
         for backend in dict.fromkeys(backends):
             script = root / "blender.py"
@@ -165,7 +165,7 @@ def probe(backends, godot):
             report["workloads"]["blender-" + backend.lower()] = classify_workload(
                 result, "GPU_RENDER_PASSED=" + backend)
         if godot:
-            (root / "project.godot").write_text('[application]\nconfig/name="Omarchy GPU Check"\n')
+            (root / "project.godot").write_text('[application]\nconfig/name="Arch GPU Check"\n')
             (root / "scene.gd").write_text(GODOT_SCENE)
             for renderer in ("gl_compatibility", "forward_plus"):
                 result = run_command(["godot", "--path", str(root), "--script", "res://scene.gd",

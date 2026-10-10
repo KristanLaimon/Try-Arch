@@ -10,7 +10,7 @@ import (
 	"syscall"
 )
 
-// updateStagingNotice reports whether a failed attempt to stage the Omarchy
+// updateStagingNotice reports whether a failed attempt to stage the Arch
 // system update deserves a message to the user.
 //
 // Intentional skips (a disabled update check, portable policy, an update that

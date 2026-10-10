@@ -15,10 +15,10 @@ import (
 // The child owns a fresh singleton, so unrelated extraction tests cannot leave
 // this test with an already-finished splash. No download or installation runs.
 func TestSetupPromptsNative(t *testing.T) {
-	if os.Getenv("TRYOMARCHY_UI_TEST") != "1" {
+	if os.Getenv("TRYARCH_UI_TEST") != "1" {
 		t.Skip("requires interactive Windows")
 	}
-	if os.Getenv("TRYOMARCHY_SETUP_CHILD") != "1" {
+	if os.Getenv("TRYARCH_SETUP_CHILD") != "1" {
 		self, err := os.Executable()
 		if err != nil {
 			t.Fatal(err)
@@ -26,7 +26,7 @@ func TestSetupPromptsNative(t *testing.T) {
 		ctx, cancel := context.WithTimeout(context.Background(), 30*time.Second)
 		defer cancel()
 		cmd := exec.CommandContext(ctx, self, "-test.v", "-test.timeout=20s", "-test.run=^TestSetupPromptsNative$")
-		cmd.Env = append(os.Environ(), "TRYOMARCHY_SETUP_CHILD=1")
+		cmd.Env = append(os.Environ(), "TRYARCH_SETUP_CHILD=1")
 		cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 		if output, err := cmd.CombinedOutput(); err != nil {
 			t.Fatalf("prompt child: %v\n%s", err, output)
@@ -37,7 +37,7 @@ func TestSetupPromptsNative(t *testing.T) {
 	ui := getUI()
 	defer ui.finish()
 	t.Log("setup window ready")
-	class, _ := syscall.UTF16PtrFromString("TryOmarchySetup")
+	class, _ := syscall.UTF16PtrFromString("TryArchSetup")
 	window, _, _ := user32.NewProc("FindWindowW").Call(uintptr(unsafe.Pointer(class)), 0)
 	visible, _, _ := user32.NewProc("IsWindowVisible").Call(window)
 	if window == 0 || visible == 0 {

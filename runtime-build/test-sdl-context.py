@@ -88,7 +88,7 @@ int main(void) {
     return 0;
 }
 '''
-with tempfile.TemporaryDirectory(prefix='tryomarchy-gl-context-') as temporary:
+with tempfile.TemporaryDirectory(prefix='tryarch-gl-context-') as temporary:
     root = Path(temporary)
     (root / 'test.c').write_text(harness, encoding='utf-8')
     subprocess.run(['gcc', '-std=gnu11', '-O2', str(root / 'test.c'),

@@ -14,8 +14,8 @@ binary=args.bin.resolve()
 # Use the same bounded socket transport as the RAM smoke test. Windows QEMU
 # does not reliably consume redirected stdio before the producer closes it.
 VM = runpy.run_path(str(Path(__file__).with_name('smoke-memory.py')))['VM']
-with tempfile.TemporaryDirectory(prefix='tryomarchy-unicode-') as temporary:
-    root=Path(temporary)/'Omarchy 世界 café'
+with tempfile.TemporaryDirectory(prefix='tryarch-unicode-') as temporary:
+    root=Path(temporary)/'Arch 世界 café'
     root.mkdir()
     disk=root/'guest 日本語.raw'
     created=subprocess.run([str(binary/'qemu-img.exe'),'create','-f','raw',str(disk),'64k'],

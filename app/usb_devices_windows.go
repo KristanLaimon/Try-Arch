@@ -258,7 +258,7 @@ func runUSBWindow(dir, qemu string, selection bool) error {
 	usbUI = s
 	defer func() { usbUI = nil }()
 	instance, _, _ := procGetModuleHandleW.Call(0)
-	class, _ := syscall.UTF16PtrFromString("TryOmarchyUSBDevices")
+	class, _ := syscall.UTF16PtrFromString("TryArchUSBDevices")
 	if !usbUIRegistered {
 		type windowClass struct {
 			size, style                   uint32

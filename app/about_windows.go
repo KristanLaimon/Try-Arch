@@ -9,8 +9,8 @@ import (
 	"time"
 )
 
-const projectURL = "https://github.com/omacom/try-omarchy-windows"
-const websiteURL = "https://tryomarchy.com"
+const projectURL = "https://github.com/KristanLaimon/Try-Arch"
+const websiteURL = "https://archlinux.org"
 
 func runAbout() {
 	message := uiTextWith("about.body", map[string]string{
@@ -36,6 +36,10 @@ func runAbout() {
 }
 
 func checkForLauncherUpdates() {
+	if defaultUpdateURL == "" {
+		infoBox(uiText("about.updates_unpublished"))
+		return
+	}
 	getUI().setStatus("%s", uiText("about.checking"))
 	key, err := updatePublicKey()
 	var manifest *updateManifest

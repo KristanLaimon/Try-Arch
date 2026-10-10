@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Execute one HLT instruction with Linux KVM. Run inside the Omarchy guest.
+"""Execute one HLT instruction with Linux KVM. Run inside the Arch guest.
 
 No disks, network, packages, sudo, or persistent changes. Exit 0 proves that
 this user can execute a KVM vCPU; exit 1 explains the failed stage. Host-side
@@ -23,7 +23,7 @@ def probe():
              "passed": False, "stage": "architecture"}
     try:
         if platform.system() != "Linux" or platform.machine() not in ("x86_64", "amd64"):
-            raise RuntimeError("This probe requires x86_64 Linux inside Omarchy")
+            raise RuntimeError("This probe requires x86_64 Linux inside Arch")
         facts["stage"] = "open /dev/kvm"
         with contextlib.ExitStack() as resources:
             kvm = os.open("/dev/kvm", os.O_RDWR | os.O_CLOEXEC)

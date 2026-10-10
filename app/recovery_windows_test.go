@@ -26,7 +26,7 @@ func TestRestoredShortcutsTargetOnlyRestoredFolder(t *testing.T) {
 		t.Fatalf("restored sign-in preference = %#v, error %v", prefs, err)
 	}
 	var links []struct{ Name, Target, Arguments, Directory string }
-	for _, name := range []string{"Start Omarchy.lnk", "Settings.lnk"} {
+	for _, name := range []string{"Start Arch.lnk", "Settings.lnk"} {
 		target, arguments, directory := readShellLinkForTest(t, filepath.Join(dir, name))
 		links = append(links, struct{ Name, Target, Arguments, Directory string }{name, target, arguments, directory})
 	}
@@ -53,7 +53,7 @@ func TestRestoredShortcutsTargetOnlyRestoredFolder(t *testing.T) {
 		wantArgs := `-dir "` + dir + `"`
 		if link.Name == "Settings.lnk" {
 			wantArgs += " -settings"
-		} else if link.Name != "Start Omarchy.lnk" {
+		} else if link.Name != "Start Arch.lnk" {
 			t.Fatalf("unexpected shortcut %q", link.Name)
 		}
 		if link.Arguments != wantArgs {
@@ -115,9 +115,9 @@ func readShellLinkForTest(t *testing.T, path string) (string, string, string) {
 
 func TestUnicodeShortcutOwnership(t *testing.T) {
 	dir := t.TempDir()
-	old := filepath.Join(dir, "原本", "TryOmarchy.exe")
-	next := filepath.Join(dir, "Moved 世界", "TryOmarchy.exe")
-	foreign := filepath.Join(dir, "Other", "TryOmarchy.exe")
+	old := filepath.Join(dir, "原本", "TryArch.exe")
+	next := filepath.Join(dir, "Moved 世界", "TryArch.exe")
+	foreign := filepath.Join(dir, "Other", "TryArch.exe")
 	paths := []string{filepath.Join(dir, "owned.lnk"), filepath.Join(dir, "foreign.lnk")}
 	for i, target := range []string{old, foreign} {
 		if err := os.MkdirAll(filepath.Dir(target), 0700); err != nil {
@@ -175,7 +175,7 @@ func TestUnicodeShortcutOwnership(t *testing.T) {
 
 func TestShortcutOwnershipAcceptsFileAliases(t *testing.T) {
 	dir := t.TempDir()
-	target := filepath.Join(dir, "TryOmarchy.exe")
+	target := filepath.Join(dir, "TryArch.exe")
 	alias := filepath.Join(dir, "alias.exe")
 	foreign := filepath.Join(dir, "foreign.exe")
 	for _, path := range []string{target, foreign} {

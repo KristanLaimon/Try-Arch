@@ -16,8 +16,8 @@ func TestValidateWindowsSharedFolderPolicy(t *testing.T) {
 	}
 	root := t.TempDir()
 	home := filepath.Join(root, "home")
-	share := filepath.Join(home, "Omarchy Shared")
-	data := filepath.Join(home, "TryOmarchyData")
+	share := filepath.Join(home, "Arch Shared")
+	data := filepath.Join(home, "TryArchData")
 	for _, path := range []string{share, data} {
 		if err := os.MkdirAll(path, 0o755); err != nil {
 			t.Fatal(err)

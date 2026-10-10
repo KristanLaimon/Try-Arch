@@ -40,7 +40,7 @@ func configureBackgroundUpdates(cfg *config, feed string, enabled bool, ownPaylo
 	snapshot := *cfg
 	var once sync.Once
 	start := func() {
-		if !enabled && ownPayload == nil {
+		if (!enabled || feed == "") && ownPayload == nil {
 			return
 		}
 		once.Do(func() {

@@ -69,13 +69,13 @@ jobs:
           TEST_SUMS_SHA256: ${{ inputs.sums_sha256 }}
         run: |
           if ($env:PAYLOAD_KIND -eq 'candidate') {
-            $flags = "-H windowsgui -s -w -X main.defaultSumsSHA256=$env:TEST_SUMS_SHA256 -X main.defaultDataDirectoryName=TryOmarchyCandidate"
+            $flags = "-H windowsgui -s -w -X main.defaultSumsSHA256=$env:TEST_SUMS_SHA256 -X main.defaultDataDirectoryName=TryArchCandidate"
           } elseif ($env:PAYLOAD_KIND -eq 'runtime') {
-            $flags = "-H windowsgui -s -w -X main.defaultRuntimeReleaseURL=$env:TEST_RELEASE_URL -X main.defaultRuntimeSumsSHA256=$env:TEST_SUMS_SHA256 -X main.defaultDataDirectoryName=TryOmarchyRuntimeTest"
+            $flags = "-H windowsgui -s -w -X main.defaultRuntimeReleaseURL=$env:TEST_RELEASE_URL -X main.defaultRuntimeSumsSHA256=$env:TEST_SUMS_SHA256 -X main.defaultDataDirectoryName=TryArchRuntimeTest"
           } else {
             throw 'Unknown test payload kind'
           }
-          go build -trimpath -ldflags $flags -o TryOmarchy-runtime-test.exe .
+          go build -trimpath -ldflags $flags -o TryArch-runtime-test.exe .
 
       - name: Sign in to Azure with OIDC
         uses: azure/login@7ddb5af1ef8758cf1353cf3b42f940aee27ba21c # v3
@@ -90,7 +90,7 @@ jobs:
           endpoint: ${{ vars.AZURE_SIGNING_ENDPOINT }}
           signing-account-name: ${{ vars.AZURE_SIGNING_ACCOUNT }}
           certificate-profile-name: ${{ vars.AZURE_SIGNING_PROFILE }}
-          files: ${{ github.workspace }}\app\TryOmarchy-runtime-test.exe
+          files: ${{ github.workspace }}\app\TryArch-runtime-test.exe
           file-digest: SHA256
           timestamp-rfc3161: http://timestamp.acs.microsoft.com
           timestamp-digest: SHA256
@@ -98,13 +98,13 @@ jobs:
       - name: Verify signature and write checksum
         shell: pwsh
         run: |
-          $path = 'app/TryOmarchy-runtime-test.exe'
+          $path = 'app/TryArch-runtime-test.exe'
           $signature = Get-AuthenticodeSignature $path
           if ($signature.Status -ne 'Valid') {
             throw "Authenticode verification failed: $($signature.StatusMessage)"
           }
           $hash = (Get-FileHash $path -Algorithm SHA256).Hash.ToLowerInvariant()
-          "$hash  TryOmarchy-runtime-test.exe" | Set-Content "$path.sha256" -Encoding ascii
+          "$hash  TryArch-runtime-test.exe" | Set-Content "$path.sha256" -Encoding ascii
           @{
             sourceCommit = '${{ github.sha }}'
             payloadKind = '${{ inputs.payload_kind || 'runtime' }}'
@@ -116,10 +116,10 @@ jobs:
       - name: Upload signed test launcher
         uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
         with:
-          name: TryOmarchy-runtime-test-${{ github.sha }}
+          name: TryArch-runtime-test-${{ github.sha }}
           path: |
-            app/TryOmarchy-runtime-test.exe
-            app/TryOmarchy-runtime-test.exe.sha256
+            app/TryArch-runtime-test.exe
+            app/TryArch-runtime-test.exe.sha256
             app/test-launcher.json
           if-no-files-found: error
           retention-days: 7

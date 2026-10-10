@@ -12,6 +12,7 @@ var (
 // buildSpec holds the fields the launcher reads from the guest's build-spec.json.
 type buildSpec struct {
 	Runtime struct {
+		Console           bool     `json:"console"`
 		KernelCommandLine string   `json:"kernelCommandLine"`
 		OptionalDevices   []string `json:"optionalDevices"`
 		Storage           struct {

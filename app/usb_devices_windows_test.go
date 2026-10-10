@@ -16,7 +16,7 @@ import (
 )
 
 func TestNativeUSBManagerRefreshAndClose(t *testing.T) {
-	if os.Getenv("TRYOMARCHY_NATIVE_UI_TEST") != "1" {
+	if os.Getenv("TRYARCH_NATIVE_UI_TEST") != "1" {
 		t.Skip("requires an interactive Windows desktop")
 	}
 	dir, err := os.MkdirTemp(os.TempDir(), "tom-usb-")
@@ -73,7 +73,7 @@ func TestNativeUSBManagerRefreshAndClose(t *testing.T) {
 	}()
 	done := make(chan error, 1)
 	go func() { done <- runUSBDeviceUI() }()
-	class, _ := syscall.UTF16PtrFromString("TryOmarchyUSBDevices")
+	class, _ := syscall.UTF16PtrFromString("TryArchUSBDevices")
 	find := user32.NewProc("FindWindowW")
 	getItem := user32.NewProc("GetDlgItem")
 	var window uintptr
@@ -122,7 +122,7 @@ func TestNativeUSBManagerRefreshAndClose(t *testing.T) {
 }
 
 func TestNativeUSBSelectionConfirmDisableAndClose(t *testing.T) {
-	if os.Getenv("TRYOMARCHY_NATIVE_UI_TEST") != "1" {
+	if os.Getenv("TRYARCH_NATIVE_UI_TEST") != "1" {
 		t.Skip("requires interactive Windows desktop")
 	}
 	dir := t.TempDir()
@@ -157,7 +157,7 @@ func TestNativeUSBSelectionConfirmDisableAndClose(t *testing.T) {
 	}
 	var h, list uintptr
 	wait(func() bool {
-		h = find("TryOmarchyUSBDevices", "USB devices")
+		h = find("TryArchUSBDevices", "USB devices")
 		if h == 0 {
 			return false
 		}
@@ -169,9 +169,9 @@ func TestNativeUSBSelectionConfirmDisableAndClose(t *testing.T) {
 	for _, reply := range []uintptr{idNo, idYes} {
 		procPostMessageW.Call(h, wmCommand, 4302, 0)
 		var confirmation uintptr
-		wait(func() bool { confirmation = find("#32770", "Try Omarchy"); return confirmation != 0 })
+		wait(func() bool { confirmation = find("#32770", "Try Arch"); return confirmation != 0 })
 		procPostMessageW.Call(confirmation, wmCommand, reply, 0)
-		wait(func() bool { return find("#32770", "Try Omarchy") == 0 })
+		wait(func() bool { return find("#32770", "Try Arch") == 0 })
 		if reply == idNo {
 			if _, err := os.Stat(filepath.Join(dir, usbPreferencesFilename)); !os.IsNotExist(err) {
 				t.Fatal("declining granted startup USB access", err)

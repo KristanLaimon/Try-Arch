@@ -8,7 +8,7 @@ import (
 )
 
 func TestDisabledCameraOverridesSyntheticCapture(t *testing.T) {
-	t.Setenv("TRYOMARCHY_FAKE_CAMERA", "1")
+	t.Setenv("TRYARCH_FAKE_CAMERA", "1")
 	source := configuredCameraSource(desktopPreferences{CameraDisabled: true})
 	defer source.stop()
 	frames, err := source.start()

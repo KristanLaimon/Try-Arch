@@ -36,7 +36,7 @@ func signedUpdateServer(t *testing.T, body []byte, mutateSignature bool) (*httpt
 }
 
 func validUpdateJSON(version string) []byte {
-	return []byte(fmt.Sprintf(`{"schema":1,"version":%q,"release":%q,"manifestSHA256":%q,"launcher":{"name":"TryOmarchy.exe","sha256":%q}}`,
+	return []byte(fmt.Sprintf(`{"schema":1,"version":%q,"release":%q,"manifestSHA256":%q,"launcher":{"name":"TryArch.exe","sha256":%q}}`,
 		version,
 		transferredReleaseBase+version,
 		strings.Repeat("a", 64), strings.Repeat("b", 64)))
@@ -63,7 +63,7 @@ func TestFetchUpdateManifestRejectsBadSignature(t *testing.T) {
 }
 
 func TestFetchUpdateManifestRejectsUnexpectedRelease(t *testing.T) {
-	body := []byte(`{"schema":1,"version":"v0.0.7-preview","release":"https://example.test/release","manifestSHA256":"` + strings.Repeat("a", 64) + `","launcher":{"name":"TryOmarchy.exe","sha256":"` + strings.Repeat("b", 64) + `"}}`)
+	body := []byte(`{"schema":1,"version":"v0.0.7-preview","release":"https://example.test/release","manifestSHA256":"` + strings.Repeat("a", 64) + `","launcher":{"name":"TryArch.exe","sha256":"` + strings.Repeat("b", 64) + `"}}`)
 	server, key := signedUpdateServer(t, body, false)
 	defer server.Close()
 	if _, err := fetchUpdateManifest(server.Client(), server.URL+"/update.json", key); err == nil {

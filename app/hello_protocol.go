@@ -21,8 +21,8 @@ import (
 const (
 	helloProtocolVersion  = 2
 	helloMaximumLineBytes = 4096
-	helloRelyingPartyID   = "try-omarchy.invalid"
-	helloClientDataType   = "try-omarchy.windows-hello.sudo"
+	helloRelyingPartyID   = "try-arch.invalid"
+	helloClientDataType   = "try-arch.windows-hello.sudo"
 )
 
 var (

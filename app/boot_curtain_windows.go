@@ -68,20 +68,20 @@ const (
 	desktopReachedName  = "desktop-reached"
 )
 
-// A first boot that asks for the user's own account shows Omarchy's account
+// A first boot that asks for the user's own account shows Arch's account
 // form in this window, so the curtain is only for disks that have reached
 // the desktop before, and for the quick-start account, which asks nothing.
 func startBootCurtain(cfg *config) {
 	id, err := diskIdentity(cfg.disk)
 	if err != nil {
-		logf("startup: showing the window while Omarchy boots (disk identity: %v)", err)
+		logf("startup: showing the window while Arch boots (disk identity: %v)", err)
 		return
 	}
 	curtainMu.Lock()
 	curtainDiskID, curtainVMDir = id, cfg.vmDir
 	curtainMu.Unlock()
 	if !cfg.instant && !desktopReachedBefore(cfg.vmDir, id) {
-		logf("startup: showing the window while Omarchy boots (first desktop on this disk)")
+		logf("startup: showing the window while Arch boots (first desktop on this disk)")
 		return
 	}
 	ui := getUI()
@@ -198,7 +198,7 @@ func curtainTick(primary uintptr) {
 	}
 	// Cancel puts its own status up.
 	if !setupCancelled() {
-		status := uiText("status.starting_omarchy")
+		status := uiText("status.starting_arch")
 		switch {
 		case runtimeLoaderPreparing.Load():
 			status = uiText("status.preparing_runtime")
@@ -243,7 +243,7 @@ func liftCurtain(reason string) {
 	windows := curtainWindows
 	curtainWindows = map[uintptr]*curtainWindow{}
 	curtainMu.Unlock()
-	logf("startup: showing Omarchy (%s)", reason)
+	logf("startup: showing Arch (%s)", reason)
 	// A window from an attempt that failed is gone, and its handle may
 	// belong to another program by now.
 	pid := qemuPid.Load()

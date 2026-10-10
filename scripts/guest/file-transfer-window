@@ -15,16 +15,16 @@ from gi.repository import Gdk, Gio, GLib, Gtk
 
 class Transfers(Gtk.Application):
     def __init__(self):
-        super().__init__(application_id='org.omarchy.FileTransfers', flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE)
+        super().__init__(application_id='org.arch.FileTransfers', flags=Gio.ApplicationFlags.HANDLES_COMMAND_LINE)
         self.window = None
         self.worker = None
         self.closing = False
         self.pending = []
         self.drop_point = None
         self.received_paths = []
-        self.state = Path(os.environ.get('XDG_RUNTIME_DIR', '/run/user/' + str(os.getuid()))) / 'try-omarchy-clipboard'
+        self.state = Path(os.environ.get('XDG_RUNTIME_DIR', '/run/user/' + str(os.getuid()))) / 'try-arch-clipboard'
         self.state.mkdir(mode=0o700, parents=True, exist_ok=True)
-        self.cache = Path(os.environ.get('XDG_CACHE_HOME', str(Path.home() / '.cache'))) / 'try-omarchy-transfers'
+        self.cache = Path(os.environ.get('XDG_CACHE_HOME', str(Path.home() / '.cache'))) / 'try-arch-transfers'
         self.cache.mkdir(mode=0o700, parents=True, exist_ok=True)
 
     def do_command_line(self, command):
@@ -65,7 +65,7 @@ class Transfers(Gtk.Application):
         if self.window:
             self.window.present()
             return
-        self.window = Gtk.ApplicationWindow(application=self, title='Files between Windows and Omarchy', default_width=560, default_height=400)
+        self.window = Gtk.ApplicationWindow(application=self, title='Files between Windows and Arch', default_width=560, default_height=400)
         box = Gtk.Box(orientation=Gtk.Orientation.VERTICAL, spacing=12, margin_top=20, margin_bottom=20, margin_start=20, margin_end=20)
         box.append(Gtk.Label(label='Drop files here to send them to Windows.\nDrag received files below into Files or another application.', wrap=True))
         target = Gtk.DropTarget.new(Gdk.FileList, Gdk.DragAction.COPY)

@@ -15,7 +15,7 @@ import (
 // Opt in on the interactive Windows test desktop. The older observer hook
 // consumes synthetic Win events so they cannot open the host Start menu.
 func TestKeyboardNativeHookChain(t *testing.T) {
-	tool := os.Getenv("TRYOMARCHY_QEMU_HOOK_TEST_BINARY")
+	tool := os.Getenv("TRYARCH_QEMU_HOOK_TEST_BINARY")
 	if tool == "" {
 		t.Skip("requires an interactive Windows runtime test")
 	}

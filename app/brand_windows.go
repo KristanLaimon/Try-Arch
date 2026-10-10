@@ -20,7 +20,7 @@ var (
 	procIsWindowEnabled = user32.NewProc("IsWindowEnabled")
 )
 
-const brandPanel = 0x003B2824 // Mac Tokyo Night panel, #24283B.
+const brandPanel = 0x0037291F // Try Arch panel, #1F2937.
 const brandMuted = 0x00684841 // #414868.
 
 // Native controls keep their roles, names, tab order and command handling.

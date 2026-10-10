@@ -132,7 +132,7 @@ func (c *qmpClient) Call(ctx context.Context, command string, arguments any, res
 		return fmt.Errorf("missing QMP command")
 	}
 	c.nextID++
-	id := fmt.Sprintf("try-omarchy-%d", c.nextID)
+	id := fmt.Sprintf("try-arch-%d", c.nextID)
 	request := struct {
 		Execute   string `json:"execute"`
 		Arguments any    `json:"arguments,omitempty"`

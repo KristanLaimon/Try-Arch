@@ -36,7 +36,7 @@ func chooseActionCancelable(cancel <-chan struct{}, title, body string, textHeig
 		var dialogErr error
 		defer func() { done <- result{selected, dialogErr} }()
 		instance, _, _ := procGetModuleHandleW.Call(0)
-		class, _ := syscall.UTF16PtrFromString("TryOmarchyChoice")
+		class, _ := syscall.UTF16PtrFromString("TryArchChoice")
 		callback := syscall.NewCallback(func(h, message, w, l uintptr) uintptr {
 			if result, handled := brand.handle(h, message, w, l); handled {
 				return result

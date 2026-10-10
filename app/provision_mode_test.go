@@ -40,7 +40,7 @@ func TestProvisionModeRejectsUnknownValues(t *testing.T) {
 
 func TestProvisionAccountHints(t *testing.T) {
 	instant := provisionAccountHint(true)
-	if instant != "Quick-start account: omarchy    Password: omarchy" {
+	if instant != "Quick-start account: arch    Password: arch" {
 		t.Fatalf("instant hint = %q", instant)
 	}
 	personal := provisionAccountHint(false)

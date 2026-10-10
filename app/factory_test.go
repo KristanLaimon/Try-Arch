@@ -364,7 +364,7 @@ func TestDamagedExistingDataDisablesWholeSetupCleanup(t *testing.T) {
 			file := filepath.Join(dir, filepath.FromSlash(name))
 			os.MkdirAll(filepath.Dir(file), 0700)
 			os.WriteFile(file, []byte("personal recovery data"), 0600)
-			if err := cleanupCancelledSetup(dir, filepath.Join(dir, "TryOmarchy.exe"), true); err != nil {
+			if err := cleanupCancelledSetup(dir, filepath.Join(dir, "TryArch.exe"), true); err != nil {
 				t.Fatal(err)
 			}
 			data, _ := os.ReadFile(file)

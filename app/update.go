@@ -18,10 +18,10 @@ import (
 
 const (
 	currentVersion         = "v0.11.0"
-	defaultUpdateURL       = "https://github.com/omacom/try-omarchy-windows/releases/latest/download/update-v2.json"
-	legacyReleaseBase      = "https://github.com/tsouth89/try-omarchy-windows/releases/download/"
-	transferredReleaseBase = "https://github.com/omacom/try-omarchy-windows/releases/download/"
-	officialReleaseBase    = "https://github.com/omacom/omarchy-win/releases/download/"
+	defaultUpdateURL       = ""
+	legacyReleaseBase      = "https://github.com/KristanLaimon/Try-Arch/releases/download/"
+	transferredReleaseBase = "https://github.com/KristanLaimon/Try-Arch/releases/download/"
+	officialReleaseBase    = "https://github.com/KristanLaimon/Try-Arch/releases/download/"
 	maxUpdateManifestLen   = 64 << 10
 	maxUpdateSignatureLen  = 4 << 10
 	// Rotating the private half requires shipping a launcher that trusts both

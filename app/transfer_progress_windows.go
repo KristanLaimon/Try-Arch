@@ -62,7 +62,7 @@ func showTransferProgress(progress *transferProgress) {
 	runtime.LockOSThread()
 	defer runtime.UnlockOSThread()
 	instance, _, _ := procGetModuleHandleW.Call(0)
-	class, _ := syscall.UTF16PtrFromString("TryOmarchyFileTransfer")
+	class, _ := syscall.UTF16PtrFromString("TryArchFileTransfer")
 	transferClassOnce.Do(func() {
 		type windowClass struct {
 			size, style                   uint32

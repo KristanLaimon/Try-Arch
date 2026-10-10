@@ -20,7 +20,7 @@ import (
 )
 
 func TestNativeStableRestartHelper(t *testing.T) {
-	marker := os.Getenv("TRYOMARCHY_STABLE_MARKER")
+	marker := os.Getenv("TRYARCH_STABLE_MARKER")
 	if marker == "" {
 		return
 	}
@@ -42,7 +42,7 @@ func TestNativeStableRestartHelper(t *testing.T) {
 }
 
 func TestNativeStableRollbackHelper(t *testing.T) {
-	dir := os.Getenv("TRYOMARCHY_STABLE_ROLLBACK_DIR")
+	dir := os.Getenv("TRYARCH_STABLE_ROLLBACK_DIR")
 	if dir == "" {
 		return
 	}
@@ -103,7 +103,7 @@ func TestNativeSignedStableUpdateAndRollback(t *testing.T) {
 				t.Fatal(err)
 			}
 			marker := filepath.Join(dir, "started.txt")
-			t.Setenv("TRYOMARCHY_STABLE_MARKER", marker)
+			t.Setenv("TRYARCH_STABLE_MARKER", marker)
 			args, err := encodeRestartArgs([]string{"-test.run=^TestNativeStableRestartHelper$"})
 			if err != nil {
 				t.Fatal(err)
@@ -157,7 +157,7 @@ func TestNativeSignedStableUpdateAndRollback(t *testing.T) {
 			if err := os.Remove(marker); err != nil {
 				t.Fatal(err)
 			}
-			t.Setenv("TRYOMARCHY_STABLE_ROLLBACK_DIR", dir)
+			t.Setenv("TRYARCH_STABLE_ROLLBACK_DIR", dir)
 			cmd := exec.Command(previousLauncherPath(dir), "-test.run=^TestNativeStableRollbackHelper$")
 			if output, err := cmd.CombinedOutput(); err != nil {
 				t.Fatalf("rollback: %v: %s", err, output)
@@ -215,7 +215,7 @@ func TestNativeBootFirstChannelAppliesOnlyOnNextStart(t *testing.T) {
 	client.Transport = updateFixtureTransport{base: client.Transport, server: server.URL}
 	defer client.CloseIdleConnections()
 	marker := filepath.Join(dir, "started.txt")
-	t.Setenv("TRYOMARCHY_STABLE_MARKER", marker)
+	t.Setenv("TRYARCH_STABLE_MARKER", marker)
 	args, err := encodeRestartArgs([]string{"-test.run=^TestNativeStableRestartHelper$"})
 	if err != nil {
 		t.Fatal(err)
@@ -248,8 +248,8 @@ func TestNativeBootFirstChannelAppliesOnlyOnNextStart(t *testing.T) {
 		if err := writeLauncherUpdateState(dir, state); err != nil {
 			t.Fatal(err)
 		}
-		t.Setenv("TRYOMARCHY_BOOT_FIRST_DIR", dir)
-		t.Setenv("TRYOMARCHY_BOOT_FIRST_ARGS", args)
+		t.Setenv("TRYARCH_BOOT_FIRST_DIR", dir)
+		t.Setenv("TRYARCH_BOOT_FIRST_ARGS", args)
 		cmd := exec.Command(stagedLauncherPath(dir, version), "-test.run=^TestNativeBootFirstApplyHelper$")
 		if output, err := cmd.CombinedOutput(); err != nil {
 			t.Fatalf("apply staged launcher: %v: %s", err, output)
@@ -351,11 +351,11 @@ func TestNativeInstalledPayloadStartsOfflineWithoutRequests(t *testing.T) {
 }
 
 func TestNativeBootFirstApplyHelper(t *testing.T) {
-	dir := os.Getenv("TRYOMARCHY_BOOT_FIRST_DIR")
+	dir := os.Getenv("TRYARCH_BOOT_FIRST_DIR")
 	if dir == "" {
 		return
 	}
-	if err := applyLauncherUpdate(dir, 2147483647, os.Getenv("TRYOMARCHY_BOOT_FIRST_ARGS"), false); err != nil {
+	if err := applyLauncherUpdate(dir, 2147483647, os.Getenv("TRYARCH_BOOT_FIRST_ARGS"), false); err != nil {
 		fmt.Fprintln(os.Stderr, err)
 		os.Exit(1)
 	}

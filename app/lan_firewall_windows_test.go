@@ -15,7 +15,7 @@ import (
 
 func TestLANFirewallProgramWindowsPaths(t *testing.T) {
 	for _, program := range []string{
-		`C:\Users\a\AppData\Local\TryOmarchy\runtime\bin\qemu-system-x86_64w.exe`,
+		`C:\Users\a\AppData\Local\TryArch\runtime\bin\qemu-system-x86_64w.exe`,
 		`C:\WINQ-EMU\bin\qemu-system-x86_64w.exe`,
 		`C:\Program Files\qemu\qemu-system-x86_64w.exe`,
 	} {
@@ -49,7 +49,7 @@ func TestLANFirewallApplyRefusesMissingProgram(t *testing.T) {
 }
 
 func TestNativeLANFirewallLifecycle(t *testing.T) {
-	if os.Getenv("TRYOMARCHY_FIREWALL_TEST") != "1" {
+	if os.Getenv("TRYARCH_FIREWALL_TEST") != "1" {
 		t.Skip("explicit disposable Windows firewall test")
 	}
 	configureSetupCancellation(false)
@@ -242,7 +242,7 @@ func TestLANFirewallCleanupQueryErrors(t *testing.T) {
 			// Exercise the actual script without modifying this machine's firewall.
 			mock := `function Get-NetFirewallRule { Write-Error -Message 'mock query failure' -Category ` + test.category + ` };` + "\n"
 			cmd := exec.Command(system32("WindowsPowerShell\\v1.0\\powershell.exe"), "-NoProfile", "-NonInteractive", "-Command", mock+lanFirewallScript)
-			cmd.Env = append(os.Environ(), "TRYOMARCHY_FIREWALL="+string(data), "TRYOMARCHY_FIREWALL_APPLY=1")
+			cmd.Env = append(os.Environ(), "TRYARCH_FIREWALL="+string(data), "TRYARCH_FIREWALL_APPLY=1")
 			configureDiskTool(cmd)
 			output, err := cmd.CombinedOutput()
 			if (err == nil) != test.success {

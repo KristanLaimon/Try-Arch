@@ -71,7 +71,7 @@ const (
 	settingsAltTabID             = 2126
 	settingsUSBSelectionID       = 2127
 	settingsVolumeSyncID         = 2128
-	settingsInstallOmarchyID     = 2130
+	settingsInstallArchID     = 2130
 	settingsSaveID               = 2001
 	settingsCancelID             = 2002
 	settingsBrowseID             = 2003
@@ -246,7 +246,7 @@ func runLauncherSettings(path, dataDir string, portable, launcher bool, beforeRe
 	}
 	guard.Close()
 	hInst, _, _ := procGetModuleHandleW.Call(0)
-	className, _ := syscall.UTF16PtrFromString("TryOmarchySettings")
+	className, _ := syscall.UTF16PtrFromString("TryArchSettings")
 	var hwnd uintptr
 	var scroll settingsScroll
 	var hFull, hFullscreenDisplay, hStartAutomatically, hLaunchAtSignIn, hAltTab, hMem, hCPUs, hDisk, hShare, hShareOn, hFwd, hKey uintptr
@@ -646,8 +646,8 @@ func runLauncherSettings(path, dataDir string, portable, launcher bool, beforeRe
 				launchRecovery("reset")
 			case settingsUninstallID:
 				launchRecovery("uninstall")
-			case settingsInstallOmarchyID:
-				launchRecovery("install-omarchy")
+			case settingsInstallArchID:
+				launchRecovery("install-arch")
 			}
 			return 0
 		case settingsRecoveryDone:
@@ -1237,7 +1237,7 @@ func runLauncherSettings(path, dataDir string, portable, launcher bool, beforeRe
 	}
 	y += 40 + grow
 	y = note(uiText("settings.recovery.install_help"), left, y, clientW-2*left, 20, 26)
-	_, grow = buttons(left, y, 26, 0, rowButton{uiText("settings.recovery.install"), 160, settingsInstallOmarchyID})
+	_, grow = buttons(left, y, 26, 0, rowButton{uiText("settings.recovery.install"), 160, settingsInstallArchID})
 	pages[3] = append(pages[3], scroll.controls...)
 	pageHeights[3] = y + 40 + grow
 	scroll.controls = nil

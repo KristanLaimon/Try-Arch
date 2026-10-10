@@ -6,7 +6,7 @@ script_dir=$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd)
 work=${1:?Usage: build-arch.sh BUILD_DIRECTORY [INSTALL_DIRECTORY]}
 mkdir -p -- "$work"
 work=$(cd -- "$work" && pwd)
-prefix=${2:-"$HOME/.local/opt/blender-5.2.2-omarchy"}
+prefix=${2:-"$HOME/.local/opt/blender-5.2.2-arch"}
 mkdir -p -- "$prefix"
 prefix=$(cd -- "$prefix" && pwd)
 jobs=${JOBS:-4}
@@ -64,7 +64,7 @@ cmake -S "$work/source" -B "$work/build" -G Ninja \
     -DWITH_GTESTS=OFF
 cmake --build "$work/build" --parallel "$jobs"
 cmake --install "$work/build"
-git -C "$work/source" diff > "$prefix/omarchy-source.patch"
-pacman -Q > "$prefix/omarchy-build-packages.txt"
-printf 'Blender %s\nArch packaging %s\n' "$blender_commit" "$arch_commit" > "$prefix/omarchy-source-revisions.txt"
+git -C "$work/source" diff > "$prefix/arch-source.patch"
+pacman -Q > "$prefix/arch-build-packages.txt"
+printf 'Blender %s\nArch packaging %s\n' "$blender_commit" "$arch_commit" > "$prefix/arch-source-revisions.txt"
 echo "Built $prefix/blender; install its optional launcher with app_compat.py."

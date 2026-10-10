@@ -16,7 +16,7 @@ import (
 )
 
 // First-run machine setup: everything bootstrap.ps1 did, done by the app
-// itself so tryomarchy.com can honestly say "download one file and open it".
+// itself, including hypervisor setup and the verified QEMU runtime.
 // Two machine-wide pieces are handled here:
 //
 //   - Windows Hypervisor Platform. Checked unprivileged via WinHvPlatform.dll
@@ -26,7 +26,7 @@ import (
 //     and Windows then needs its one restart.
 //   - QEMU. A portable WINQ-EMU tree (the validated GPU stack, same bin/
 //     layout as C:\WINQ-EMU) is downloaded from the release into
-//     %LOCALAPPDATA%\TryOmarchy\runtime, SHA256-verified like the image.
+//     %LOCALAPPDATA%\TryArch\runtime, SHA256-verified like the image.
 //     Existing installs (C:\WINQ-EMU, stock QEMU from the old bootstrap)
 //     still win, so nothing already set up changes behavior.
 

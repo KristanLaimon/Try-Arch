@@ -15,7 +15,7 @@ import (
 // Run in its own interactive test process alongside smoke-guest.py's transfer
 // round trip. It exercises the production bridge through QEMU user networking.
 func TestGuestDesktopFileTransferRoundTrip(t *testing.T) {
-	if os.Getenv("TRYOMARCHY_GUEST_TRANSFER_TEST") != "1" {
+	if os.Getenv("TRYARCH_GUEST_TRANSFER_TEST") != "1" {
 		t.Skip("complete guest desktop and isolated Windows test process required")
 	}
 	t.Setenv("LOCALAPPDATA", t.TempDir())
@@ -23,7 +23,7 @@ func TestGuestDesktopFileTransferRoundTrip(t *testing.T) {
 		t.Fatal("cannot initialize test clipboard")
 	}
 	sequence := clipboardSequence()
-	payload := bytes.Repeat([]byte("Try Omarchy verified file drop\n"), 1<<20)
+	payload := bytes.Repeat([]byte("Try Arch verified file drop\n"), 1<<20)
 	source := filepath.Join(t.TempDir(), "from-windows-世界.txt")
 	if err := os.WriteFile(source, payload, 0600); err != nil {
 		t.Fatal(err)
@@ -53,14 +53,14 @@ func TestGuestDesktopFileTransferRoundTrip(t *testing.T) {
 	t.Log("host sent file-drop ticket")
 	select {
 	case paths := <-received:
-		if len(paths) != 1 || filepath.Base(paths[0]) != "from-omarchy-世界.txt" {
+		if len(paths) != 1 || filepath.Base(paths[0]) != "from-arch-世界.txt" {
 			t.Fatal("unexpected guest files", paths)
 		}
 		data, err := os.ReadFile(paths[0])
 		if err != nil || !bytes.Equal(data, payload) {
 			t.Fatal("guest return data changed", err)
 		}
-		class, _ := syscall.UTF16PtrFromString("TryOmarchyFileDrops")
+		class, _ := syscall.UTF16PtrFromString("TryArchFileDrops")
 		visibleDeadline := time.Now().Add(5 * time.Second)
 		for {
 			window, _, _ := user32.NewProc("FindWindowW").Call(uintptr(unsafe.Pointer(class)), 0)

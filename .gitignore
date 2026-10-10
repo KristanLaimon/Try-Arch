@@ -9,10 +9,13 @@ dist/
 .wrangler/
 __pycache__/
 *.pyc
-/TryOmarchy*.exe
-/TryOmarchy*.exe.sha256
+/TryArch*.exe
+/TryArch*.exe.sha256
 /artifacts/
 /release-manifest/
 /release/
 /bridge-metadata/
 /release-notes.md
+
+/.tmp/
+/app/.tmp/

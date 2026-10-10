@@ -7,7 +7,7 @@ import (
 
 // venusVariable forces Venus, the guest's Vulkan path to the host GPU, on or
 // off for testing a driver the automatic choice gets wrong.
-const venusVariable = "TRYOMARCHY_VENUS"
+const venusVariable = "TRYARCH_VENUS"
 
 // venusDecision decides whether the GPU device offers Venus. On NVIDIA hosts
 // a Vulkan swapchain (mpv) freezes the guest compositor for good, GTK4 aborts

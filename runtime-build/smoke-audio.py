@@ -20,11 +20,11 @@ VM = runpy.run_path(str(Path(__file__).with_name('smoke-memory.py')))['VM']
 
 for label, output, input_, muted, expected in [
     ('selected devices', args.output, args.input, False, []),
-    ('missing playback', 'Try Omarchy nonexistent playback endpoint', args.input,
+    ('missing playback', 'Try Arch nonexistent playback endpoint', args.input,
      False, ['playback']),
-    ('missing recording', args.output, 'Try Omarchy nonexistent recording endpoint',
+    ('missing recording', args.output, 'Try Arch nonexistent recording endpoint',
      False, ['recording']),
-    ('microphone disabled', args.output, 'Try Omarchy nonexistent recording endpoint',
+    ('microphone disabled', args.output, 'Try Arch nonexistent recording endpoint',
      True, []),
 ]:
     env = {k: v for k, v in os.environ.items() if k.upper() not in {

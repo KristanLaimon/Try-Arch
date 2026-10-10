@@ -10,7 +10,7 @@ TEXT_LIMIT=8388608
 IMAGE_LIMIT=16777216
 
 XDG_RUNTIME_DIR=${XDG_RUNTIME_DIR:-/run/user/$(id -u)}
-STATE=$XDG_RUNTIME_DIR/try-omarchy-clipboard
+STATE=$XDG_RUNTIME_DIR/try-arch-clipboard
 export XDG_RUNTIME_DIR STATE
 umask 077
 mkdir -p "$STATE"

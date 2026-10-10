@@ -50,7 +50,7 @@ int main(void) {
     return 0;
 }
 '''
-with tempfile.TemporaryDirectory(prefix="try-omarchy-usb-test-") as directory:
+with tempfile.TemporaryDirectory(prefix="try-arch-usb-test-") as directory:
     path = Path(directory)
     (path / "test.c").write_text(harness, encoding="utf-8")
     subprocess.run(["gcc", "-std=c11", "-O2", str(path / "test.c"), "-o", str(path / "test.exe")], check=True)

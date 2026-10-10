@@ -1,6 +1,6 @@
 # Source-built WINQ-EMU runtime
 
-This recipe builds Try Omarchy's Windows QEMU runtime from the exact QEMU and
+This recipe builds Try Arch's Windows QEMU runtime from the exact QEMU and
 virglrenderer fork commits in `sources.lock.json`. It produces:
 
 - `winq-emu-alpha10-portable.zip`, a drop-in replacement for the current runtime
@@ -8,11 +8,8 @@ virglrenderer fork commits in `sources.lock.json`. It produces:
 - `SHA256SUMS`, hashes for both archives
 
 The portable archive includes source provenance, the MSYS2 package inventory,
-per-file hashes, and licenses. The Runtime workflow remains manual. Its r23
-output is published as `runtime-v1-r23` and is pinned from `v0.11.0`; r22
-shipped in `v0.10.0` and `v0.10.1`, r21 in `v0.9.0`, and r20c from `v0.3.0`
-through `v0.8.0`. Future runtime
-replacements stay test artifacts until they pass physical Windows validation.
+per-file hashes, and licenses. Existing pinned assets come from the predecessor
+project; no replacement runtime has been published by this fork yet.
 
 To build in an MSYS2 UCRT64 shell with the packages in `packages.txt` installed:
 
@@ -54,7 +51,7 @@ tests the actual guest ABI when `QEMU_PINCH_TEST_BINARY` names a qtest-capable
 build; `smoke-memory.py --pinch` includes the device in the saved-RAM check.
 The r18 recipe queries the exact Windows touchpad history size before reading
 it, so a large first frame cannot be dropped by a fixed buffer. Set
-`OMARCHY_PINCH_TRACE=1` during a physical test to log recognition and history
+`ARCH_PINCH_TRACE=1` during a physical test to log recognition and history
 failures to QEMU stderr; it is off during normal use.
 See [experimental pinch behavior and acceptance limits](../docs/PINCH-ZOOM.md).
 

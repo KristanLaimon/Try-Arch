@@ -32,7 +32,7 @@ func TestDXGIEnumerationOnWindows(t *testing.T) {
 			t.Fatalf("missing preference order: %+v", facts)
 		}
 	}
-	if value := qemuGPUPreference(`C:\try-omarchy-test-no-such-runtime\qemu-system-x86_64w.exe`); value != "unset (Windows default)" {
+	if value := qemuGPUPreference(`C:\try-arch-test-no-such-runtime\qemu-system-x86_64w.exe`); value != "unset (Windows default)" {
 		t.Fatalf("unexpected preference for nonexistent runtime: %s", value)
 	}
 }

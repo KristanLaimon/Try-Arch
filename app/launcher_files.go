@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	stableLauncherName  = "TryOmarchy.exe"
+	stableLauncherName  = "TryArch.exe"
 	shortcutOfferMarker = "shortcuts-offered-v1"
 )
 

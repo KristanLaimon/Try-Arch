@@ -7,3 +7,6 @@ runtime-build/patches/**/*.patch text eol=lf whitespace=-blank-at-eol,-blank-at-
 guest-build/*.patch text eol=lf whitespace=-blank-at-eol,-blank-at-eof
 scripts/gpu/blender/*.sh text eol=lf
 scripts/gpu/blender/*.patch text eol=lf whitespace=-blank-at-eol,-blank-at-eof
+
+*.sh text eol=lf
+guest-build/overlay/** text eol=lf

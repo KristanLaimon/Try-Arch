@@ -10,7 +10,7 @@ if sys.platform != 'win32':
 if options.vulkan_python_path:
     sys.path.insert(0, options.vulkan_python_path)
 import vulkan as v
-instance=v.vkCreateInstance(v.VkInstanceCreateInfo(pApplicationInfo=v.VkApplicationInfo(pApplicationName='Try Omarchy acceptance memory probe',apiVersion=v.VK_MAKE_VERSION(1,1,0))),None)
+instance=v.vkCreateInstance(v.VkInstanceCreateInfo(pApplicationInfo=v.VkApplicationInfo(pApplicationName='Try Arch acceptance memory probe',apiVersion=v.VK_MAKE_VERSION(1,1,0))),None)
 results=[]
 try:
  for pd in v.vkEnumeratePhysicalDevices(instance):

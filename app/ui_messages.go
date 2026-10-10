@@ -20,8 +20,8 @@ var uiPlaceholder = regexp.MustCompile(`\{[a-z][a-z0-9_]*\}`)
 const (
 	// uiLanguageVariable picks the launcher language instead of Windows'
 	// display language, so a translation can be checked without changing
-	// Windows: TRY_OMARCHY_UI_LANGUAGE=ko.
-	uiLanguageVariable = "TRY_OMARCHY_UI_LANGUAGE"
+	// Windows: TRY_ARCH_UI_LANGUAGE=ko.
+	uiLanguageVariable = "TRY_ARCH_UI_LANGUAGE"
 	// uiPseudoLanguage shows every catalog message accented and about a third
 	// longer. Text that stays plain English was never moved into the catalog,
 	// and text that gets cut off has no room for a longer translation.
@@ -143,7 +143,7 @@ func sortedPlaceholders(message string) []string {
 	return placeholders
 }
 
-// launcherUILanguage applies the override in TRY_OMARCHY_UI_LANGUAGE, if
+// launcherUILanguage applies the override in TRY_ARCH_UI_LANGUAGE, if
 // any, before Windows' preferred display languages.
 func launcherUILanguage(override string, preferred []string, catalogs map[string]map[string]string) string {
 	override = strings.TrimSpace(override)

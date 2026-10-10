@@ -14,7 +14,7 @@ temp_root=${RUNNER_TEMP:-/tmp}
 if command -v cygpath >/dev/null 2>&1; then
     temp_root=$(cygpath -u "$temp_root")
 fi
-work=$(mktemp -d "$temp_root/try-omarchy-runtime.XXXXXX")
+work=$(mktemp -d "$temp_root/try-arch-runtime.XXXXXX")
 trap 'chmod -R u+w "$work" 2>/dev/null || true; rm -rf -- "$work"' EXIT
 
 python "$recipe/validate-lock.py" "$lock"
@@ -236,10 +236,10 @@ if [[ -d "$recipe/patches" ]]; then
 fi
 pacman -Q | sort >"$runtime/provenance/build-environment-packages.txt"
 cat >"$runtime/README.txt" <<'EOF'
-WINQ-EMU runtime for Try Omarchy
+WINQ-EMU runtime for Try Arch
 
 This portable runtime contains the patched QEMU and virglrenderer components
-used by Try Omarchy. Exact source commits, binary hashes, dependency versions,
+used by Try Arch. Exact source commits, binary hashes, dependency versions,
 and licenses are included under provenance and LICENSES.
 
 The corresponding source archive is published beside this runtime artifact.

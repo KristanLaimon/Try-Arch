@@ -104,7 +104,7 @@ func TestNativePinnedPayloadConvergesAfterLegacyHop(t *testing.T) {
 			}
 			capture := func(step string) {
 				t.Helper()
-				if root := os.Getenv("TRYOMARCHY_HOP_EVIDENCE"); root != "" {
+				if root := os.Getenv("TRYARCH_HOP_EVIDENCE"); root != "" {
 					out := filepath.Join(root, baseline, step)
 					for _, name := range []string{updateStateFilename, payloadUpdateStateFilename, "guest/" + installReceiptFilename,
 						"runtime/" + runtimeReceiptFilename, "updates/" + stagedUpdateFilename, "updates/" + currentVersion + "/" + pinnedPayloadFilename} {

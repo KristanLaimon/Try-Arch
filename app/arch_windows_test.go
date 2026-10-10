@@ -24,7 +24,7 @@ func TestHostArchUnsupportedReason(t *testing.T) {
 	if reason == "" {
 		return
 	}
-	for _, want := range []string{"Intel", "AMD", "https://github.com/omacom/try-omarchy-windows"} {
+	for _, want := range []string{"Intel", "AMD", "https://github.com/KristanLaimon/Try-Arch"} {
 		if !strings.Contains(reason, want) {
 			t.Errorf("message should mention %q, got: %q", want, reason)
 		}

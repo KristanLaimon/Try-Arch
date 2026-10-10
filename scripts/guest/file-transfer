@@ -370,7 +370,7 @@ def clipboard_selection_key(paths):
 
 
 def transfer_cache():
-    cache = Path(os.environ.get('XDG_CACHE_HOME', str(Path.home() / '.cache'))) / 'try-omarchy-transfers'
+    cache = Path(os.environ.get('XDG_CACHE_HOME', str(Path.home() / '.cache'))) / 'try-arch-transfers'
     plain_path(cache)
     cache.mkdir(mode=0o700, parents=True, exist_ok=True)
     return cache
@@ -479,7 +479,7 @@ def main():
             fd, name = tempfile.mkstemp(prefix='incoming-drop-', dir=args.state)
             with os.fdopen(fd, 'wb') as output:
                 output.write(data)
-            command = ['try-omarchy-drop', '--receive', name]
+            command = ['try-arch-drop', '--receive', name]
             point = ticket.get('point')
             if valid_drop_point(point):
                 command += [','.join(map(str, point))]

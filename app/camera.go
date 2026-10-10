@@ -13,8 +13,8 @@ import (
 )
 
 // The host half of the camera bridge. The guest side
-// (usr/local/bin/omarchy-windows-camera-bridge) opens the virtio port named
-// dev.tryomarchy.camera and asks this side to start capture when a camera
+// (usr/local/bin/arch-windows-camera-bridge) opens the virtio port named
+// dev.tryarch.camera and asks this side to start capture when a camera
 // consumer appears. Frames travel as the same framed messages the macOS guest
 // bridge uses, so the two guests share the wire format:
 //

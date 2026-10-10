@@ -217,7 +217,7 @@ func runTray(cfg trayLaunchConfig, ready chan<- uintptr, done chan<- struct{}) {
 	const manualPowerResume = 0xffff
 
 	hInst, _, _ := procGetModuleHandleW.Call(0)
-	className, _ := syscall.UTF16PtrFromString("TryOmarchyTray")
+	className, _ := syscall.UTF16PtrFromString("TryArchTray")
 	taskbarName, _ := syscall.UTF16PtrFromString("TaskbarCreated")
 	taskbarCreated, _, _ := procRegisterWindowMessage.Call(uintptr(unsafe.Pointer(taskbarName)))
 

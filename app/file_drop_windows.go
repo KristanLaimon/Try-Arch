@@ -239,7 +239,7 @@ func runFileDropWindow(paths []string, userInitiated bool) {
 	}
 	defer ole.NewProc("OleUninitialize").Call()
 	instance, _, _ := procGetModuleHandleW.Call(0)
-	class, _ := syscall.UTF16PtrFromString("TryOmarchyFileDrops")
+	class, _ := syscall.UTF16PtrFromString("TryArchFileDrops")
 	fileDropClassOnce.Do(func() {
 		type wc struct {
 			size, style                   uint32

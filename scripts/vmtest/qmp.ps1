@@ -1,10 +1,10 @@
-# QMP driver for the running Omarchy guest over its private socket.
+# QMP driver for the running Arch guest over its private socket.
 # Usage: qmp.ps1 shot NAME | type STRING | key NAME[,NAME...] | status
 param([Parameter(Mandatory)][string]$op, [string]$arg = '')
 $ErrorActionPreference = 'Stop'
 
 . "$PSScriptRoot\..\qmp-transport.ps1"
-$s = New-OmarchyQmpStream 4445; $s.ReadTimeout = 5000
+$s = New-ArchQmpStream 4445; $s.ReadTimeout = 5000
 $w = New-Object IO.StreamWriter($s); $w.AutoFlush = $true
 $r = New-Object IO.StreamReader($s)
 $r.ReadLine() | Out-Null

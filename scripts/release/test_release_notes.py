@@ -48,7 +48,7 @@ class ReleaseNotesTests(unittest.TestCase):
             self.assertEqual(result.stdout, "Short release notes.\n")
 
     def test_non_ascii_notes_with_cp1252_console(self) -> None:
-        body = "Try Omarchy v1.2.3.\n\n# Fixes\n\n- Clipboard images work. 🎉\n\nThanks, 世界!\n"
+        body = "Try Arch v1.2.3.\n\n# Fixes\n\n- Clipboard images work. 🎉\n\nThanks, 世界!\n"
         with tempfile.TemporaryDirectory() as temp:
             root = Path(temp)
             (root / "release-notes").mkdir()

@@ -119,7 +119,7 @@ func TestPortableGrowthFailuresPreserveOriginal(t *testing.T) {
 					t.Fatal("changed source on failure", err)
 				}
 			}
-			stages, err := filepath.Glob(filepath.Join(filepath.Dir(disk.Path), ".try-omarchy-grow-*"))
+			stages, err := filepath.Glob(filepath.Join(filepath.Dir(disk.Path), ".try-arch-grow-*"))
 			if err != nil || len(stages) != 0 {
 				t.Fatal("left failed staging", err)
 			}
@@ -131,8 +131,8 @@ func TestPortableGrowthRecoversOnlyOwnedInterruptedFiles(t *testing.T) {
 	configureSetupCancellation(false)
 	_, disk, tool, _ := portableGrowthFixture(t, true)
 	parent := filepath.Dir(disk.Path)
-	owned := filepath.Join(parent, ".try-omarchy-grow-1234.qcow2")
-	unrelated := filepath.Join(parent, ".try-omarchy-grow-personal.qcow2")
+	owned := filepath.Join(parent, ".try-arch-grow-1234.qcow2")
+	unrelated := filepath.Join(parent, ".try-arch-grow-personal.qcow2")
 	for _, path := range []string{owned, unrelated} {
 		if err := os.WriteFile(path, []byte("keep unrelated contents"), 0600); err != nil {
 			t.Fatal(err)

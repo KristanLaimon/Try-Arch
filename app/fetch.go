@@ -19,6 +19,9 @@ import (
 // Updates prepare only boot components. Factory acquisition is an explicit
 // creation/reset operation and completes before any guest or disk publication.
 func ensureGuest(cfg *config, release, sumsSHA256 string) (result error) {
+	if strings.TrimSpace(release) == "" {
+		return fmt.Errorf("no vanilla Arch guest release is pinned yet; build guest-build/ and supply -release and -sums-sha256 (see README.md)")
+	}
 	if cfg.fresh && !cfg.resetPayloadPrepared {
 		if err := rejectPendingReset(cfg); err != nil {
 			return err
@@ -174,7 +177,7 @@ func ensureGuestFiles(cfg *config, release, sumsSHA256 string) error {
 		if payloadIsLocal(cfg, sumsSHA256) {
 			err = ensureVerifiedPortableCopy(filepath.Join(portablePayloadDirectory(cfg.payloadDir, sumsSHA256), name), dest, sums[name], status, ui)
 		} else {
-			status = uiTextWith("status.downloading_omarchy", map[string]string{"part": fmt.Sprint(index + 1), "total": fmt.Sprint(len(downloadedGuestArtifacts))})
+			status = uiTextWith("status.downloading_arch", map[string]string{"part": fmt.Sprint(index + 1), "total": fmt.Sprint(len(downloadedGuestArtifacts))})
 			err = ensureVerifiedDownload(client, normalizedRelease(release)+"/"+name, dest, sums[name], status, ui)
 		}
 		if err != nil {

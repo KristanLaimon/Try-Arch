@@ -282,9 +282,9 @@ if __name__ == '__main__':
         if sys.argv[1] == 'pack':
             result = pack(data)
         elif sys.argv[1] == 'unpack':
-            result = unpack(data, Path.home() / '.cache/try-omarchy/clipboard-files')
+            result = unpack(data, Path.home() / '.cache/try-arch/clipboard-files')
         elif sys.argv[1] == 'discard':
-            discard(data, Path.home() / '.cache/try-omarchy/clipboard-files')
+            discard(data, Path.home() / '.cache/try-arch/clipboard-files')
             result = b''
         else:
             raise ValueError('Unknown command')
@@ -293,7 +293,7 @@ if __name__ == '__main__':
         print(f'File clipboard: {error}', file=sys.stderr)
         if shutil.which('notify-send') and os.environ.get('WAYLAND_DISPLAY'):
             try:
-                subprocess.run(['notify-send', '-a', 'Try Omarchy', 'Files were not transferred', str(error)], timeout=3, check=False)
+                subprocess.run(['notify-send', '-a', 'Try Arch', 'Files were not transferred', str(error)], timeout=3, check=False)
             except (OSError, subprocess.TimeoutExpired):
                 pass
         sys.exit(1)

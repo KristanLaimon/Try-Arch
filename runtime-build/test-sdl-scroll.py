@@ -98,7 +98,7 @@ int main(void) {
     return 0;
 }
 '''
-with tempfile.TemporaryDirectory(prefix='tryomarchy-sdl-scroll-') as directory:
+with tempfile.TemporaryDirectory(prefix='tryarch-sdl-scroll-') as directory:
     work = Path(directory)
     (work / 'test.c').write_text(harness)
     for precise in (1, 0):

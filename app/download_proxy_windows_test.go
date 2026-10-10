@@ -22,7 +22,7 @@ func TestNativeWindowsPACResolution(t *testing.T) {
 	if err != nil {
 		t.Fatal(err)
 	}
-	target, _ := url.Parse("https://github.com/omacom/try-omarchy-windows/releases/latest/download/update-v2.json")
+	target, _ := url.Parse("https://github.com/KristanLaimon/Try-Arch/releases/latest/download/update-v2.json")
 	proxy, err := windowsProxyForConfig(target, &ieProxyConfig{autoURL: pac})
 	if err != nil {
 		t.Fatal(err)

@@ -2,7 +2,7 @@
 """Build the diskless nested-Linux test initramfs with a static C compiler.
 
 The tiny PID 1 prints kernel/readiness markers and powers off or reboots according
- to tryomarchy.test=poweroff|reboot. It contains no shell, disks or network tools.
+ to tryarch.test=poweroff|reboot. It contains no shell, disks or network tools.
 """
 import argparse
 import gzip

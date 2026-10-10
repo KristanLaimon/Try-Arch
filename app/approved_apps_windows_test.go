@@ -34,8 +34,8 @@ func TestApproveWindowsExecutableRequiresAnExistingLocalExe(t *testing.T) {
 }
 
 func TestApprovedAppsSettingsNative(t *testing.T) {
-	launcher := os.Getenv("TRYOMARCHY_LAUNCHER_TEST_EXE")
-	if os.Getenv("TRYOMARCHY_UI_TEST") != "1" || launcher == "" {
+	launcher := os.Getenv("TRYARCH_LAUNCHER_TEST_EXE")
+	if os.Getenv("TRYARCH_UI_TEST") != "1" || launcher == "" {
 		t.Skip("requires an interactive Windows desktop and a candidate launcher")
 	}
 	dir := t.TempDir()
@@ -51,7 +51,7 @@ func TestApprovedAppsSettingsNative(t *testing.T) {
 	done := make(chan error, 1)
 	go func() { done <- cmd.Wait() }()
 	defer cmd.Process.Kill()
-	class, _ := syscall.UTF16PtrFromString("TryOmarchySettings")
+	class, _ := syscall.UTF16PtrFromString("TryArchSettings")
 	var window, list uintptr
 	for deadline := time.Now().Add(15 * time.Second); time.Now().Before(deadline); {
 		window, _, _ = user32.NewProc("FindWindowW").Call(uintptr(unsafe.Pointer(class)), 0)

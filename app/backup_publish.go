@@ -21,7 +21,7 @@ func copyAndPublishBackup(from, to string) error {
 		return err
 	}
 	defer source.Close()
-	stage, err := os.CreateTemp(filepath.Dir(to), ".try-omarchy-backup-publish-*")
+	stage, err := os.CreateTemp(filepath.Dir(to), ".try-arch-backup-publish-*")
 	if err != nil {
 		return err
 	}

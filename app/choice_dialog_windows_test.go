@@ -11,11 +11,11 @@ import (
 	"unsafe"
 )
 
-// Run in an interactive Windows session with TRYOMARCHY_UI_TEST=1. Reopening
+// Run in an interactive Windows session with TRYARCH_UI_TEST=1. Reopening
 // checks class teardown as well as real button routing and cancellation.
 func TestChoiceDialogNative(t *testing.T) {
-	if os.Getenv("TRYOMARCHY_UI_TEST") != "1" {
-		t.Skip("requires an interactive Windows desktop and TRYOMARCHY_UI_TEST=1")
+	if os.Getenv("TRYARCH_UI_TEST") != "1" {
+		t.Skip("requires an interactive Windows desktop and TRYARCH_UI_TEST=1")
 	}
 	for _, want := range []int{2, 1, 0, 3} {
 		type result struct {
@@ -24,11 +24,11 @@ func TestChoiceDialogNative(t *testing.T) {
 		}
 		finished := make(chan result, 1)
 		go func() {
-			action, err := chooseAction("Try Omarchy choice test", "This test changes no installation files.", "First action", "Second action", "Close")
+			action, err := chooseAction("Try Arch choice test", "This test changes no installation files.", "First action", "Second action", "Close")
 			finished <- result{action, err}
 		}()
-		class, _ := syscall.UTF16PtrFromString("TryOmarchyChoice")
-		title, _ := syscall.UTF16PtrFromString("Try Omarchy choice test")
+		class, _ := syscall.UTF16PtrFromString("TryArchChoice")
+		title, _ := syscall.UTF16PtrFromString("Try Arch choice test")
 		var window, button uintptr
 		deadline := time.Now().Add(5 * time.Second)
 		for time.Now().Before(deadline) {
@@ -72,11 +72,11 @@ func TestChoiceDialogNative(t *testing.T) {
 }
 
 func TestChoiceDialogHiddenStartup(t *testing.T) {
-	if os.Getenv("TRYOMARCHY_UI_TEST") != "1" {
-		t.Skip("requires an interactive Windows desktop and TRYOMARCHY_UI_TEST=1")
+	if os.Getenv("TRYARCH_UI_TEST") != "1" {
+		t.Skip("requires an interactive Windows desktop and TRYARCH_UI_TEST=1")
 	}
-	const titleText = "Try Omarchy hidden-startup test"
-	if os.Getenv("TRYOMARCHY_CHOICE_CHILD") == "1" {
+	const titleText = "Try Arch hidden-startup test"
+	if os.Getenv("TRYARCH_CHOICE_CHILD") == "1" {
 		action, err := chooseAction(titleText, "A native dialog must remain visible when its process suppresses a console.", "Close")
 		if err != nil || action != 0 {
 			t.Fatalf("unexpected result: %d, %v", action, err)
@@ -88,7 +88,7 @@ func TestChoiceDialogHiddenStartup(t *testing.T) {
 		t.Fatal(err)
 	}
 	cmd := exec.Command(self, "-test.run=^TestChoiceDialogHiddenStartup$")
-	cmd.Env = append(os.Environ(), "TRYOMARCHY_CHOICE_CHILD=1")
+	cmd.Env = append(os.Environ(), "TRYARCH_CHOICE_CHILD=1")
 	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
 	if err := cmd.Start(); err != nil {
 		t.Fatal(err)
@@ -125,8 +125,8 @@ func TestChoiceDialogHiddenStartup(t *testing.T) {
 }
 
 func TestFirstRunLocationNative(t *testing.T) {
-	if os.Getenv("TRYOMARCHY_UI_TEST") != "1" {
-		t.Skip("requires an interactive Windows desktop and TRYOMARCHY_UI_TEST=1")
+	if os.Getenv("TRYARCH_UI_TEST") != "1" {
+		t.Skip("requires an interactive Windows desktop and TRYARCH_UI_TEST=1")
 	}
 	for _, action := range []int{1, 3} {
 		dir := t.TempDir()
@@ -140,7 +140,7 @@ func TestFirstRunLocationNative(t *testing.T) {
 			path, proceed, err := chooseFirstRunDataDirectory(dir)
 			done <- selection{path, proceed, err}
 		}()
-		title, _ := syscall.UTF16PtrFromString("Choose where to keep Omarchy")
+		title, _ := syscall.UTF16PtrFromString("Choose where to keep Arch")
 		var window, button uintptr
 		for deadline := time.Now().Add(5 * time.Second); time.Now().Before(deadline); {
 			window, _, _ = user32.NewProc("FindWindowW").Call(0, uintptr(unsafe.Pointer(title)))

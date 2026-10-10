@@ -31,7 +31,7 @@ def check():
     scene = bpy.context.scene
     cube = bpy.data.objects["Cube"]
     cube.rotation_euler.z = 0.3
-    cube["omarchy_acceptance"] = "saved scene data"
+    cube["arch_acceptance"] = "saved scene data"
     scene.render.resolution_x = 320
     scene.render.resolution_y = 240
     scene.render.resolution_percentage = 100
@@ -65,14 +65,14 @@ def check():
         results.append(engine)
         print("RENDER_PASSED=" + engine, flush=True)
     scene.render.engine = "BLENDER_EEVEE"
-    target = output / "omarchy-scene.blend"
+    target = output / "arch-scene.blend"
     bpy.ops.wm.save_as_mainfile(filepath=str(target), copy=True)
     with bpy.data.libraries.load(str(target), link=False) as (source, destination):
         if "Cube" not in source.objects:
             raise RuntimeError("Saved scene is missing its cube")
         destination.objects = ["Cube"]
     restored = destination.objects[0]
-    if restored.get("omarchy_acceptance") != "saved scene data" or abs(restored.rotation_euler.z - 0.3) > 0.001:
+    if restored.get("arch_acceptance") != "saved scene data" or abs(restored.rotation_euler.z - 0.3) > 0.001:
         raise RuntimeError("Saved object did not retain its edited data")
     bpy.data.objects.remove(restored)
     details["passed"] = results + ["save-and-load-edited-object"]

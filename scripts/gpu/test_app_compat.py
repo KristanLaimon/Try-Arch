@@ -108,7 +108,7 @@ class ApplicationCompatibilityTests(unittest.TestCase):
             app_compat.godot_default_renderer("godot")
             app_compat.godot_default_renderer("godot")
             self.assertEqual(target.read_text(), original.replace('"forward_plus"', '"gl_compatibility"'))
-            self.assertEqual(target.with_suffix(".tres.before-omarchy").read_text(), original)
+            self.assertEqual(target.with_suffix(".tres.before-arch").read_text(), original)
 
 
 if __name__ == "__main__":

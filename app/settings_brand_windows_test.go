@@ -12,8 +12,8 @@ import (
 )
 
 func TestNativeSettingsResourceProfiles(t *testing.T) {
-	launcher := os.Getenv("TRYOMARCHY_LAUNCHER_TEST_EXE")
-	if os.Getenv("TRYOMARCHY_UI_TEST") != "1" || launcher == "" {
+	launcher := os.Getenv("TRYARCH_LAUNCHER_TEST_EXE")
+	if os.Getenv("TRYARCH_UI_TEST") != "1" || launcher == "" {
 		t.Skip("requires interactive Windows and candidate executable")
 	}
 	dir := t.TempDir()
@@ -30,7 +30,7 @@ func TestNativeSettingsResourceProfiles(t *testing.T) {
 	done := make(chan error, 1)
 	go func() { done <- cmd.Wait() }()
 	defer func() { _ = cmd.Process.Kill() }()
-	class, _ := syscall.UTF16PtrFromString("TryOmarchySettings")
+	class, _ := syscall.UTF16PtrFromString("TryArchSettings")
 	var window, profile uintptr
 	for deadline := time.Now().Add(15 * time.Second); time.Now().Before(deadline); {
 		window, _, _ = user32.NewProc("FindWindowW").Call(uintptr(unsafe.Pointer(class)), 0)

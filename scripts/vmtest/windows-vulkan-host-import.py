@@ -55,7 +55,7 @@ class SharedBacking:
             self.section = None
 
 instance = v.vkCreateInstance(v.VkInstanceCreateInfo(pApplicationInfo=v.VkApplicationInfo(
-    pApplicationName='Try Omarchy host import transfer acceptance',
+    pApplicationName='Try Arch host import transfer acceptance',
     apiVersion=v.VK_MAKE_VERSION(1, 1, 0))), None)
 results = []
 try:

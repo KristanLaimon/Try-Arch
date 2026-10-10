@@ -14,7 +14,7 @@ if options.vulkan_python_path:
 import vulkan as v
 
 instance = v.vkCreateInstance(v.VkInstanceCreateInfo(pApplicationInfo=v.VkApplicationInfo(
-    pApplicationName='Try Omarchy image memory compatibility', apiVersion=v.VK_MAKE_VERSION(1, 1, 0))), None)
+    pApplicationName='Try Arch image memory compatibility', apiVersion=v.VK_MAKE_VERSION(1, 1, 0))), None)
 results = []
 try:
     for physical in v.vkEnumeratePhysicalDevices(instance):

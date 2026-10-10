@@ -222,7 +222,7 @@ int main(int argc, char **argv) {
     if (argc == 2 && !strcmp(argv[1], "route-open-backoff")) {
         capture_count = 1;
         sdl_enable_in(&sdl.hw, true);
-        g_autofree char *directory = g_dir_make_tmp("tryomarchy-capture-XXXXXX", NULL);
+        g_autofree char *directory = g_dir_make_tmp("tryarch-capture-XXXXXX", NULL);
         assert(directory);
         g_autofree char *input = g_build_filename(directory, "input", NULL);
         g_setenv("OMARCHY_SDL_AUDIO_CONTROL_DIRECTORY", directory, TRUE);
@@ -323,7 +323,7 @@ int main(int argc, char **argv) {
     return 0;
 }
 '''
-with tempfile.TemporaryDirectory(prefix='tryomarchy-sdl-capture-') as temporary:
+with tempfile.TemporaryDirectory(prefix='tryarch-sdl-capture-') as temporary:
     test = Path(temporary)
     (test / 'test.c').write_text(harness, encoding='utf-8')
     flags = shlex.split(subprocess.check_output(

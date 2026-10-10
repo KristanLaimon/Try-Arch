@@ -16,9 +16,9 @@ func TestVerifyBridge(t *testing.T) {
 	}
 	const version = "v0.0.12-preview"
 	base := updateManifest{Schema: 1, Version: version,
-		Release:        "https://github.com/tsouth89/try-omarchy-windows/releases/download/" + version,
+		Release:        "https://github.com/KristanLaimon/Try-Arch/releases/download/" + version,
 		ManifestSHA256: strings.Repeat("a", 64)}
-	base.Launcher.Name = "TryOmarchy.exe"
+	base.Launcher.Name = "TryArch.exe"
 	base.Launcher.SHA256 = strings.Repeat("b", 64)
 	for _, tc := range []struct {
 		name         string

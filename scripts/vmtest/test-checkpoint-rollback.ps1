@@ -1,7 +1,7 @@
 param(
  [Parameter(Mandatory=$true)][string]$Launcher,
- [string]$WorkRoot=(Join-Path $env:TEMP ('TryOmarchyRollbackTest-'+[Guid]::NewGuid().ToString('N'))),
- [string]$ResultPath=(Join-Path $env:TEMP 'tryomarchy-rollback-result.json')
+ [string]$WorkRoot=(Join-Path $env:TEMP ('TryArchRollbackTest-'+[Guid]::NewGuid().ToString('N'))),
+ [string]$ResultPath=(Join-Path $env:TEMP 'tryarch-rollback-result.json')
 )
 # Run in an interactive Windows session. Uses a new synthetic installation.
 $ErrorActionPreference='Stop' 
@@ -46,7 +46,7 @@ try {
  Copy-Item $Launcher "$dir\Candidate.exe"
  $p=Start-Process "$dir\Candidate.exe" -ArgumentList '-dir',$dir,'-recovery','snapshots' -RedirectStandardError "$dir\stderr.txt" -RedirectStandardOutput "$dir\stdout.txt" -PassThru
  $deadline=(Get-Date).AddSeconds(20)
- do { Start-Sleep -Milliseconds 200; $h=[SnapshotUI]::FindWindow('TryOmarchySnapshots','Try Omarchy snapshots') } while($h -eq [IntPtr]::Zero -and (Get-Date) -lt $deadline)
+ do { Start-Sleep -Milliseconds 200; $h=[SnapshotUI]::FindWindow('TryArchSnapshots','Try Arch snapshots') } while($h -eq [IntPtr]::Zero -and (Get-Date) -lt $deadline)
  if($h -eq [IntPtr]::Zero){throw 'Snapshot manager did not open'}
  foreach($id in 4100..4106) { if([SnapshotUI]::GetDlgItem($h,$id) -eq [IntPtr]::Zero){throw "Missing control $id"} }
  [SnapshotUI]::PostMessage($h,273,[IntPtr]4102,[IntPtr]::Zero)|Out-Null
@@ -80,7 +80,7 @@ try {
  if([IO.File]::ReadAllText("$dir\vm\disk.raw") -ne $original){throw 'Active rollback did not restore the disk'}
  $retained=@(Get-ChildItem $dir -Directory -Force | Where-Object Name -Like '.snapshot-rollback-*')
  if($retained.Count -ne 1 -or [IO.File]::ReadAllText("$($retained[0].FullName)\data\vm\disk.raw") -ne 'New work to retain'){throw 'Current work was not retained'}
- if(-not (Test-Path "$($retained[0].FullName)\data\Start Omarchy.lnk")){throw 'Recovery launcher missing'}
+ if(-not (Test-Path "$($retained[0].FullName)\data\Start Arch.lnk")){throw 'Recovery launcher missing'}
  [SnapshotUI]::PostMessage($done,273,[IntPtr]2,[IntPtr]::Zero)|Out-Null
  Start-Sleep -Milliseconds 300
  [SnapshotUI]::PostMessage($h,273,[IntPtr]2,[IntPtr]::Zero)|Out-Null

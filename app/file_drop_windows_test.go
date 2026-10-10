@@ -80,14 +80,14 @@ func TestWindowsShellDropData(t *testing.T) {
 }
 
 func TestNativeFileDropWindow(t *testing.T) {
-	if os.Getenv("TRYOMARCHY_NATIVE_UI_TEST") != "1" {
+	if os.Getenv("TRYARCH_NATIVE_UI_TEST") != "1" {
 		t.Skip("interactive Windows desktop required")
 	}
 	path := filepath.Join(t.TempDir(), "received.txt")
 	os.WriteFile(path, []byte("received"), 0600)
 	done := make(chan struct{})
 	go func() { defer close(done); showFileDropWindow([]string{path}) }()
-	class, _ := syscall.UTF16PtrFromString("TryOmarchyFileDrops")
+	class, _ := syscall.UTF16PtrFromString("TryArchFileDrops")
 	var hwnd uintptr
 	deadline := time.Now().Add(5 * time.Second)
 	for hwnd == 0 && time.Now().Before(deadline) {
@@ -121,7 +121,7 @@ func TestNativeFileDropWindow(t *testing.T) {
 // This uses the real Windows OLE source and SDL destination. It requires an
 // isolated interactive test desktop because it moves the pointer briefly.
 func TestNativeQEMUFileDropEvent(t *testing.T) {
-	if os.Getenv("TRYOMARCHY_NATIVE_DROP_TEST") != "1" {
+	if os.Getenv("TRYARCH_NATIVE_DROP_TEST") != "1" {
 		t.Skip("isolated Windows desktop and runtime r7 required")
 	}
 	tool := os.Getenv("QEMU_SYSTEM")
@@ -179,7 +179,7 @@ func TestNativeQEMUFileDropEvent(t *testing.T) {
 
 	done := make(chan struct{})
 	go func() { defer close(done); showFileDropWindow([]string{path}) }()
-	class, _ := syscall.UTF16PtrFromString("TryOmarchyFileDrops")
+	class, _ := syscall.UTF16PtrFromString("TryArchFileDrops")
 	var source uintptr
 	ready := false
 	deadline := time.Now().Add(5 * time.Second)

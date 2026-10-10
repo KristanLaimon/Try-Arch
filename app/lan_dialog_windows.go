@@ -81,7 +81,7 @@ func chooseLANForward(parent uintptr) (lanForwardChoice, error) {
 	lanDialog = state
 	defer func() { lanDialog = nil }()
 	instance, _, _ := procGetModuleHandleW.Call(0)
-	class, _ := syscall.UTF16PtrFromString("TryOmarchyLANForward")
+	class, _ := syscall.UTF16PtrFromString("TryArchLANForward")
 	if !lanDialogRegistered {
 		type windowClass struct {
 			size, style                   uint32
@@ -132,7 +132,7 @@ func chooseLANForward(parent uintptr) (lanForwardChoice, error) {
 	procSendMessageW.Call(state.address, 0x14e, 0, 0)
 	control("STATIC", uiText("lan.protocol"), 16, 84, 106, 22, ssNoprefix, 0)
 	control("STATIC", uiText("lan.windows_port"), 126, 84, 146, 22, ssNoprefix, 0)
-	control("STATIC", uiText("lan.omarchy_port"), 276, 84, 138, 22, ssNoprefix, 0)
+	control("STATIC", uiText("lan.arch_port"), 276, 84, 138, 22, ssNoprefix, 0)
 	state.protocol = control("COMBOBOX", "", 16, 108, 90, 120, wsTabstop|3, 4202)
 	for _, value := range []string{"TCP", "UDP"} {
 		text, _ := syscall.UTF16PtrFromString(value)

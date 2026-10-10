@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """Boot a diskless Linux acceptance fixture through nested KVM, never TCG.
 
-Run as the ordinary Omarchy user. Supply QEMU, kernel, initramfs and firmware
+Run as the ordinary Arch user. Supply QEMU, kernel, initramfs and firmware
 paths. The initramfs must print the documented READY/EXIT markers from PID 1.
 No disks or network devices are attached. Each boot is bounded to 60 seconds.
 """
@@ -22,7 +22,7 @@ def boot(args, mode):
                '-nodefaults', '-display', 'none', '-serial', 'stdio', '-monitor', 'none',
                '-no-reboot', '-S', '-kernel', str(args.kernel.resolve()),
                '-initrd', str(args.initramfs.resolve()),
-               '-append', f'console=ttyS0 rdinit=/init panic=1 tryomarchy.test={mode}',
+               '-append', f'console=ttyS0 rdinit=/init panic=1 tryarch.test={mode}',
                '-qmp', f'tcp:{address[0]}:{address[1]},server=on,wait=off']
     process = subprocess.Popen(command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
     try:
@@ -57,8 +57,8 @@ def boot(args, mode):
                     raise RuntimeError(f'KVM is not enabled: {kvm}')
                 qmp('cont')
         output = process.communicate(timeout=60)[0].decode(errors='replace')
-        ready = next((s for s in output.splitlines() if s.startswith('TRY_OMARCHY_NESTED_LINUX_READY ')), '')
-        passed = process.returncode == 0 and bool(ready) and f'TRY_OMARCHY_NESTED_LINUX_EXIT {mode}' in output
+        ready = next((s for s in output.splitlines() if s.startswith('TRY_ARCH_NESTED_LINUX_READY ')), '')
+        passed = process.returncode == 0 and bool(ready) and f'TRY_ARCH_NESTED_LINUX_EXIT {mode}' in output
         result = {'mode': mode, 'kvm': kvm, 'exitCode': process.returncode,
                   'ready': ready, 'passed': passed}
         if not passed:

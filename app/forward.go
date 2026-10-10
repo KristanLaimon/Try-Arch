@@ -17,7 +17,7 @@ import (
 // service must listen on its network interface,
 // and sshd is requested per boot whenever a TCP forward targets guest port
 // 22. The launcher never enables sshd across boots or edits its config; the
-// guest side lives in the factory overlay's try-omarchy-sshd.service.
+// guest side lives in the factory overlay's try-arch-sshd.service.
 type portForward struct {
 	proto     string
 	hostPort  int
@@ -63,7 +63,7 @@ func parseForward(value string) (portForward, error) {
 		return f, fmt.Errorf("port forward %q: Windows port %v", value, err)
 	}
 	if f.guestPort, err = parsePort(parts[1]); err != nil {
-		return f, fmt.Errorf("port forward %q: Omarchy port %v", value, err)
+		return f, fmt.Errorf("port forward %q: Arch port %v", value, err)
 	}
 	return f, nil
 }
@@ -165,7 +165,7 @@ func loadPublicKey(path string) (string, error) {
 
 // defaultPublicKey finds the user's usual public key when -ssh is used
 // without -ssh-key. No key is not an error: password login still works
-// until the user hardens sshd inside Omarchy.
+// until the user hardens sshd inside Arch.
 func defaultPublicKey(home string) string {
 	for _, name := range []string{"id_ed25519.pub", "id_ecdsa.pub", "id_rsa.pub"} {
 		path := filepath.Join(home, ".ssh", name)
@@ -216,9 +216,9 @@ func sshCmdline(forwards []portForward, publicKey string) string {
 	if !sshRequested(forwards) {
 		return ""
 	}
-	words := " tryomarchy.sshd=1"
+	words := " tryarch.sshd=1"
 	if publicKey != "" {
-		words += " tryomarchy.sshkey=" + base64.StdEncoding.EncodeToString([]byte(publicKey))
+		words += " tryarch.sshkey=" + base64.StdEncoding.EncodeToString([]byte(publicKey))
 	}
 	return words
 }

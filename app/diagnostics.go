@@ -49,7 +49,7 @@ func writeDiagnostics(dir string, facts map[string]string) (string, error) {
 	if err := os.MkdirAll(outDir, 0o755); err != nil {
 		return "", err
 	}
-	name := fmt.Sprintf("try-omarchy-diagnostics-%s.zip", time.Now().Format("20060102-150405.000000000"))
+	name := fmt.Sprintf("try-arch-diagnostics-%s.zip", time.Now().Format("20060102-150405.000000000"))
 	path := filepath.Join(outDir, name)
 	tmp := path + ".part"
 	f, err := os.Create(tmp)
@@ -250,8 +250,8 @@ func redactDiagnosticText(text string, redactions []string) string {
 	}
 	// Public keys are not private, but their comments commonly contain a user
 	// and computer name. The key is not needed to diagnose guest startup.
-	const keyPrefix = "tryomarchy.sshkey="
-	const keyReplacement = "tryomarchy.sshkey=<redacted>"
+	const keyPrefix = "tryarch.sshkey="
+	const keyReplacement = "tryarch.sshkey=<redacted>"
 	for offset := 0; ; {
 		relative := strings.Index(text[offset:], keyPrefix)
 		if relative < 0 {

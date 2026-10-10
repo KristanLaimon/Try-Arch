@@ -10,7 +10,7 @@ import (
 )
 
 func TestPortableUpdateHelperProcess(t *testing.T) {
-	marker := os.Getenv("TRYOMARCHY_UPDATE_TEST_MARKER")
+	marker := os.Getenv("TRYARCH_UPDATE_TEST_MARKER")
 	if marker == "" {
 		return
 	}
@@ -47,7 +47,7 @@ func TestPortableLauncherReplacementUsesBundleRoot(t *testing.T) {
 		t.Fatal(err)
 	}
 	marker := filepath.Join(root, "started.txt")
-	t.Setenv("TRYOMARCHY_UPDATE_TEST_MARKER", marker)
+	t.Setenv("TRYARCH_UPDATE_TEST_MARKER", marker)
 	args, err := encodeRestartArgs([]string{"-test.run=^TestPortableUpdateHelperProcess$"})
 	if err != nil {
 		t.Fatal(err)

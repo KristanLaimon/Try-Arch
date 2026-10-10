@@ -94,5 +94,5 @@ func portableRecoveryCommand(arguments []string) (string, error) {
 		}
 		quoted = append(quoted, "\""+strings.ReplaceAll(argument, "%", "%%")+"\"")
 	}
-	return "@echo off\r\nsetlocal DisableDelayedExpansion\r\n\"%~dp0TryOmarchy.exe\" " + strings.Join(quoted, " ") + " %*\r\n", nil
+	return "@echo off\r\nsetlocal DisableDelayedExpansion\r\n\"%~dp0TryArch.exe\" " + strings.Join(quoted, " ") + " %*\r\n", nil
 }

@@ -66,7 +66,7 @@ func materializeInstallationDiskWithTool(parent string, disk installationDisk, t
 	if err := verifyBacking(); err != nil {
 		return "", nil, err
 	}
-	stage, err := os.MkdirTemp(parent, ".try-omarchy-materialize-")
+	stage, err := os.MkdirTemp(parent, ".try-arch-materialize-")
 	if err != nil {
 		return "", nil, err
 	}

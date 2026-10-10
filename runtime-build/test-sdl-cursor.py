@@ -207,7 +207,7 @@ int main(void) {
  return 0;
 }
 '''
-with tempfile.TemporaryDirectory(prefix='tryomarchy-sdl-cursor-') as temporary:
+with tempfile.TemporaryDirectory(prefix='tryarch-sdl-cursor-') as temporary:
     output = Path(temporary)
     (output / 'test.c').write_text(harness)
     subprocess.run(['gcc', '-std=gnu11', '-O2', '-Wall', '-Werror',

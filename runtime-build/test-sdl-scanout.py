@@ -57,7 +57,7 @@ int main(void) {
     return 0;
 }
 '''
-with tempfile.TemporaryDirectory(prefix='tryomarchy-scanout-') as temporary:
+with tempfile.TemporaryDirectory(prefix='tryarch-scanout-') as temporary:
     root = Path(temporary)
     (root / 'test.c').write_text(harness, encoding='utf-8')
     subprocess.run(['gcc', '-std=gnu11', '-O2', str(root / 'test.c'),

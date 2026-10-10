@@ -364,7 +364,7 @@ func TestDownloadVerifiedCancelsBlockedBodyAndCleansPartial(t *testing.T) {
 	if _, err := os.Stat(dest + ".part"); err != nil {
 		t.Fatalf("partial should remain until explicit-cancel cleanup: %v", err)
 	}
-	if err := cleanupCancelledSetup(root, filepath.Join(t.TempDir(), "TryOmarchy.exe"), false); err != nil {
+	if err := cleanupCancelledSetup(root, filepath.Join(t.TempDir(), "TryArch.exe"), false); err != nil {
 		t.Fatal(err)
 	}
 	if _, err := os.Stat(dest + ".part"); !os.IsNotExist(err) {

@@ -12,14 +12,14 @@ import (
 )
 
 func TestNativeTransferProgressCancellation(t *testing.T) {
-	if os.Getenv("TRYOMARCHY_NATIVE_UI_TEST") != "1" {
+	if os.Getenv("TRYARCH_NATIVE_UI_TEST") != "1" {
 		t.Skip("interactive Windows desktop required")
 	}
 	progress := newTransferProgress("Preparing files")
 	defer progress.finish()
 	done := make(chan struct{})
 	go func() { defer close(done); showTransferProgress(progress) }()
-	class, _ := syscall.UTF16PtrFromString("TryOmarchyFileTransfer")
+	class, _ := syscall.UTF16PtrFromString("TryArchFileTransfer")
 	find := user32.NewProc("FindWindowW")
 	var hwnd uintptr
 	deadline := time.Now().Add(5 * time.Second)
@@ -58,14 +58,14 @@ func TestNativeTransferProgressCancellation(t *testing.T) {
 }
 
 func TestNativeTransferProgressCloseKeepsCopying(t *testing.T) {
-	if os.Getenv("TRYOMARCHY_NATIVE_UI_TEST") != "1" {
+	if os.Getenv("TRYARCH_NATIVE_UI_TEST") != "1" {
 		t.Skip("interactive Windows desktop required")
 	}
 	progress := newTransferProgress("Copying in background")
 	defer progress.finish()
 	done := make(chan struct{})
 	go func() { defer close(done); showTransferProgress(progress) }()
-	class, _ := syscall.UTF16PtrFromString("TryOmarchyFileTransfer")
+	class, _ := syscall.UTF16PtrFromString("TryArchFileTransfer")
 	var hwnd uintptr
 	deadline := time.Now().Add(5 * time.Second)
 	for hwnd == 0 && time.Now().Before(deadline) {

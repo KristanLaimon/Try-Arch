@@ -15,7 +15,7 @@ cases = source[source.index('    case INPUT_EVENT_KIND_BTN:'):
                source.index('    case INPUT_EVENT_KIND_ABS:')]
 harness = Path(__file__).with_name('virtio-scroll-harness.c').read_text()
 harness = harness.replace('/* REL_CAPABILITY */', capability).replace('/* WHEEL_DISPATCH */', cases)
-with tempfile.TemporaryDirectory(prefix='tryomarchy-virtio-scroll-') as directory:
+with tempfile.TemporaryDirectory(prefix='tryarch-virtio-scroll-') as directory:
     work = Path(directory)
     (work / 'test.c').write_text(harness)
     subprocess.run(['gcc', '-std=c11', '-Wall', '-Wextra', '-Werror',
@@ -62,7 +62,7 @@ int main(void) {
     return 0;
 }
 '''
-with tempfile.TemporaryDirectory(prefix='tryomarchy-wheel-routing-') as directory:
+with tempfile.TemporaryDirectory(prefix='tryarch-wheel-routing-') as directory:
     work = Path(directory)
     (work / 'test.c').write_text(routing_harness)
     subprocess.run(['gcc', '-std=c11', '-Wall', '-Wextra', '-Werror',

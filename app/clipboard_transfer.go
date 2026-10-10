@@ -60,7 +60,7 @@ func (b *clipBridge) receiveClipboardTransfer(conn net.Conn, line string) {
 			os.RemoveAll(destination)
 		}
 	}()
-	progress := b.progress(uiText("transfer.receiving_from_omarchy"))
+	progress := b.progress(uiText("transfer.receiving_from_arch"))
 	defer progress.finish()
 	conn.SetDeadline(time.Now().Add(2 * time.Hour))
 	stopCancel := context.AfterFunc(progress.ctx, func() { b.transfers.Cancel(ticket.ID); conn.SetDeadline(time.Now()) })

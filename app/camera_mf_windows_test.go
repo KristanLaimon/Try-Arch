@@ -138,7 +138,7 @@ func TestCameraCallbackInterfaceAndLifetime(t *testing.T) {
 }
 
 func TestNativeCameraCaptureRestart(t *testing.T) {
-	if os.Getenv("TRYOMARCHY_TEST_CAMERA") != "1" {
+	if os.Getenv("TRYARCH_TEST_CAMERA") != "1" {
 		t.Skip("requires a real camera and user opt-in")
 	}
 	source := &mfCameraSource{}
@@ -162,10 +162,10 @@ func TestNativeCameraCaptureRestart(t *testing.T) {
 }
 
 func TestSelectedMissingCameraDoesNotFallBack(t *testing.T) {
-	if os.Getenv("TRYOMARCHY_TEST_CAMERA") != "1" {
+	if os.Getenv("TRYARCH_TEST_CAMERA") != "1" {
 		t.Skip("requires a camera-enabled Windows test host")
 	}
-	source := &mfCameraSource{deviceID: "try-omarchy-intentionally-missing-device"}
+	source := &mfCameraSource{deviceID: "try-arch-intentionally-missing-device"}
 	defer source.stop()
 	if _, err := source.start(); err == nil || !strings.Contains(err.Error(), "selected camera is disconnected") {
 		t.Fatalf("missing selected camera silently fell back: %v", err)

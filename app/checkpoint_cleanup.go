@@ -73,8 +73,8 @@ func (s checkpointStore) cleanupInterrupted(root *os.Root) error {
 		recognized := true
 		for _, file := range files {
 			allowed := file.Name() == "vm.zip" || file.Name() == "snapshot.json"
-			if pending && strings.HasPrefix(file.Name(), ".try-omarchy-backup-") {
-				suffix := strings.TrimPrefix(file.Name(), ".try-omarchy-backup-")
+			if pending && strings.HasPrefix(file.Name(), ".try-arch-backup-") {
+				suffix := strings.TrimPrefix(file.Name(), ".try-arch-backup-")
 				allowed = suffix != "" && strings.Trim(suffix, "0123456789") == ""
 			}
 			info, err := file.Info()

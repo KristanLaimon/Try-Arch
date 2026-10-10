@@ -31,9 +31,9 @@ func TestCheckpointRecoveryPortableLaunchers(t *testing.T) {
 	if err := createRollbackRecoveryLaunchers(dir, filepath.Join(filepath.Dir(payload), "data")); err != nil {
 		t.Fatal(err)
 	}
-	for _, name := range []string{"Start Omarchy.cmd", "Settings.cmd"} {
+	for _, name := range []string{"Start Arch.cmd", "Settings.cmd"} {
 		data, err := os.ReadFile(filepath.Join(root, name))
-		if err != nil || !strings.Contains(string(data), `"%~dp0TryOmarchy.exe" "-portable" "-no-update"`) {
+		if err != nil || !strings.Contains(string(data), `"%~dp0TryArch.exe" "-portable" "-no-update"`) {
 			t.Fatalf("%s: %s %v", name, data, err)
 		}
 	}
@@ -46,7 +46,7 @@ func TestCheckpointRecoveryPortableLaunchers(t *testing.T) {
 }
 
 func TestPortableRecoveryBatchHelper(t *testing.T) {
-	marker := os.Getenv("TRYOMARCHY_RECOVERY_ARGS_OUTPUT")
+	marker := os.Getenv("TRYARCH_RECOVERY_ARGS_OUTPUT")
 	if marker == "" {
 		return
 	}
@@ -82,7 +82,7 @@ func TestPortableRecoveryBatchPreservesLiteralArguments(t *testing.T) {
 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
 	defer cancel()
 	cmd := exec.CommandContext(ctx, system32("cmd.exe"), "/d", "/c", script)
-	cmd.Env = append(os.Environ(), "TRYOMARCHY_RECOVERY_ARGS_OUTPUT="+marker)
+	cmd.Env = append(os.Environ(), "TRYARCH_RECOVERY_ARGS_OUTPUT="+marker)
 	configureDiskTool(cmd)
 	if output, err := cmd.CombinedOutput(); err != nil {
 		t.Fatalf("batch launcher: %v: %s", err, output)

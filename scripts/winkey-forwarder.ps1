@@ -2,7 +2,7 @@
 # While the QEMU window is foreground: swallows the Windows key on the host (no Start
 # menu, no Win+combos) and forwards it to the guest as Super (meta_l) over QMP.
 # While any other window is foreground: the Windows key behaves normally.
-# Also keeps the SDL window retitled to "Try Omarchy" - users must never see QEMU
+# Also keeps the SDL window retitled to "Try Arch" - users must never see QEMU
 # chrome (QEMU resets its title on every grab toggle, so this reasserts periodically).
 # Pair with SDL_GRAB_KEYBOARD=0 so SDL never installs its own (system-wide) hook.
 #   powershell -ExecutionPolicy Bypass -File winkey-forwarder.ps1 [-QmpPort 4446]
@@ -88,7 +88,7 @@ public static class WinKeyForwarder
 
     [DllImport("user32.dll", CharSet = CharSet.Unicode)] static extern bool SetWindowText(IntPtr hWnd, string text);
     [DllImport("user32.dll", CharSet = CharSet.Unicode)] static extern int GetWindowText(IntPtr hWnd, StringBuilder buf, int max);
-    const string AppTitle = "Try Omarchy";
+    const string AppTitle = "Try Arch";
 
     static void PidRefresher()
     {
@@ -162,7 +162,7 @@ public static class WinKeyForwarder
         keep = Callback;
         IntPtr h = SetWindowsHookEx(WH_KEYBOARD_LL, keep, GetModuleHandle(null), 0);
         if (h == IntPtr.Zero) throw new Exception("SetWindowsHookEx failed");
-        Console.WriteLine("winkey-forwarder active: Super -> Omarchy when the VM window is focused");
+        Console.WriteLine("winkey-forwarder active: Super -> Arch when the VM window is focused");
         // QEMU re-installs its own LL hook on every grab; LL hooks run newest-first.
         // Re-hook periodically so this hook stays at the front of the chain.
         MSG m;
@@ -178,4 +178,4 @@ public static class WinKeyForwarder
 }
 "@
 
-[WinKeyForwarder]::Run((Get-OmarchyQmpPath $QmpPort))
+[WinKeyForwarder]::Run((Get-ArchQmpPath $QmpPort))

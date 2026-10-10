@@ -17,7 +17,7 @@ func TestCheckpointRecoversInterruptedStagesOnly(t *testing.T) {
 		name, file string
 		remove     bool
 	}{
-		{".pending-" + strings.Repeat("a", 32), ".try-omarchy-backup-123456", true},
+		{".pending-" + strings.Repeat("a", 32), ".try-arch-backup-123456", true},
 		{".pending-" + strings.Repeat("b", 32), "vm.zip", true},
 		{".deleting-" + strings.Repeat("c", 32), "snapshot.json", true},
 		{".pending-" + strings.Repeat("d", 32), "personal.txt", false},

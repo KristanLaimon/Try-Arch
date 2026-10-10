@@ -95,7 +95,7 @@ func runCheckpointUI(dir string) error {
 		}()
 	}
 	hInst, _, _ := procGetModuleHandleW.Call(0)
-	className, _ := syscall.UTF16PtrFromString("TryOmarchySnapshots")
+	className, _ := syscall.UTF16PtrFromString("TryArchSnapshots")
 	wndProc := syscall.NewCallback(func(h, message, wParam, lParam uintptr) uintptr {
 		switch message {
 		case progressChanged:
@@ -158,7 +158,7 @@ func runCheckpointUI(dir string) error {
 				if !ok {
 					return 0
 				}
-				destination := filepath.Join(parent, "OmarchySnapshot-"+time.Now().Format("20060102-150405"))
+				destination := filepath.Join(parent, "ArchSnapshot-"+time.Now().Format("20060102-150405"))
 				start(uiText("snapshots.restoring"), func(report backupProgress) outcome {
 					if err := store.Restore(entry.ID, destination, report); err != nil {
 						return outcome{err: err}

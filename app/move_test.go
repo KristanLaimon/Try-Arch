@@ -13,7 +13,7 @@ func moveFixture(t *testing.T) (moveStore, string, string) {
 	t.Helper()
 	source, _ := backupFixture(t)
 	root := filepath.Dir(source)
-	return moveStore{dir: filepath.Join(root, "host"), defaultDir: source}, source, filepath.Join(root, "Other drive Ω", "TryOmarchy")
+	return moveStore{dir: filepath.Join(root, "host"), defaultDir: source}, source, filepath.Join(root, "Other drive Ω", "TryArch")
 }
 
 func prepareFixtureMove(t *testing.T, s moveStore, source, destination string) *installationMove {
@@ -418,14 +418,14 @@ func TestMoveVolumeRecoveryRepairsOnlySelectedInstallation(t *testing.T) {
 		t.Fatal(err)
 	}
 	state, _ := s.load()
-	location := moveVolumeLocation{Volume: `\\?\Volume{12345678-1234-1234-1234-123456789abc}\`, Relative: "TryOmarchy"}
+	location := moveVolumeLocation{Volume: `\\?\Volume{12345678-1234-1234-1234-123456789abc}\`, Relative: "TryArch"}
 	state.Locations = map[string]moveVolumeLocation{destination: location}
 	otherSource, otherTarget := filepath.Join(t.TempDir(), "other-source"), filepath.Join(t.TempDir(), "other-target")
 	state.Redirects[otherSource] = otherTarget
 	if err := s.save(state); err != nil {
 		t.Fatal(err)
 	}
-	relocated := filepath.Join(t.TempDir(), "TryOmarchy")
+	relocated := filepath.Join(t.TempDir(), "TryArch")
 	if err := os.Rename(destination, relocated); err != nil {
 		t.Fatal(err)
 	}
@@ -476,7 +476,7 @@ func TestMoveVolumeRecoveryRefusesWrongMissingAndLinkedVolumes(t *testing.T) {
 		t.Fatal(err)
 	}
 	state, _ := s.load()
-	state.Locations = map[string]moveVolumeLocation{destination: {Volume: `\\?\Volume{12345678-1234-1234-1234-123456789abc}\`, Relative: "TryOmarchy"}}
+	state.Locations = map[string]moveVolumeLocation{destination: {Volume: `\\?\Volume{12345678-1234-1234-1234-123456789abc}\`, Relative: "TryArch"}}
 	if err := s.save(state); err != nil {
 		t.Fatal(err)
 	}
@@ -510,7 +510,7 @@ func TestMoveVolumeRecoveryRefusesWrongMissingAndLinkedVolumes(t *testing.T) {
 	locateMoveVolume = func(moveVolumeLocation) (string, error) { return destination, nil }
 	failure := errors.New("shortcut repair failed")
 	// Force a real relocated path, so entrypoint repair is required.
-	relocated := filepath.Join(t.TempDir(), "TryOmarchy")
+	relocated := filepath.Join(t.TempDir(), "TryArch")
 	if err := os.Rename(destination, relocated); err != nil {
 		t.Fatal(err)
 	}
@@ -582,7 +582,7 @@ func TestMoveRecordsReachableLegacyVolume(t *testing.T) {
 	}
 	original := identifyMoveVolume
 	t.Cleanup(func() { identifyMoveVolume = original })
-	location := moveVolumeLocation{Volume: `\\?\Volume{12345678-1234-1234-1234-123456789abc}\`, Relative: "TryOmarchy"}
+	location := moveVolumeLocation{Volume: `\\?\Volume{12345678-1234-1234-1234-123456789abc}\`, Relative: "TryArch"}
 	identifyMoveVolume = func(path string) (*moveVolumeLocation, error) {
 		if path != destination {
 			t.Fatal("recorded wrong installation", path)
@@ -628,12 +628,12 @@ func TestInterruptedMoveRebasesGuardedStagingAfterVolumeChange(t *testing.T) {
 	m := prepareFixtureMove(t, s, source, destination)
 	state, _ := s.load()
 	state.Pending.Phase = "copying"
-	state.Pending.Volume = &moveVolumeLocation{Volume: `\\?\Volume{12345678-1234-1234-1234-123456789abc}\`, Relative: "TryOmarchy"}
+	state.Pending.Volume = &moveVolumeLocation{Volume: `\\?\Volume{12345678-1234-1234-1234-123456789abc}\`, Relative: "TryArch"}
 	if err := s.save(state); err != nil {
 		t.Fatal(err)
 	}
-	newDestination := filepath.Join(t.TempDir(), "TryOmarchy")
-	newStage := filepath.Join(filepath.Dir(newDestination), ".TryOmarchy-move-"+m.ID)
+	newDestination := filepath.Join(t.TempDir(), "TryArch")
+	newStage := filepath.Join(filepath.Dir(newDestination), ".TryArch-move-"+m.ID)
 	if err := os.Rename(m.Stage, newStage); err != nil {
 		t.Fatal(err)
 	}

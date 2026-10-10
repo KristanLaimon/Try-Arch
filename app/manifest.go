@@ -13,13 +13,15 @@ import (
 
 const maxSumsBytes = 1 << 20
 
+// Guest downloads are disabled until a verified vanilla release is published.
+// The separate pin below supplies only the existing QEMU runtime.
 // Variables so the signed test-launcher workflow can pin an isolated release
 // with -ldflags -X. Normal builds retain these production defaults.
 var (
-	defaultReleaseURL        = "https://github.com/omacom/try-omarchy-windows/releases/download/v0.11.0"
+	defaultReleaseURL        = ""
 	defaultSumsSHA256        = "db18064cb120a0820e8886fe68db2101d32a304fb3508418280a2cfa9a16a18e"
-	defaultRuntimeReleaseURL = ""
-	defaultRuntimeSumsSHA256 = ""
+	defaultRuntimeReleaseURL = "https://github.com/omacom/try-omarchy-windows/releases/download/v0.11.0"
+	defaultRuntimeSumsSHA256 = "db18064cb120a0820e8886fe68db2101d32a304fb3508418280a2cfa9a16a18e"
 )
 
 //go:embed testdata/SHA256SUMS.v0.11.0

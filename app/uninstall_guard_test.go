@@ -12,7 +12,7 @@ import (
 func TestUninstallLinkedAncestorHasRecoveryGuidance(t *testing.T) {
 	root := t.TempDir()
 	realProfile := filepath.Join(root, "real-profile")
-	realDir := filepath.Join(realProfile, "TryOmarchy")
+	realDir := filepath.Join(realProfile, "TryArch")
 	if err := os.MkdirAll(realDir, 0700); err != nil {
 		t.Fatal(err)
 	}
@@ -24,7 +24,7 @@ func TestUninstallLinkedAncestorHasRecoveryGuidance(t *testing.T) {
 	if err := os.Symlink(realProfile, linkedProfile); err != nil {
 		t.Skipf("symlinks unavailable: %v", err)
 	}
-	dir := filepath.Join(linkedProfile, "TryOmarchy")
+	dir := filepath.Join(linkedProfile, "TryArch")
 	err := removeUninstallDirectory(dir, func(string) error {
 		t.Fatal("attempted deletion through a linked profile")
 		return nil
@@ -203,7 +203,7 @@ func TestUninstallBootstrapPreservesOtherInstallAndUnknownFiles(t *testing.T) {
 			if err := saveDataLocationPointer(def, pointed); err != nil {
 				t.Fatal(err)
 			}
-			archive := filepath.Join(def, "diagnostics", "try-omarchy-diagnostics-20261005-120000.123456789.zip")
+			archive := filepath.Join(def, "diagnostics", "try-arch-diagnostics-20261005-120000.123456789.zip")
 			unknown := filepath.Join(def, "diagnostics", "my-backup.zip")
 			host := filepath.Join(def, "portable-host", "keep.txt")
 			for _, path := range []string{archive, unknown, host} {

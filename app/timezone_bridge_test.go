@@ -87,7 +87,7 @@ func TestTimeZoneChannelRequiresGuestDeclarationAndKeepOptOut(t *testing.T) {
 	}
 	for _, flag := range []string{"", "keep", "Europe/Berlin"} {
 		cfg := config{followHostTimeZone: flag != "keep" && guestAcceptsTimeZone(spec)}
-		present := slices.Contains(buildQemuArgs(&cfg, ""), "virtserialport,chardev=timezone0,name=dev.tryomarchy.timezone")
+		present := slices.Contains(buildQemuArgs(&cfg, ""), "virtserialport,chardev=timezone0,name=dev.tryarch.timezone")
 		if present != (flag != "keep") {
 			t.Fatal("incorrect channel", flag, present)
 		}

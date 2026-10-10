@@ -8,7 +8,7 @@ import (
 )
 
 func TestWindowsMoveVolumeResolvesByIdentity(t *testing.T) {
-	target := filepath.Join(t.TempDir(), "TryOmarchy")
+	target := filepath.Join(t.TempDir(), "TryArch")
 	location, err := windowsMoveVolume(target)
 	if err != nil {
 		t.Fatal(err)

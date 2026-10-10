@@ -39,7 +39,7 @@ func nativeMachine() uint16 {
 	return native
 }
 
-// hostArchUnsupportedReason returns "" when this machine can run Try Omarchy,
+// hostArchUnsupportedReason returns "" when this machine can run Try Arch,
 // otherwise the message to show the user. The launcher, the WINQ-EMU runtime
 // and the guest image are all x86_64-only, so ARM64 Windows PCs cannot run
 // the app - and before this check they got the worst possible tour: an
@@ -62,5 +62,5 @@ func hostArchUnsupportedReason() string {
 // intelAMDOnlyMessage is the honest version of the ARM64 story: nothing on
 // the machine is broken or misconfigured - the hardware line sits elsewhere.
 func intelAMDOnlyMessage(detail string) string {
-	return uiTextWith("arch.unsupported", map[string]string{"detail": detail, "url": "https://github.com/omacom/try-omarchy-windows/issues"})
+	return uiTextWith("arch.unsupported", map[string]string{"detail": detail, "url": "https://github.com/KristanLaimon/Try-Arch/issues"})
 }

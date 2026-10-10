@@ -34,7 +34,7 @@ func TestFullscreenDisplaySelection(t *testing.T) {
 }
 
 func TestFullscreenDisplayEnumeration(t *testing.T) {
-	if os.Getenv("TRYOMARCHY_NATIVE_UI_TEST") != "1" {
+	if os.Getenv("TRYARCH_NATIVE_UI_TEST") != "1" {
 		t.Skip("requires interactive Windows desktop")
 	}
 	monitors := hostMonitors()
@@ -52,7 +52,7 @@ func TestFullscreenDisplayEnumeration(t *testing.T) {
 
 func TestNativeQEMUPrimaryWindow(t *testing.T) {
 	tool := os.Getenv("QEMU_SYSTEM")
-	if tool == "" || os.Getenv("TRYOMARCHY_NATIVE_UI_TEST") != "1" {
+	if tool == "" || os.Getenv("TRYARCH_NATIVE_UI_TEST") != "1" {
 		t.Skip("requires QEMU_SYSTEM and an interactive Windows desktop")
 	}
 	runtime.LockOSThread()
@@ -106,7 +106,7 @@ func TestNativeQEMUPrimaryWindow(t *testing.T) {
 // Secondary SDL windows appear when the guest activates their scanouts. Exercise
 // the native window lifecycle independently of guest boot and acceleration.
 func TestMultipleNativeDisplayWindowLifecycle(t *testing.T) {
-	if os.Getenv("TRYOMARCHY_NATIVE_UI_TEST") != "1" {
+	if os.Getenv("TRYARCH_NATIVE_UI_TEST") != "1" {
 		t.Skip("requires an interactive Windows desktop")
 	}
 	runtime.LockOSThread()

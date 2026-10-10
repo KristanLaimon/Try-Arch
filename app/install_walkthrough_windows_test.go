@@ -16,13 +16,13 @@ import (
 )
 
 func TestNativeInstallWalkthroughDuringActiveLifecycle(t *testing.T) {
-	launcher := os.Getenv("TRYOMARCHY_LAUNCHER_TEST_EXE")
-	if os.Getenv("TRYOMARCHY_UI_TEST") != "1" || launcher == "" {
+	launcher := os.Getenv("TRYARCH_LAUNCHER_TEST_EXE")
+	if os.Getenv("TRYARCH_UI_TEST") != "1" || launcher == "" {
 		t.Skip("requires interactive Windows and candidate executable")
 	}
 	listener, err := net.Listen("tcp", fmt.Sprintf("127.0.0.1:%d", lifecyclePort))
 	if err != nil {
-		t.Skip("requires an otherwise idle Try Omarchy lifecycle port")
+		t.Skip("requires an otherwise idle Try Arch lifecycle port")
 	}
 	defer listener.Close()
 	dir := t.TempDir()
@@ -38,13 +38,13 @@ func TestNativeInstallWalkthroughDuringActiveLifecycle(t *testing.T) {
 	if err := os.WriteFile(journal, pending, 0600); err != nil {
 		t.Fatal(err)
 	}
-	cmd := exec.Command(launcher, "-dir", dir, "-recovery", "install-omarchy", "-no-update")
+	cmd := exec.Command(launcher, "-dir", dir, "-recovery", "install-arch", "-no-update")
 	if err := cmd.Start(); err != nil {
 		t.Fatal(err)
 	}
 	defer func() { _ = cmd.Process.Kill(); _ = cmd.Wait() }()
-	class, _ := syscall.UTF16PtrFromString("TryOmarchyChoice")
-	title, _ := syscall.UTF16PtrFromString("Install Omarchy on this PC")
+	class, _ := syscall.UTF16PtrFromString("TryArchChoice")
+	title, _ := syscall.UTF16PtrFromString("Install Arch on this PC")
 	for deadline := time.Now().Add(10 * time.Second); time.Now().Before(deadline); {
 		window, _, _ := user32.NewProc("FindWindowW").Call(uintptr(unsafe.Pointer(class)), uintptr(unsafe.Pointer(title)))
 		var owner uint32

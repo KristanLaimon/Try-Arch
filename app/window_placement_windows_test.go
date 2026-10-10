@@ -83,7 +83,7 @@ func TestHookStatePruningKeepsOnlyCurrentLiveWindows(t *testing.T) {
 }
 
 func TestNativePlacementCorrectionKeepsForeground(t *testing.T) {
-	if os.Getenv("TRYOMARCHY_NATIVE_UI_TEST") != "1" {
+	if os.Getenv("TRYARCH_NATIVE_UI_TEST") != "1" {
 		t.Skip("requires an interactive Windows desktop")
 	}
 	runtime.LockOSThread()

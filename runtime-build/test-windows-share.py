@@ -74,7 +74,7 @@ int main(void) {
 '''
 flags = shlex.split(subprocess.check_output(
     ["pkg-config", "--cflags", "--libs", "glib-2.0"], text=True))
-with tempfile.TemporaryDirectory(prefix="try-omarchy-share-test-") as directory:
+with tempfile.TemporaryDirectory(prefix="try-arch-share-test-") as directory:
     root = Path(directory)
     (root / "test.c").write_text(harness, encoding="utf-8")
     subprocess.run(["gcc", "-std=gnu11", "-O2", str(root / "test.c"),

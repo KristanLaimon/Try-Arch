@@ -1,37 +1,18 @@
 # Security
 
-## Reporting a vulnerability
+Report security issues privately through the repository's Security tab:
+https://github.com/KristanLaimon/Try-Arch/security . Include reproduction steps
+and the launcher, guest and runtime versions. Do not share guest disks, backups,
+private keys or unreviewed diagnostics.
 
-Please report security issues privately, not as a public issue. Use GitHub's
-[private vulnerability reporting](https://github.com/omacom/try-omarchy-windows/security/advisories/new)
-(the repository's **Security** tab, then **Report a vulnerability**).
+The launcher authenticates SHA256 manifests before using guest or runtime
+downloads. Custom releases require an independent checksum pin. Automatic
+updates are disabled until this fork has its own signing key and signed feed.
+Locally built TryArch.exe is unsigned; do not expect the predecessor's signature.
 
-Include the Try Omarchy version, your Windows version and steps to reproduce.
-Review any diagnostics zip before attaching it, and do not attach guest disks or
-backups. Reporters who want credit will be credited.
+The guest uses official signed Arch packages. Root login is locked, SSH is
+off unless requested, and SSH password authentication is disabled. Quick start
+uses arch / arch locally; change its password with passwd.
 
-## Supported versions
-
-Fixes ship in the latest release only. Use the newest version from the
-[releases page](https://github.com/omacom/try-omarchy-windows/releases).
-
-## Scope
-
-In scope: the Windows launcher in `app/`, the importer in `migrate/`, the
-release and signing scripts, and the guest and runtime build recipes in this
-repository. Issues in upstream projects (Omarchy, QEMU, WINQ-EMU, Arch packages)
-are welcome here when Try Omarchy ships or configures them in a way that makes
-them exploitable; otherwise report them upstream.
-
-## Release integrity
-
-`TryOmarchy.exe` is Authenticode-signed with the publisher `CN=Brandon South`.
-The launcher verifies SHA256 checksums for the graphics runtime and guest image
-before using them. The [user guide](docs/USER-GUIDE.md) explains how to check
-the signature, and [RELEASING.md](docs/RELEASING.md) describes the release
-process.
-
-## Maintainer
-
-Brandon South ([@btsouth](https://github.com/btsouth)) maintains this
-project and handles security reports, audits and hardening.
+Arch and QEMU retain their upstream security policies. This project owns the
+launcher, guest configuration and integration changes it ships.

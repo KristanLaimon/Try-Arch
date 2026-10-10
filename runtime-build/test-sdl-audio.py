@@ -56,7 +56,7 @@ int main(void) {
     bool matched, present;
     char *value;
     gint64 next = 0;
-    g_autofree char *directory = g_dir_make_tmp("tryomarchy-audio-XXXXXX", NULL);
+    g_autofree char *directory = g_dir_make_tmp("tryarch-audio-XXXXXX", NULL);
     assert(directory);
     g_autofree char *output = g_build_filename(directory, "output", NULL);
 
@@ -102,7 +102,7 @@ int main(void) {
     return 0;
 }
 '''
-with tempfile.TemporaryDirectory(prefix='tryomarchy-sdl-audio-') as temporary:
+with tempfile.TemporaryDirectory(prefix='tryarch-sdl-audio-') as temporary:
     root = Path(temporary)
     (root / 'test.c').write_text(harness, encoding='utf-8')
     flags = shlex.split(subprocess.check_output(

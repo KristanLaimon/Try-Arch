@@ -11,8 +11,8 @@ const (
 	provisionModeFilename = "provision-mode"
 	provisionModePersonal = "personal"
 	provisionModeInstant  = "instant"
-	trialUsername         = "omarchy"
-	trialPassword         = "omarchy"
+	trialUsername         = "arch"
+	trialPassword         = "arch"
 )
 
 func provisionAccountHint(instant bool) string {

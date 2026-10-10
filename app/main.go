@@ -21,14 +21,14 @@ import (
 	"time"
 )
 
-// Try Omarchy for Windows - the native app shell. One exe replacing
-// launch-omarchy.ps1 + winkey-forwarder.ps1 + clipboard-bridge.ps1:
+// Try Arch for Windows - the native app shell. One exe replacing
+// launch-arch.ps1 + winkey-forwarder.ps1 + clipboard-bridge.ps1:
 // launches QEMU (WINQ-EMU GPU stack when installed, stock CPU fallback),
 // supervises it through WHPX's rough edges, scopes the Windows key to the VM
 // window, keeps the window branded, and bridges the clipboard. The native
 // launcher edits settings before handing off to the SDL guest window.
 
-const appTitle = "Try Omarchy"
+const appTitle = "Try Arch"
 
 type config struct {
 	desktop                     desktopPreferences
@@ -140,9 +140,9 @@ func main() {
 	cfg := &config{}
 	removeDataOnCancel := false
 	defaultDir := filepath.Join(os.Getenv("LOCALAPPDATA"), defaultDataDirectoryName)
-	flag.StringVar(&cfg.dir, "dir", defaultDir, "Try Omarchy data directory (virtual machine, runtime, and settings)")
+	flag.StringVar(&cfg.dir, "dir", defaultDir, "Try Arch data directory (virtual machine, runtime, and settings)")
 	flag.StringVar(&cfg.winqEmu, "winq", `C:\WINQ-EMU`, "WINQ-EMU install path (GPU mode)")
-	flag.StringVar(&cfg.share, "share", "", "Windows folder shared into Omarchy at /mnt/host and as ~/<folder name>")
+	flag.StringVar(&cfg.share, "share", "", "Windows folder shared into Arch at /mnt/host and as ~/<folder name>")
 	flag.BoolVar(&cfg.fresh, "fresh", false, "start over and retain the previous writable disk for recovery")
 	flag.IntVar(&cfg.displays, "displays", 1, "number of guest displays (1 to 16)")
 	flag.BoolVar(&cfg.fullscreen, "fullscreen", false, "start fullscreen (Immersive)")
@@ -159,27 +159,27 @@ func main() {
 	flag.BoolVar(&cfg.hostCursor, "host-cursor", false, "force the legacy Windows cursor over the guest")
 	flag.BoolVar(&cfg.experimentalPinch, "experimental-pinch", false, "force Precision Touchpad pinch on for a guest configured by hand")
 	flag.BoolVar(&cfg.disablePinch, "disable-pinch", false, "keep ordinary Windows two-finger input instead of forwarding touchpad pinch")
-	flag.BoolVar(&cfg.instant, "instant", false, "skip first-boot questions and use the quick-start account (omarchy / omarchy)")
+	flag.BoolVar(&cfg.instant, "instant", false, "skip first-boot questions and use the quick-start account (arch / arch)")
 	flag.BoolVar(&cfg.portable, "portable", false, "run entirely from data and payload folders beside the executable")
 	var forwards forwardList
-	flag.Var(&forwards, "forward", "forward a Windows port into Omarchy: tcp:2222:22 (local), tcp:192.168.1.5:8080:80 (LAN); repeatable")
+	flag.Var(&forwards, "forward", "forward a Windows port into Arch: tcp:2222:22 (local), tcp:192.168.1.5:8080:80 (LAN); repeatable")
 	firewallPlan := flag.String("firewall-plan", "", "internal: apply owned LAN firewall rules")
 	flag.BoolVar(&cfg.lanPublic, "lan-public", false, "allow explicitly selected LAN forwards on public networks")
-	sshPort := flag.Int("ssh", 0, "forward this Windows loopback port to Omarchy's sshd and start sshd for the session")
+	sshPort := flag.Int("ssh", 0, "forward this Windows loopback port to Arch's sshd and start sshd for the session")
 	openAbout := flag.Bool("about", false, "show version information and check for updates")
 	usbSelection := flag.Bool("usb-selection", false, "internal: edit startup USB selection for an explicit data folder")
 	openDevices := flag.Bool("devices", false, "manage USB devices in the running VM")
-	recoveryAction := flag.String("recovery", "", "open backup, restore, snapshots, portable-create, reset, move, uninstall, or install-omarchy controls")
-	uninstall := flag.Bool("uninstall", false, "remove this Try Omarchy installation: shortcuts, the Apps & features entry, and the data folder")
+	recoveryAction := flag.String("recovery", "", "open backup, restore, snapshots, portable-create, reset, move, uninstall, or install-arch controls")
+	uninstall := flag.Bool("uninstall", false, "remove this Try Arch installation: shortcuts, the Apps & features entry, and the data folder")
 	uninstallFinish := flag.Bool("uninstall-finish", false, "internal: delete the data folder after the launcher inside it exits")
-	reclaim := flag.Bool("reclaim", false, "ask the running Omarchy to zero its free space so the disk file shrinks after shutdown, then exit")
+	reclaim := flag.Bool("reclaim", false, "ask the running Arch to zero its free space so the disk file shrinks after shutdown, then exit")
 	backupPath := flag.String("backup", "", "back up a stopped standard VM to a new ZIP file, then exit")
 	restorePath := flag.String("restore", "", "restore a trusted backup into a new folder selected with -dir, then exit")
 	openSettings := flag.Bool("settings", false, "open the settings window, then exit")
-	openLauncher := flag.Bool("launcher", false, "open the launcher before starting Omarchy")
-	startImmediately := flag.Bool("start", false, "start Omarchy immediately without the launcher window")
+	openLauncher := flag.Bool("launcher", false, "open the launcher before starting Arch")
+	startImmediately := flag.Bool("start", false, "start Arch immediately without the launcher window")
 	diagnostics := flag.Bool("diagnostics", false, "write a zip of logs, settings, and machine facts for a bug report, then exit")
-	sshKeyPath := flag.String("ssh-key", "", "public key to authorize for the Omarchy account (default: your ~/.ssh/id_*.pub when -ssh is used)")
+	sshKeyPath := flag.String("ssh-key", "", "public key to authorize for the Arch account (default: your ~/.ssh/id_*.pub when -ssh is used)")
 	noUpdate := flag.Bool("no-update", false, "do not check the feed for newer releases")
 	updateURL := flag.String("update-url", defaultUpdateURL, "authenticated update manifest URL")
 	release := flag.String("release", defaultReleaseURL,
@@ -191,7 +191,7 @@ func main() {
 	runtimeSumsSHA256 := flag.String("runtime-sums-sha256", defaultRuntimeSumsSHA256,
 		"trusted SHA256 digest of the runtime release's SHA256SUMS file")
 	enableWhp := flag.Bool("enable-whp", false, "internal: elevated helper that enables the Windows Hypervisor Platform")
-	disableFastStartupFlag := flag.Bool("disable-fast-startup", false, "internal: elevated helper that turns off Windows Fast Startup before installing Omarchy next to Windows")
+	disableFastStartupFlag := flag.Bool("disable-fast-startup", false, "internal: elevated helper that turns off Windows Fast Startup before installing Arch next to Windows")
 	applyLauncherUpdateFlag := flag.Bool("apply-launcher-update", false, "internal: apply a staged launcher update")
 	applyLauncherRollbackFlag := flag.Bool("apply-launcher-rollback", false, "internal: restore the previous launcher")
 	restartWaitPID := flag.Int("restart-update-wait-pid", 0, "internal: wait for the stopped guest launcher before restarting")
@@ -219,9 +219,9 @@ func main() {
 		*recoveryAction = "uninstall"
 	}
 	maintenance := *backupPath != "" || *restorePath != "" || *recoveryAction != ""
-	installWalkthrough := *recoveryAction == "install-omarchy"
-	if *recoveryAction != "" && (*recoveryAction != "backup" && *recoveryAction != "restore" && *recoveryAction != "reset" && *recoveryAction != "uninstall" && *recoveryAction != "move" && *recoveryAction != "move-cleanup" && *recoveryAction != "snapshots" && *recoveryAction != "portable-create" && *recoveryAction != "install-omarchy" || *backupPath != "" || *restorePath != "") {
-		fatal(uiTextWith("fatal.cli.recovery_action", map[string]string{"actions": "backup, restore, snapshots, portable-create, reset, move, uninstall, install-omarchy"}))
+	installWalkthrough := *recoveryAction == "install-arch"
+	if *recoveryAction != "" && (*recoveryAction != "backup" && *recoveryAction != "restore" && *recoveryAction != "reset" && *recoveryAction != "uninstall" && *recoveryAction != "move" && *recoveryAction != "move-cleanup" && *recoveryAction != "snapshots" && *recoveryAction != "portable-create" && *recoveryAction != "install-arch" || *backupPath != "" || *restorePath != "") {
+		fatal(uiTextWith("fatal.cli.recovery_action", map[string]string{"actions": "backup, restore, snapshots, portable-create, reset, move, uninstall, install-arch"}))
 	}
 	if maintenance && (*backupPath != "" && *restorePath != "" || cfg.portable && !portableRecoveryAllowed(*recoveryAction, *backupPath, *restorePath) || cfg.fresh || *openSettings || *diagnostics || *enableWhp || *disableFastStartupFlag || *applyLauncherUpdateFlag || *applyLauncherRollbackFlag) {
 		fatal(uiText("fatal.cli.one_action"))
@@ -342,7 +342,7 @@ func main() {
 		}
 		// WHP is a property of this Windows host, so its restart marker must
 		// not travel to another PC with the USB.
-		cfg.hostDir = filepath.Join(os.Getenv("LOCALAPPDATA"), "TryOmarchy", "portable-host")
+		cfg.hostDir = filepath.Join(os.Getenv("LOCALAPPDATA"), "TryArch", "portable-host")
 	} else {
 		promptForLocation := !maintenance && !*diagnostics && !*applyLauncherUpdateFlag && !*applyLauncherRollbackFlag
 		selected, proceed, err := resolveStandardDataDirectory(
@@ -608,7 +608,7 @@ func main() {
 	logf("---- %s starting ----", appTitle)
 
 	// The splash IS the launch experience: it appears here and stays on screen
-	// through every phase until the Omarchy window itself is visible (the
+	// through every phase until the Arch window itself is visible (the
 	// title enforcer closes it). Setup must never look like nothing happened.
 	getUI().setStatus("%s", uiText("status.starting_launcher"))
 	if err := configureRecommendedSharedFolder(cfg, &userSettings, settingsFile, home, explicitFlags["share"]); err != nil {
@@ -864,14 +864,19 @@ func main() {
 	// Serial log only - no console= on the display, so no kernel text or
 	// blinking cursor flashes in the window before SDDM (boot problems: read
 	// vm\serial*.log).
-	cmdline := strings.ReplaceAll(spec.Runtime.KernelCommandLine, "console=tty0 ", "")
+	cmdline := spec.Runtime.KernelCommandLine
+	if !spec.Runtime.Console {
+		cmdline = strings.ReplaceAll(cmdline, "console=tty0 ", "")
+	}
 	cmdline = strings.ReplaceAll(cmdline, "console=hvc0", "console=ttyS0")
-	cmdline += " vt.global_cursor_default=0"
+	if !spec.Runtime.Console {
+		cmdline += " vt.global_cursor_default=0"
+	}
 	// The kernel's setup code prints "Probing EDD" on the display while it
 	// asks the BIOS about disks, which a virtio disk does not need.
 	cmdline += " edd=off"
 	if cfg.instant {
-		cmdline += " tryomarchy.instant=1"
+		cmdline += " tryarch.instant=1"
 	}
 	cmdline += sshCmdline(cfg.forwards, cfg.sshKey)
 	plan := &bootPlan{
@@ -913,7 +918,7 @@ func main() {
 		fatal(uiTextWith("fatal.resources", map[string]string{"error": err.Error()}))
 	}
 	bootLine := bootCmdline(cfg, plan)
-	getUI().setStatus("%s", uiText("status.starting_omarchy"))
+	getUI().setStatus("%s", uiText("status.starting_arch"))
 	stopTray := startTray(cfg)
 	defer stopTray()
 	if len(pausedLANForwards) > 0 {
@@ -974,7 +979,11 @@ func main() {
 	}
 	cfg.audio = "sdl"
 
-	startBootCurtain(cfg)
+	if !spec.Runtime.Console {
+		startBootCurtain(cfg)
+	} else {
+		uiDone()
+	}
 	stopDiskMonitor := startHostDiskMonitor(cfg.dir)
 	defer stopDiskMonitor()
 	for relaunch := supervise(cfg, bootLine); relaunch; relaunch = supervise(cfg, bootLine) {
@@ -1036,7 +1045,7 @@ func loadLaunchAudioPreferences(dir string) (audioPreferences, error) {
 // supervise runs one guest lifetime: launch with the wedge watchdog, watch it
 // until the guest goes down, reap a wedged QEMU. Returns true when the guest
 // rebooted (with -no-reboot a guest reset exits QEMU; relaunching IS the
-// reboot). The two hard-won subtleties from launch-omarchy.ps1 are preserved:
+// reboot). The two hard-won subtleties from launch-arch.ps1 are preserved:
 // liveness is probed (a QEMU wedged at guest poweroff cannot deliver its
 // SHUTDOWN event), and a read stays permanently pending so a fast exit after
 // guest-reset cannot discard the event (see docs/FINDINGS.md).
@@ -1376,9 +1385,9 @@ func watch(cfg *config, qmp *qmpConn, exited <-chan error) bool {
 	procDown := false
 	movedBootPending := false
 	diskPauseNotified := false
-	// Cancel in the setup window, which stays up while Omarchy boots, shuts
+	// Cancel in the setup window, which stays up while Arch boots, shuts
 	// the guest down. Early in its boot the guest misses the power button, so
-	// it is pressed again once Omarchy reports that it is up; stopping it
+	// it is pressed again once Arch reports that it is up; stopping it
 	// outright could interrupt a first boot's account setup. A guest that
 	// still has not shut down is stopped.
 	var stopDeadline <-chan time.Time
@@ -1607,7 +1616,7 @@ var (
 )
 
 // runLifecycleListener receives the guest's shutdown intent: the image's
-// try-omarchy-reboot-notify unit connects to 10.0.2.2:4450 (this listener via
+// try-arch-reboot-notify unit connects to 10.0.2.2:4450 (this listener via
 // user-net) and says "reboot" when the guest is rebooting rather than
 // powering off.
 func runLifecycleListener() {

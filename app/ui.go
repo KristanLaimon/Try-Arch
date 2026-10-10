@@ -11,8 +11,8 @@ import (
 	"unsafe"
 )
 
-// The first-run splash: a borderless dark panel in the Omarchy look - the app
-// icon, the wordmark, a live status line and a slim green progress bar. The
+// The first-run splash: a borderless dark panel in the Arch look - the app
+// icon, the wordmark, a live status line and a slim blue progress bar. The
 // download goroutine writes atomics; a WM_TIMER repaints from them. Esc or
 // closing cancels the setup (nothing else is running at that point). Drag
 // the empty background moves it. Native buttons support keyboard navigation.
@@ -87,11 +87,11 @@ const (
 	imageIcon         = 1
 	diNormal          = 0x0003
 
-	// The Omarchy look (Tokyo Night-ish, matching the boot splash). COLORREF
+	// The Try Arch palette. COLORREF
 	// is 0x00BBGGRR.
-	colBg    = 0x00261B1A // RGB(26,27,38)
-	colBgBar = 0x003C2A28 // RGB(40,42,60)
-	colGreen = 0x006ACE9E // RGB(158,206,106)
+	colBg    = 0x00271811 // RGB(17,24,39)
+	colBgBar = 0x0037291F // RGB(31,41,55)
+	colGreen = 0x00CC9317 // RGB(23,147,204)
 	colText  = 0x00F5CAC0 // RGB(192,202,245)
 	colDim   = 0x00A27A73 // RGB(115,122,162)
 )
@@ -131,7 +131,7 @@ type progressUI struct {
 }
 
 // THE app has ONE splash (launch-UX requirement: it appears at launch and
-// stays visible until the Omarchy window itself is on screen - setup must
+// stays visible until the Arch window itself is on screen - setup must
 // never look like nothing is happening). The singleton is also what makes the
 // Win32 side correct: the window class registers once with one wndproc; with
 // per-phase windows, every window after the first ran the FIRST window's
@@ -261,7 +261,7 @@ func (ui *progressUI) run() {
 	defer brand.close()
 	var progressStep int32
 
-	className, _ := syscall.UTF16PtrFromString("TryOmarchySetup")
+	className, _ := syscall.UTF16PtrFromString("TryArchSetup")
 	var hHead, hTag, hText, hAccountInfo, hSuperInfo uintptr
 	var hKeySpace, hKeyK, hKeyReturn, hKeyW uintptr
 	var hLabelMenu, hLabelKeys, hLabelTerminal, hLabelClose, hCancel uintptr
@@ -563,11 +563,11 @@ func (ui *progressUI) run() {
 		return h
 	}
 	hHead = mk(uiText("brand.name"), 120, 30, width-152, 34, 0, 0)
-	hTag = mk("WINDOWS  ·  "+currentVersion, 122, 67, width-154, 22, 0, 0)
+	hTag = mk(uiTextWith("setup.version", map[string]string{"version": currentVersion}), 122, 67, width-154, 22, 0, 0)
 	hText = mk(uiText("status.preparing"), 32, 148, width-64, 44, 0, 0)
 	// Starter keybindings on screen during the boot wait (the #1 field
 	// complaint: an hour lost guessing tiling WM keys once the VM appears and
-	// this window closes). Binds verified against Omarchy v4.0.1 defaults.
+	// this window closes). Commands for the vanilla Arch console.
 	hAccountInfo = mk("", 40, 230, width-80, 22, 0, 0)
 	hSuperInfo = mk(uiText("setup.keys.super"), 40, 256, width-80, 22, 0, 0)
 	// Two key columns; each label column widens for its longer translation and
@@ -585,13 +585,13 @@ func (ui *progressUI) run() {
 	secondKeyX := max(int32(280), 164+firstLabelWidth+16)
 	secondLabelX := secondKeyX + 88
 	secondLabelWidth := min(labelWidth(112, keysLabel, closeLabel), width-40-secondLabelX)
-	hKeySpace = mk("SUPER+SPACE", 40, 286, 118, 20, 0, 0)
+	hKeySpace = mk(uiText("setup.command.files"), 40, 286, 118, 20, 0, 0)
 	hLabelMenu = mk(menuLabel, 164, 286, firstLabelWidth, 20, 0, 0)
-	hKeyK = mk("SUPER+K", secondKeyX, 286, 86, 20, 0, 0)
+	hKeyK = mk(uiText("setup.command.help"), secondKeyX, 286, 86, 20, 0, 0)
 	hLabelKeys = mk(keysLabel, secondLabelX, 286, secondLabelWidth, 20, 0, 0)
-	hKeyReturn = mk("SUPER+RETURN", 40, 310, 118, 20, 0, 0)
+	hKeyReturn = mk(uiText("setup.command.update"), 40, 310, 118, 20, 0, 0)
 	hLabelTerminal = mk(terminalLabel, 164, 310, firstLabelWidth, 20, 0, 0)
-	hKeyW = mk("SUPER+W", secondKeyX, 310, 86, 20, 0, 0)
+	hKeyW = mk(uiText("setup.command.shutdown"), secondKeyX, 310, 86, 20, 0, 0)
 	hLabelClose = mk(closeLabel, secondLabelX, 310, secondLabelWidth, 20, 0, 0)
 	cancelWidth := buttonWidthFor(brand.font, 100, uiText("setup.cancel"), uiText("setup.cancelling_button"))
 	hCancel = button(uiText("setup.cancel"), 32, height-50, cancelWidth, 36, wsTabstop, cancelControlID)

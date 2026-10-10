@@ -220,7 +220,7 @@ func writeVMArchive(dir, destination string, report backupProgress, checkpoint b
 	if _, err := os.Lstat(destination); !os.IsNotExist(err) {
 		return uiError(uiText("error.backup.new_filename"), nil)
 	}
-	f, err := os.CreateTemp(filepath.Dir(destination), ".try-omarchy-backup-*")
+	f, err := os.CreateTemp(filepath.Dir(destination), ".try-arch-backup-*")
 	if err != nil {
 		return err
 	}
@@ -431,7 +431,7 @@ func restoreVMBackupReader(z *zip.Reader, destination string, report backupProgr
 	if err = requireDiskSpace(filepath.Dir(destination), restoreSpaceEstimate(manifest, files)); err != nil {
 		return err
 	}
-	staging, err := os.MkdirTemp(filepath.Dir(destination), ".try-omarchy-restore-*")
+	staging, err := os.MkdirTemp(filepath.Dir(destination), ".try-arch-restore-*")
 	if err != nil {
 		return err
 	}

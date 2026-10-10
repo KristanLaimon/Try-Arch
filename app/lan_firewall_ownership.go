@@ -199,7 +199,7 @@ func portableFirewallOwnerStale(owner portableFirewallOwner) (bool, error) {
 	}
 	// This identity survives runtime updates, unlike a runtime receipt, and
 	// distinguishes a different installation reusing the same drive and path.
-	return id != strings.TrimPrefix(owner.Plan.Group, "TryOmarchy-"), nil
+	return id != strings.TrimPrefix(owner.Plan.Group, "TryArch-"), nil
 }
 
 func ensureLANFirewallAfterCleanup(cleanup func() error, notice func(error), ensure func() error) error {

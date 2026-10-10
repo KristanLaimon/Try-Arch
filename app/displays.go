@@ -38,7 +38,7 @@ func displayDevice(cfg *config, hostmem uint64) string {
 	}
 	outputs := make([]map[string]any, guestDisplayCount(cfg.displays))
 	for i := range outputs {
-		outputs[i] = map[string]any{"name": fmt.Sprintf("Omarchy %d", i+1), "xres": width, "yres": height}
+		outputs[i] = map[string]any{"name": fmt.Sprintf("Arch %d", i+1), "xres": width, "yres": height}
 	}
 	device := map[string]any{"driver": "virtio-gpu-pci", "id": "gpu0", "max_outputs": len(outputs), "outputs": outputs}
 	if cfg.useGpu {
@@ -62,10 +62,10 @@ func displayWindowTitle(index int) string {
 }
 
 // isRunningInstanceWindow reports whether a window with this class and title
-// is a running Try Omarchy: its VM window (under our title or QEMU's), or the
-// setup window shown while Omarchy prepares and starts.
+// is a running Try Arch: its VM window (under our title or QEMU's), or the
+// setup window shown while Arch prepares and starts.
 func isRunningInstanceWindow(class, title string) bool {
-	if class == "TryOmarchySetup" {
+	if class == "TryArchSetup" {
 		return true
 	}
 	if _, ok := displayIndexFromTitle(title); ok {

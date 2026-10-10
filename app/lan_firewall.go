@@ -83,7 +83,7 @@ func makeLANFirewallPlan(dir, program string, public bool, forwards []portForwar
 	if id == "" {
 		return plan, nil
 	}
-	plan.Group = "TryOmarchy-" + id
+	plan.Group = "TryArch-" + id
 	data, err := json.Marshal(plan)
 	if err != nil {
 		return plan, err
@@ -94,7 +94,7 @@ func makeLANFirewallPlan(dir, program string, public bool, forwards []portForwar
 }
 
 func (p lanFirewallPlan) validate() error {
-	if !strings.HasPrefix(p.Group, "TryOmarchy-") || !validCheckpointID(strings.TrimPrefix(p.Group, "TryOmarchy-")) {
+	if !strings.HasPrefix(p.Group, "TryArch-") || !validCheckpointID(strings.TrimPrefix(p.Group, "TryArch-")) {
 		return fmt.Errorf("invalid firewall ownership")
 	}
 	if len(p.Generation) != 16 {
@@ -131,7 +131,7 @@ const (
 // line, so without this check the helper would open inbound ports for any
 // program a caller named.
 func validateLANFirewallProgram(program string) error {
-	invalid := fmt.Errorf("firewall program must be Try Omarchy's QEMU")
+	invalid := fmt.Errorf("firewall program must be Try Arch's QEMU")
 	if !filepath.IsAbs(program) || filepath.Clean(program) != program || strings.HasPrefix(program, `\\`) {
 		return invalid
 	}

@@ -25,7 +25,7 @@ The launcher downloads without a GitHub token and a draft release's assets
 require one, so serve the assets from the container instead:
 
 ```bash
-docker exec -d omarchy-windows sh -c 'python3 -m http.server 18080 --bind 0.0.0.0 --directory /shared/candidate > /tmp/http.log 2>&1'
+docker exec -d arch-windows sh -c 'python3 -m http.server 18080 --bind 0.0.0.0 --directory /shared/candidate > /tmp/http.log 2>&1'
 ```
 
 Inside the VM the container host is `172.30.0.1`, so the launcher takes
@@ -55,13 +55,13 @@ that for a launcher build and waits for the guest to report ready.
 ## Driving the guest
 
 `qmp.ps1` talks to QEMU's tools QMP port (4445) from inside the VM:
-`qmp.ps1 key meta_l,ret` opens a terminal in Omarchy, `qmp.ps1 type '...'`
+`qmp.ps1 key meta_l,ret` opens a terminal in Arch, `qmp.ps1 type '...'`
 and `qmp.ps1 key ret` run a command. Pair it with the shared folder: put a
-script in `Omarchy Shared`, run it with `bash ~/Omarchy\ Shared/x.sh`, and
+script in `Arch Shared`, run it with `bash ~/Arch\ Shared/x.sh`, and
 have it write its results back to the same folder. Nested SSH into the guest
 stalls; keystrokes and the shared folder do not.
 
-Never send keystrokes with `sendkeys.ps1` to the "Try Omarchy" title while
+Never send keystrokes with `sendkeys.ps1` to the "Try Arch" title while
 the VM window is up: they land inside the guest.
 
 ## Other helpers
@@ -90,7 +90,7 @@ then relaunch and confirm no download and the previous payload).
 ## Complete guest file-transfer round trip
 
 Run `TestGuestDesktopFileTransferRoundTrip` alone in the interactive Windows
-session with `TRYOMARCHY_GUEST_TRANSFER_TEST=1`. It owns ports 4448, 4449 and
+session with `TRYARCH_GUEST_TRANSFER_TEST=1`. It owns ports 4448, 4449 and
 4452, so stop the launcher first. Run the matching Linux smoke command against
 the same Windows machine with `--displays 1 --file-transfer-round-trip`.
 `windows-qemu-stdio.py` supplies the Windows QEMU serial transport; its module
@@ -105,7 +105,7 @@ qemu-img.exe create -f qcow2 -F raw -b D:\candidate\rootfs.ext4 D:\candidate\tra
 
 Then add `--disk-image /local/candidate/transfer-test.qcow2 --disk-format qcow2`
 to the smoke command. The serial wrapper maps the local candidate prefix to
-`TRYOMARCHY_WINDOWS_GUEST`. The smoke also uses QEMU's temporary snapshot mode,
+`TRYARCH_WINDOWS_GUEST`. The smoke also uses QEMU's temporary snapshot mode,
 so the factory image and supplied overlay remain intact. The compact factory
 image alone has insufficient user space for the transfer service's 1 GiB
 reserve; a failure there does not represent an installed VM.
@@ -114,7 +114,7 @@ The fixture sends 31 MiB files with Unicode names in both directions, verifies
 bytes and original files, checks the guest's native transfer window, and asserts
 that neither clipboard was replaced. The separate opt-in
 `TestNativeQEMUFileDropEvent` performs the actual Windows OLE mouse drag into
-SDL. Run that with `TRYOMARCHY_NATIVE_DROP_TEST=1` and `QEMU_SYSTEM` pointing to
+SDL. Run that with `TRYARCH_NATIVE_DROP_TEST=1` and `QEMU_SYSTEM` pointing to
 the matching runtime, without other UI tests or manual pointer activity.
 
 ## Native Windows Vulkan memory diagnostics

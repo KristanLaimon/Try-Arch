@@ -15,7 +15,7 @@ import (
 )
 
 func TestLauncherMenuGuard(t *testing.T) {
-	name := fmt.Sprintf("TryOmarchy-Test-%d", os.Getpid())
+	name := fmt.Sprintf("TryArch-Test-%d", os.Getpid())
 	first, err := acquireLauncherMenu(name)
 	if err != nil || first == 0 {
 		t.Fatalf("first lock: %d, %v", first, err)
@@ -39,9 +39,9 @@ func TestLauncherMenuGuard(t *testing.T) {
 // Exercise the actual executable in an isolated directory. Neither case boots
 // a guest: Close must exit, and Settings must save without launching.
 func TestLauncherWindowKeyboard(t *testing.T) {
-	launcher := os.Getenv("TRYOMARCHY_LAUNCHER_TEST_EXE")
-	if os.Getenv("TRYOMARCHY_UI_TEST") != "1" || launcher == "" {
-		t.Skip("requires interactive Windows and TRYOMARCHY_LAUNCHER_TEST_EXE")
+	launcher := os.Getenv("TRYARCH_LAUNCHER_TEST_EXE")
+	if os.Getenv("TRYARCH_UI_TEST") != "1" || launcher == "" {
+		t.Skip("requires interactive Windows and TRYARCH_LAUNCHER_TEST_EXE")
 	}
 	for _, settingsOnly := range []bool{false, true} {
 		name := "launcher Enter on Close"
@@ -71,7 +71,7 @@ func TestLauncherWindowKeyboard(t *testing.T) {
 			done := make(chan error, 1)
 			go func() { done <- cmd.Wait() }()
 			defer func() { _ = cmd.Process.Kill() }()
-			class, _ := syscall.UTF16PtrFromString("TryOmarchySettings")
+			class, _ := syscall.UTF16PtrFromString("TryArchSettings")
 			title, _ := syscall.UTF16PtrFromString(titleText)
 			var window, target uintptr
 			for deadline := time.Now().Add(15 * time.Second); time.Now().Before(deadline); {
@@ -122,9 +122,9 @@ func TestLauncherWindowKeyboard(t *testing.T) {
 }
 
 func TestAutomaticStartSettingNative(t *testing.T) {
-	launcher := os.Getenv("TRYOMARCHY_LAUNCHER_TEST_EXE")
-	if os.Getenv("TRYOMARCHY_UI_TEST") != "1" || launcher == "" {
-		t.Skip("requires interactive Windows and TRYOMARCHY_LAUNCHER_TEST_EXE")
+	launcher := os.Getenv("TRYARCH_LAUNCHER_TEST_EXE")
+	if os.Getenv("TRYARCH_UI_TEST") != "1" || launcher == "" {
+		t.Skip("requires interactive Windows and TRYARCH_LAUNCHER_TEST_EXE")
 	}
 	dir := t.TempDir()
 	cmd := exec.Command(launcher, "-dir", dir, "-settings")
@@ -135,7 +135,7 @@ func TestAutomaticStartSettingNative(t *testing.T) {
 	done := make(chan error, 1)
 	go func() { done <- cmd.Wait() }()
 	defer func() { _ = cmd.Process.Kill() }()
-	class, _ := syscall.UTF16PtrFromString("TryOmarchySettings")
+	class, _ := syscall.UTF16PtrFromString("TryArchSettings")
 	title, _ := syscall.UTF16PtrFromString(appTitle + " settings")
 	var window, checkbox uintptr
 	for deadline := time.Now().Add(15 * time.Second); time.Now().Before(deadline); {
@@ -173,9 +173,9 @@ func TestAutomaticStartSettingNative(t *testing.T) {
 }
 
 func TestSignInFullscreenSettingsNative(t *testing.T) {
-	launcher := os.Getenv("TRYOMARCHY_LAUNCHER_TEST_EXE")
-	if os.Getenv("TRYOMARCHY_UI_TEST") != "1" || launcher == "" {
-		t.Skip("requires interactive Windows and TRYOMARCHY_LAUNCHER_TEST_EXE")
+	launcher := os.Getenv("TRYARCH_LAUNCHER_TEST_EXE")
+	if os.Getenv("TRYARCH_UI_TEST") != "1" || launcher == "" {
+		t.Skip("requires interactive Windows and TRYARCH_LAUNCHER_TEST_EXE")
 	}
 	dir := t.TempDir()
 	target := filepath.Join(dir, stableLauncherName)
@@ -195,7 +195,7 @@ func TestSignInFullscreenSettingsNative(t *testing.T) {
 		}
 		done := make(chan error, 1)
 		go func() { done <- cmd.Wait() }()
-		class, _ := syscall.UTF16PtrFromString("TryOmarchySettings")
+		class, _ := syscall.UTF16PtrFromString("TryArchSettings")
 		title, _ := syscall.UTF16PtrFromString(appTitle + " settings")
 		var window, signIn, full, display uintptr
 		for deadline := time.Now().Add(15 * time.Second); time.Now().Before(deadline); {
@@ -258,9 +258,9 @@ func TestSignInFullscreenSettingsNative(t *testing.T) {
 }
 
 func TestSnapshotsWindowHiddenStartup(t *testing.T) {
-	launcher := os.Getenv("TRYOMARCHY_LAUNCHER_TEST_EXE")
-	if os.Getenv("TRYOMARCHY_UI_TEST") != "1" || launcher == "" {
-		t.Skip("requires interactive Windows and TRYOMARCHY_LAUNCHER_TEST_EXE")
+	launcher := os.Getenv("TRYARCH_LAUNCHER_TEST_EXE")
+	if os.Getenv("TRYARCH_UI_TEST") != "1" || launcher == "" {
+		t.Skip("requires interactive Windows and TRYARCH_LAUNCHER_TEST_EXE")
 	}
 	cmd := exec.Command(launcher, "-dir", t.TempDir(), "-recovery", "snapshots")
 	cmd.SysProcAttr = &syscall.SysProcAttr{HideWindow: true}
@@ -270,7 +270,7 @@ func TestSnapshotsWindowHiddenStartup(t *testing.T) {
 	done := make(chan error, 1)
 	go func() { done <- cmd.Wait() }()
 	defer func() { _ = cmd.Process.Kill() }()
-	class, _ := syscall.UTF16PtrFromString("TryOmarchySnapshots")
+	class, _ := syscall.UTF16PtrFromString("TryArchSnapshots")
 	var window uintptr
 	visible := false
 	for deadline := time.Now().Add(10 * time.Second); time.Now().Before(deadline); {

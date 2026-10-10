@@ -11,7 +11,7 @@ import (
 )
 
 const timeZoneInterval = 5 * time.Second
-const timeZoneDevice = "dev.tryomarchy.timezone"
+const timeZoneDevice = "dev.tryarch.timezone"
 
 func guestAcceptsTimeZone(spec buildSpec) bool {
 	return slices.Contains(spec.Runtime.OptionalDevices, timeZoneDevice)

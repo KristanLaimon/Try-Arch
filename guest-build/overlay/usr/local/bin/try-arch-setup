@@ -1,0 +1,45 @@
+#!/usr/bin/env bash
+set -euo pipefail
+resize2fs /dev/vda
+cmdline=$(cat /proc/cmdline)
+if [[ ! -f /var/lib/try-arch/account-ready ]]; then
+  if [[ " $cmdline " == *' tryarch.instant=1 '* ]]; then
+    username=arch
+    useradd -m -G wheel -s /bin/bash "$username"
+    printf 'arch:arch\n' | chpasswd
+  else
+    clear
+    printf 'Welcome to Try Arch\nCreate your Linux account.\n\n'
+    while true; do
+      read -r -p 'Username: ' username
+      if [[ $username =~ ^[a-z_][a-z0-9_-]{0,31}$ ]] && ! id "$username" &>/dev/null; then
+        break
+      fi
+      printf 'Choose an unused Linux username (lowercase letters, digits, _ or -).\n'
+    done
+    useradd -m -G wheel -s /bin/bash "$username"
+    until passwd "$username"; do printf 'Please try setting your password again.\n'; done
+  fi
+  mkdir -p /var/lib/try-arch
+  printf '%s\n' "$username" > /var/lib/try-arch/account-ready
+fi
+username=$(cat /var/lib/try-arch/account-ready)
+for word in $cmdline; do
+  case $word in
+    tryarch.sshkey=*)
+      key=$(printf '%s' "${word#*=}" | base64 -d)
+      printf '%s\n' "$key" > /run/try-arch-public-key
+      ssh-keygen -l -f /run/try-arch-public-key >/dev/null
+      install -Dm644 /run/try-arch-public-key "/etc/ssh/authorized_keys/$username"
+      rm /run/try-arch-public-key
+      ;;
+  esac
+done
+if [[ " $cmdline " == *' tryarch.sshd=1 '* ]]; then
+  systemctl start sshd
+fi
+# Notify the launcher's existing lifecycle listener; networking may still be starting.
+for attempt in {1..30}; do
+  if (exec 3<>/dev/tcp/10.0.2.2/4450; printf 'ready\n' >&3) 2>/dev/null; then break; fi
+  sleep 1
+done
