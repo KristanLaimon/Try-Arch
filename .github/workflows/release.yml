@@ -27,7 +27,9 @@ jobs:
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: TryArch-manifest
-          path: artifacts/release/SHA256SUMS
+          path: |
+            artifacts/release/SHA256SUMS
+            artifacts/release/guest-manifest.json
           retention-days: 7
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:

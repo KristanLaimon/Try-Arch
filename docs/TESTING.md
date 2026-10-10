@@ -1,6 +1,9 @@
 # Testing
 
-Run `go test ./...` in `app/` and build `TryArch.exe` for Windows amd64.
+With Python available on PATH, run `go test ./...` in `app/` and build
+`TryArch.exe` for Windows amd64. The tests run the real Python guest builder
+against tiny fixtures through the download/install path, and validate the
+actual pinned release metadata against the launcher's schema and checksums.
 Run `python -m unittest discover -s guest-build -p 'test_*.py'`.
 Run `bash scripts/release/build-guest.sh --contract-only` for shell syntax and
 guest metadata checks. These checks do not prove that a Linux image boots.

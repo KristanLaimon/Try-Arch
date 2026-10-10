@@ -21,7 +21,8 @@ for a new version. Write .github/release-notes/TAG.md before creating its draft.
 Publish the compressed guest, boot files, metadata, runtime and SHA256SUMS only
 after validation. Keep the uncompressed rootfs.ext4 hash in the manifest for
 decompression verification; the 4 GiB raw image exceeds GitHub's asset limit.
-The build helper embeds SHA256SUMS and pins both guest and runtime downloads to
+The build helper validates the actual guest-manifest.json through the launcher's
+installer schema checks, embeds SHA256SUMS, and pins guest and runtime downloads to
 the release URL using Go linker flags. Development builds keep guest downloads
 disabled. It updates the checked-in guest manifest and its digest together;
 commit those files with the release source. SHA256SUMS excludes the executable

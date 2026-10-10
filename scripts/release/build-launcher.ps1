@@ -14,6 +14,7 @@ $version = [regex]::Match($versionSource, 'currentVersion\s*=\s*"([^"]+)"').Grou
 if (($ReleaseUrl -split '/')[-1] -cne $version) { throw "Release tag must match $version in app/update.go" }
 # Embed the exact manifest; hashing the executable separately avoids a circular pin.
 Copy-Item -LiteralPath $manifest -Destination (Join-Path $repo 'app/testdata/SHA256SUMS.arch') -Force
+Copy-Item -LiteralPath (Join-Path $assets 'guest-manifest.json') -Destination (Join-Path $repo 'app/testdata/guest-manifest.arch.json') -Force
 $pinSource = Join-Path $repo 'app/manifest.go'
 $pinText = [IO.File]::ReadAllText($pinSource)
 $pinPattern = '(defaultSumsSHA256\s*=\s*)"[0-9a-f]{64}"'

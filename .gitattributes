@@ -1,4 +1,5 @@
 app/testdata/SHA256SUMS.* text eol=lf
+app/testdata/guest-manifest.arch.json text eol=lf
 
 # Runtime patches are digest-pinned and must be byte-identical on Windows.
 runtime-build/patches/**/*.patch text eol=lf whitespace=-blank-at-eol,-blank-at-eof
