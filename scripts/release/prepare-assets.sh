@@ -40,7 +40,10 @@ for archive in "${runtime_archives[@]}"; do
     echo "$name is already present in SHA256SUMS" >&2
     exit 1
   fi
-  curl --fail --location --retry 3 --output "$artifacts/$name" "$url"
+  if [[ ! -f $artifacts/$name ]] || ! printf '%s  %s\n' "$digest" "$artifacts/$name" | sha256sum --check --status; then
+    curl --fail --location --retry 3 --connect-timeout 20 --max-time 1800 \
+      --speed-time 60 --speed-limit 1024 --output "$artifacts/$name" "$url"
+  fi
   printf '%s  %s\n' "$digest" "$artifacts/$name" | sha256sum --check
   printf '%s  %s\n' "$digest" "$name" >>"$artifacts/SHA256SUMS"
 done

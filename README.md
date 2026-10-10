@@ -19,6 +19,10 @@ bundled with the vanilla terminal image.
 
 ## Build and run
 
+To produce the downloadable executable and matching guest assets, use the
+**Build Try Arch release** workflow or follow [RELEASING.md](docs/RELEASING.md).
+The workflow creates a preview draft for review before publishing.
+
 Build the Windows launcher from `app/`:
 
 ```powershell

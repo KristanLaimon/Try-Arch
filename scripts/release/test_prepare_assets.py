@@ -38,8 +38,10 @@ class PrepareAssetsTests(unittest.TestCase):
                 data = f"{role} archive".encode()
                 path = payloads / name
                 path.write_bytes(data)
+                # Valid cache entries may be reused; corrupt ones must be replaced.
+                (artifacts / name).write_bytes(data if role == "runtime" else b"corrupt")
                 entries[role] = {
-                    "url": path.as_uri(),
+                    "url": "file:///missing-cache-source" if role == "runtime" else path.as_uri(),
                     "filename": name,
                     "sha256": sha256(data),
                 }

@@ -1,10 +1,42 @@
-name: Build Try Arch
+name: Build Try Arch release
 on:
   workflow_dispatch:
 permissions:
   contents: read
 jobs:
+  guest:
+    runs-on: ubuntu-latest
+    timeout-minutes: 120
+    steps:
+      - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
+      - run: bash scripts/release/build-guest.sh --contract-only
+      - run: python3 -m unittest discover -s scripts/release -p 'test_*.py'
+      - run: bash scripts/release/build-guest.sh --output artifacts/release
+      - name: Boot the finished vanilla guest
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y qemu-system-x86 qemu-utils
+          python3 guest-build/smoke.py artifacts/release
+      - run: bash scripts/release/prepare-assets.sh artifacts/release
+      - name: Assemble publishable guest assets
+        run: |
+          cp LICENSE THIRD_PARTY_NOTICES.md artifacts/release/
+          cd artifacts/release
+          sha256sum LICENSE THIRD_PARTY_NOTICES.md >> SHA256SUMS
+          rm rootfs.ext4 smoke.log
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: TryArch-manifest
+          path: artifacts/release/SHA256SUMS
+          retention-days: 7
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: TryArch-guest
+          path: artifacts/release/*
+          compression-level: 0
+          retention-days: 7
   launcher:
+    needs: guest
     runs-on: windows-latest
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
@@ -12,25 +44,44 @@ jobs:
         with:
           go-version-file: app/go.mod
           cache-dependency-path: app/go.sum
-      - run: go test ./...
-        working-directory: app
-      - run: go build -trimpath -ldflags "-H windowsgui -s -w" -o ../TryArch.exe .
-        working-directory: app
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
+        with:
+          name: TryArch-manifest
+          path: artifacts/release
+      - name: Build the executable with this guest's trust pin
+        shell: pwsh
+        env:
+          RELEASE_REPOSITORY: ${{ github.repository }}
+        run: |
+          $source = Get-Content app/update.go -Raw
+          $tag = [regex]::Match($source, 'currentVersion\s*=\s*"([^"]+)"').Groups[1].Value
+          ./scripts/release/build-launcher.ps1 -Artifacts artifacts/release -ReleaseUrl "https://github.com/$env:RELEASE_REPOSITORY/releases/download/$tag"
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
           name: TryArch-launcher
-          path: TryArch.exe
-  guest:
+          path: |
+            artifacts/release/TryArch.exe
+            artifacts/release/TryArch.exe.sha256
+          retention-days: 7
+  draft:
+    needs: [guest, launcher]
     runs-on: ubuntu-latest
-    timeout-minutes: 120
+    permissions:
+      contents: write
     steps:
       - uses: actions/checkout@fbc6f3992d24b796d5a048ff273f7fcc4a7b6c09
-      - run: bash scripts/release/build-guest.sh --contract-only
-      - run: bash scripts/release/build-guest.sh --output artifacts/arch-guest
-      - run: bash scripts/release/prepare-assets.sh artifacts/arch-guest
-      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093
         with:
-          name: TryArch-guest
-          path: |
-            artifacts/arch-guest/*
-            !artifacts/arch-guest/rootfs.ext4
+          pattern: TryArch-*
+          merge-multiple: true
+          path: artifacts/release
+      - name: Create a preview draft with all required assets
+        env:
+          GH_TOKEN: ${{ github.token }}
+          RELEASE_REPOSITORY: ${{ github.repository }}
+          RELEASE_COMMIT: ${{ github.sha }}
+        run: |
+          tag=$(python3 -c 'import pathlib,re; print(re.search(r"currentVersion\s*=\s*\"([^\"]+)\"", pathlib.Path("app/update.go").read_text())[1])')
+          python3 scripts/release/check-asset-sizes.py artifacts/release
+          python3 scripts/release/release-notes.py "$tag" --output release-notes.md
+          gh release create "$tag" artifacts/release/* --repo "$RELEASE_REPOSITORY" --target "$RELEASE_COMMIT" --draft --prerelease --title "Try Arch $tag (preview)" --notes-file release-notes.md
