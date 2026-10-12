@@ -39,8 +39,8 @@ arch-chroot "$work/root" mkinitcpio -P
 kernel=$(find "$work/root/usr/lib/modules" -name vmlinuz -print -quit)
 # shortcut: QEMU boots external kernel files, update these together after guest kernel upgrades.
 [[ -n $kernel ]] || { echo 'Installed kernel is missing.' >&2; exit 1; }
-cp "$kernel" "$output/vmlinuz-linux"
-cp "$work/root/boot/initramfs-linux.img" "$output/initramfs-linux.img"
+install -m644 "$kernel" "$output/vmlinuz-linux"
+install -m644 "$work/root/boot/initramfs-linux.img" "$output/initramfs-linux.img"
 arch-chroot "$work/root" pacman -Q > "$output/packages.txt"
 rm -f "$work/root/etc/machine-id" "$work/root/var/lib/systemd/random-seed"
 rm -f "$work/root/boot/"*.img
