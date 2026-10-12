@@ -22,6 +22,11 @@ is disabled, and the launcher's public key is validated before installation.
 Networking uses systemd-networkd DHCP and systemd-resolved. The default locale
 is en_US.UTF-8 and time zone is UTC; change these using normal Arch tools.
 
+`try-arch-share` mounts the launcher's selected Windows folder at `/mnt/host`
+after account setup and links it into the account's home using the folder name
+passed in `tryarch.sharename`. It preserves existing files at that name and
+skips boots without a selected share.
+
 Artifacts: `rootfs.ext4`, `rootfs.ext4.zst`, `vmlinuz-linux`,
 `initramfs-linux.img`, `build-spec.json`, `guest-manifest.json`, `packages.txt`,
 and `SHA256SUMS`. The package inventory records the build transaction.

@@ -1,5 +1,11 @@
 # Changelog
 
+## v0.1.1
+
+- Mount selected Windows shared folders automatically at `/mnt/host` and link them into the Linux account's home, including names with spaces.
+- Preserve existing files at the home-folder link and verify normal-user file exchange during guest smoke tests.
+- Include a shared-folder repair archive for existing Arch installations.
+
 ## Unreleased — Try Arch
 
 - Vanilla Arch terminal guest built from official repositories.

@@ -28,6 +28,12 @@ restart and connect using `ssh -p 2222 your-user@localhost`. SSH password login
 and root login are disabled. Do not expose the quick-start account on untrusted
 networks.
 
-Guest desktop integrations are not installed. Use ordinary network tools to
-transfer files, or mount an explicitly shared folder yourself. Create diagnostics
+Choose a Windows folder in Settings and restart Arch to access it at `/mnt/host`
+and `~/<Windows folder name>`. Existing files at the home-folder link are kept;
+use `/mnt/host` if that name is already occupied. Files can be read and written
+from Windows and Arch. Older installations need the `try-arch-share` script and
+service from `guest-build/overlay` installed once, then enabled with
+`sudo systemctl enable --now try-arch-share`.
+
+Guest desktop integrations are not installed. Create diagnostics
 from the tray when reporting problems and review the ZIP before sharing it.

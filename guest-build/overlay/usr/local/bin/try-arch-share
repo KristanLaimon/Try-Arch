@@ -1,0 +1,24 @@
+#!/usr/bin/env bash
+set -euo pipefail
+name=
+for word in $(cat /proc/cmdline); do
+  case $word in
+    tryarch.sharename=*) name=$(printf '%s' "${word#*=}" | base64 -d) ;;
+  esac
+done
+[[ -n $name ]] || exit 0
+[[ $name != . && $name != .. && $name != */* ]] || exit 1
+username=$(cat /var/lib/try-arch/account-ready)
+IFS=: read -r _ _ uid gid _ home _ < <(getent passwd "$username")
+[[ $uid -gt 0 && -d $home ]] || exit 1
+mkdir -p /mnt/host
+if ! mountpoint -q /mnt/host; then
+  mount -t 9p -o trans=virtio,version=9p2000.L,cache=none,nodev,nosuid hostshare /mnt/host
+fi
+link="$home/$name"
+if [[ ! -e $link && ! -L $link ]]; then
+  ln -sT /mnt/host "$link"
+  chown -h "$uid:$gid" "$link"
+elif [[ ! -L $link || $(readlink "$link") != /mnt/host ]]; then
+  printf 'Try Arch: keeping existing %s; shared folder is available at /mnt/host.\n' "$link" >&2
+fi

@@ -1,4 +1,5 @@
 """Linux/QEMU smoke check. Boots a temporary overlay; never changes the factory image."""
+import base64
 import os
 from pathlib import Path
 import selectors
@@ -13,6 +14,10 @@ def main(directory):
     directory = Path(directory).resolve()
     with tempfile.TemporaryDirectory(prefix='try-arch-smoke-') as temporary, socket.create_server(('127.0.0.1', 4450)) as lifecycle:
         disk = Path(temporary) / 'disk.qcow2'
+        share = Path(temporary) / 'Smoke Shared'
+        share.mkdir(mode=0o777)
+        share.chmod(0o777)
+        (share / 'from-host').write_text('host-to-guest')
         subprocess.run(['qemu-img', 'create', '-f', 'qcow2', '-F', 'raw', '-b',
                         str(directory / 'rootfs.ext4'), str(disk)], check=True)
         subprocess.run(['qemu-img', 'resize', str(disk), '16G'], check=True)
@@ -23,7 +28,8 @@ def main(directory):
             '-monitor', 'none', '-no-reboot', '-drive', f'file={disk},format=qcow2,if=virtio',
             '-kernel', str(directory / 'vmlinuz-linux'),
             '-initrd', str(directory / 'initramfs-linux.img'),
-            '-append', 'root=/dev/vda rw console=ttyS0 tryarch.instant=1',
+            '-append', 'root=/dev/vda rw console=ttyS0 tryarch.instant=1 tryarch.sharename=' + base64.b64encode(share.name.encode()).decode(),
+            '-virtfs', f'local,path={share},mount_tag=hostshare,security_model=none',
             '-device', 'virtio-net-pci,netdev=n0', '-netdev', 'user,id=n0',
             '-device', 'virtio-rng-pci'], stdin=subprocess.PIPE,
             stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
@@ -44,6 +50,10 @@ def main(directory):
             'sshd -T | grep -qix "passwordauthentication no"; '
             'sshd -T | grep -qix "permitrootlogin no"; '
             'until systemctl is-active --quiet try-arch-setup; do sleep 1; done; '
+            'until systemctl is-active --quiet try-arch-share; do sleep 1; done; '
+            'test "$(readlink "/home/arch/Smoke Shared")" = /mnt/host; '
+            'test "$(cat /mnt/host/from-host)" = host-to-guest; '
+            'runuser -u arch -- touch "/home/arch/Smoke Shared/from-guest"; '
             'systemctl is-active --quiet systemd-networkd systemd-resolved; '
             'test -f /usr/lib/modules/$(uname -r)/modules.dep.bin; '
             'pacman -Syu --noconfirm; '
@@ -80,7 +90,8 @@ def main(directory):
             with connection:
                 assert connection.recv(64) == b'ready\n', 'Guest did not report readiness'
             assert process.wait(timeout=20) == 0, 'QEMU did not shut down cleanly'
-            print('PASS: vanilla login, sudo, networking, package update, root/SSH policy, kernel modules, disk growth and shutdown')
+            assert (share / 'from-guest').is_file(), 'Guest file was not visible on host'
+            print('PASS: vanilla login, sudo, networking, shared-folder read/write, package update, root/SSH policy, kernel modules, disk growth and shutdown')
         finally:
             selector.close()
             if process.poll() is None:

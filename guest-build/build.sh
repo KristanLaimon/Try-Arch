@@ -19,7 +19,7 @@ truncate -s 4G "$image"
 sed '/^NoExtract/d' /etc/pacman.conf > "$work/pacman.conf"
 pacstrap -C "$work/pacman.conf" -c -K "$work/root" base linux linux-firmware e2fsprogs openssh sudo nano
 cp -r --no-preserve=mode,ownership /src/guest-build/overlay/. "$work/root/"
-chmod 755 "$work/root/usr/local/bin/try-arch-setup"
+chmod 755 "$work/root/usr/local/bin/try-arch-setup" "$work/root/usr/local/bin/try-arch-share"
 printf 'tryarch\n' > "$work/root/etc/hostname"
 printf 'en_US.UTF-8 UTF-8\n' > "$work/root/etc/locale.gen"
 printf 'LANG=en_US.UTF-8\n' > "$work/root/etc/locale.conf"
@@ -32,7 +32,7 @@ printf 'MODULES=(virtio_pci virtio_blk virtio_gpu ext4)\nHOOKS=(base systemd aut
 arch-chroot "$work/root" locale-gen
 arch-chroot "$work/root" passwd -l root
 arch-chroot "$work/root" ln -sf /usr/share/zoneinfo/UTC /etc/localtime
-arch-chroot "$work/root" systemctl enable systemd-networkd systemd-resolved try-arch-setup
+arch-chroot "$work/root" systemctl enable systemd-networkd systemd-resolved try-arch-setup try-arch-share
 ln -sf /run/systemd/resolve/stub-resolv.conf "$work/root/etc/resolv.conf"
 arch-chroot "$work/root" mkinitcpio -P
 # Recent Arch kernels keep the boot image in their module directory.

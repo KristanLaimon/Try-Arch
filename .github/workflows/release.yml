@@ -21,8 +21,9 @@ jobs:
       - name: Assemble publishable guest assets
         run: |
           cp LICENSE THIRD_PARTY_NOTICES.md artifacts/release/
+          tar -czf artifacts/release/tryarch-shared-folder-fix.tar.gz -C guest-build/overlay usr/local/bin/try-arch-share etc/systemd/system/try-arch-share.service
           cd artifacts/release
-          sha256sum LICENSE THIRD_PARTY_NOTICES.md >> SHA256SUMS
+          sha256sum LICENSE THIRD_PARTY_NOTICES.md tryarch-shared-folder-fix.tar.gz >> SHA256SUMS
           rm rootfs.ext4 smoke.log
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:

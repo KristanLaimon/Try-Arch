@@ -3,7 +3,7 @@ set -euo pipefail
 repo_root=$(cd "$(dirname "$0")/../.." && pwd)
 if [[ ${1:-} == --contract-only ]]; then
   python3 -m unittest discover -s "$repo_root/guest-build" -p 'test_*.py'
-  bash -n "$repo_root/guest-build/build.sh" "$repo_root/guest-build/overlay/usr/local/bin/try-arch-setup"
+  bash -n "$repo_root/guest-build/build.sh" "$repo_root/guest-build/overlay/usr/local/bin/try-arch-setup" "$repo_root/guest-build/overlay/usr/local/bin/try-arch-share"
   exit
 fi
 [[ ${1:-} == --output && -n ${2:-} && $# == 2 ]] || {

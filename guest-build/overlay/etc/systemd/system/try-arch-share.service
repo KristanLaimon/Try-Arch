@@ -1,0 +1,15 @@
+[Unit]
+Description=Try Arch Windows shared folder
+Requires=try-arch-setup.service
+After=try-arch-setup.service
+Before=getty@tty1.service display-manager.service
+ConditionKernelCommandLine=tryarch.sharename
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/bin/try-arch-share
+RemainAfterExit=yes
+TimeoutStartSec=30
+
+[Install]
+WantedBy=multi-user.target
