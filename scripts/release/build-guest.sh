@@ -13,4 +13,4 @@ mkdir -p "$2"
 output=$(cd "$2" && pwd)
 docker run --rm --privileged -v "$repo_root:/src:ro" -v "$output:/output" \
   --mount type=volume,destination=/var/cache/pacman/pkg archlinux:base \
-  bash -c 'pacman -Syu --noconfirm arch-install-scripts e2fsprogs python zstd && bash /src/guest-build/build.sh /output'
+  bash -c 'pacman -Syu --noconfirm arch-install-scripts e2fsprogs python zstd && bash /src/guest-build/build.sh /output && chown --reference=/output /output/*'
