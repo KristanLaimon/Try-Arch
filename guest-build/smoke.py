@@ -29,7 +29,8 @@ def main(directory):
             '-kernel', str(directory / 'vmlinuz-linux'),
             '-initrd', str(directory / 'initramfs-linux.img'),
             '-append', 'root=/dev/vda rw console=ttyS0 tryarch.instant=1 tryarch.sharename=' + base64.b64encode(share.name.encode()).decode(),
-            '-virtfs', f'local,path={share},mount_tag=hostshare,security_model=none',
+            # The Linux runner cannot chown host files to the guest's account.
+            '-virtfs', f'local,path={share},mount_tag=hostshare,security_model=mapped-xattr',
             '-device', 'virtio-net-pci,netdev=n0', '-netdev', 'user,id=n0',
             '-device', 'virtio-rng-pci'], stdin=subprocess.PIPE,
             stdout=subprocess.PIPE, stderr=subprocess.STDOUT)
