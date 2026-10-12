@@ -252,8 +252,8 @@ func prepareDisk(cfg *config, expandedMiB int64) error {
 			return fmt.Errorf("existing disk is below its verified factory size; your disk has been kept. Use Start fresh or restore a backup")
 		}
 		// A smaller disk can be a complete guest from an older release whose
-		// expanded size has since increased. Grow it in place and let the existing
-		// systemd-growfs-root unit extend ext4 at boot. Replacing it with the
+		// expanded size has since increased. Grow it in place and let the guest
+		// grow the root filesystem at boot. Replacing it with the
 		// factory image here would silently discard the user's system and files.
 		disk, err := os.OpenFile(cfg.disk, os.O_RDWR, 0)
 		if err != nil {

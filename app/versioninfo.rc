@@ -17,8 +17,8 @@
 1 ICON "icon.ico"
 
 1 VERSIONINFO
-FILEVERSION 0, 1, 1, 0
-PRODUCTVERSION 0, 1, 1, 0
+FILEVERSION 0, 1, 2, 0
+PRODUCTVERSION 0, 1, 2, 0
 FILEFLAGSMASK 0x3fL
 FILEFLAGS 0x0L
 FILEOS 0x40004L
@@ -31,12 +31,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "Try Arch contributors"
             VALUE "FileDescription", "Try Arch"
-            VALUE "FileVersion", "v0.1.1"
+            VALUE "FileVersion", "v0.1.2"
             VALUE "InternalName", "TryArch"
             VALUE "LegalCopyright", "Copyright (c) 2026 Try Arch contributors"
             VALUE "OriginalFilename", "TryArch.exe"
             VALUE "ProductName", "Try Arch"
-            VALUE "ProductVersion", "v0.1.1"
+            VALUE "ProductVersion", "v0.1.2"
         END
     END
     BLOCK "VarFileInfo"

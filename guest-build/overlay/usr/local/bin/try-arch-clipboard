@@ -1,0 +1,41 @@
+#!/usr/bin/env python3
+"""Copy stdin to Windows, or paste Windows text to stdout in the Linux console."""
+import argparse
+import base64
+import socket
+import sys
+
+LIMIT = 8 << 20
+
+
+def exchange(command, source, destination):
+    if command == 'copy':
+        data = source.read(LIMIT + 1)
+        if not data or len(data) > LIMIT:
+            raise ValueError('Copy requires 1 byte to 8 MiB of UTF-8 text')
+        data.decode('utf-8')
+        with socket.create_connection(('10.0.2.2', 4448), timeout=5) as connection:
+            connection.sendall(base64.b64encode(data) + b'\n')
+    else:
+        with socket.create_connection(('10.0.2.2', 4449), timeout=5) as connection:
+            # End capability negotiation without enabling desktop file transfers.
+            connection.sendall(b'text-only\n')
+            with connection.makefile('rb') as incoming:
+                frame = incoming.readline(4 * ((LIMIT + 2) // 3) + 2)
+        if not frame.endswith(b'\n'):
+            raise ValueError('Missing or oversized clipboard response')
+        data = base64.b64decode(frame.rstrip(b'\r\n'), validate=True)
+        if len(data) > LIMIT:
+            raise ValueError('Clipboard text exceeds 8 MiB')
+        data.decode('utf-8')
+        destination.write(data)
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('command', choices=('copy', 'paste'))
+    args = parser.parse_args()
+    try:
+        exchange(args.command, sys.stdin.buffer, sys.stdout.buffer)
+    except (OSError, ValueError) as error:
+        sys.exit(f'Clipboard: {error}')

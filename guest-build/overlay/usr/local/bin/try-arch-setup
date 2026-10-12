@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 set -euo pipefail
-resize2fs /dev/vda
+btrfs filesystem resize max /
 cmdline=$(cat /proc/cmdline)
 if [[ ! -f /var/lib/try-arch/account-ready ]]; then
   if [[ " $cmdline " == *' tryarch.instant=1 '* ]]; then

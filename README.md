@@ -13,9 +13,9 @@ Update Linux with `sudo pacman -Syu`.
 
 Windows 10/11 on an Intel or AMD x86_64 PC and Windows Hypervisor Platform are
 required. The launcher retains VM storage, backup, restore, snapshot, portable
-copy, resource, USB and port-forward controls. Desktop clipboard, camera,
-Windows Hello and application bridges require guest software and are not
-bundled with the vanilla terminal image.
+copy, resource, USB and port-forward controls. The guest uses Btrfs and includes
+text clipboard commands plus a Wayland clipboard bridge. Camera, Windows Hello
+and application bridges require additional guest software.
 
 ## Build and run
 
