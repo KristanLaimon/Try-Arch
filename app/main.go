@@ -38,6 +38,7 @@ type config struct {
 	winqEmu, share              string
 	fresh, fullscreen, noGpu    bool
 	captureFriendly             bool
+	discordRPC                  bool
 	updateGuestPayload          bool
 	resetPayloadPrepared        bool
 	factoryVerifiedThisRun      bool
@@ -495,11 +496,16 @@ func main() {
 	if err := applySettings(cfg, userSettings, explicitFlags, &forwards, sshKeyPath); err != nil {
 		fatal(uiTextWith("fatal.settings.use", map[string]string{"error": err.Error()}))
 	}
-	if !explicitFlags["discord-rpc"] {
-		*discordRPC = discordBridgeEnabled(cfg.dir)
+	integrations, integrationErr := loadIntegrationPreferences(cfg.dir)
+	if integrationErr != nil {
+		fatal(uiTextWith("settings.error.integrations", map[string]string{"error": integrationErr.Error()}))
 	}
+	if !explicitFlags["discord-rpc"] {
+		*discordRPC = integrations.DiscordRPC
+	}
+	cfg.discordRPC = *discordRPC
 	if !explicitFlags["capture-friendly"] {
-		cfg.captureFriendly = captureFriendlyEnabled(cfg.dir)
+		cfg.captureFriendly = integrations.CaptureFriendly
 	}
 	resourcePrefs, err := loadResourcePreferences(cfg.dir)
 	if err != nil {
@@ -950,6 +956,7 @@ func main() {
 	reclaimSupported.Store(cfg.diskFormat == "raw")
 	go runGuestAgent(cfg.dir)
 	go watchKeyboardPreferences(cfg.dir)
+	captureFriendlyShortcuts.Store(cfg.captureFriendly)
 	go runWinKeyHook()
 	go runWinKeyQmp()
 	go runTitleEnforcer(cfg.dir, cfg.fullscreen, cfg.fullscreenDisplay, cfg.captureFriendly)

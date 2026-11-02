@@ -71,7 +71,9 @@ const (
 	settingsAltTabID             = 2126
 	settingsUSBSelectionID       = 2127
 	settingsVolumeSyncID         = 2128
-	settingsInstallArchID     = 2130
+	settingsInstallArchID        = 2130
+	settingsCaptureFriendlyID    = 2131
+	settingsDiscordRPCID         = 2132
 	settingsSaveID               = 2001
 	settingsCancelID             = 2002
 	settingsBrowseID             = 2003
@@ -159,6 +161,11 @@ func runLauncherSettings(path, dataDir string, portable, launcher bool, beforeRe
 	prefs, err := loadDesktopPreferences(dataDir)
 	if err != nil {
 		errorBox(uiTextWith("settings.error.read_devices", map[string]string{"error": err.Error()}))
+		return false
+	}
+	integrations, err := loadIntegrationPreferences(dataDir)
+	if err != nil {
+		errorBox(uiTextWith("settings.error.integrations", map[string]string{"error": err.Error()}))
 		return false
 	}
 	launchPrefs, err := loadLaunchPreferences(dataDir)
@@ -257,6 +264,7 @@ func runLauncherSettings(path, dataDir string, portable, launcher bool, beforeRe
 	var hAudioOutput, hAudioInput, hVolumeSync uintptr
 	var hResourceProfile, hResourceHelp uintptr
 	var hApprovedApps uintptr
+	var hCaptureFriendly, hDiscordRPC uintptr
 	var updateResourceControls func()
 	var refreshApprovedApps func()
 	profileValues := []string{resourceBalanced, resourceMaximum, resourceManual}
@@ -490,8 +498,17 @@ func runLauncherSettings(path, dataDir string, portable, launcher bool, beforeRe
 					return 0
 				}
 				if err == nil {
+					updatedIntegrations := integrations
+					v, _, _ := procSendMessageW.Call(hCaptureFriendly, bmGetcheck, 0, 0)
+					updatedIntegrations.CaptureFriendly = v == bstChecked
+					v, _, _ = procSendMessageW.Call(hDiscordRPC, bmGetcheck, 0, 0)
+					updatedIntegrations.DiscordRPC = v == bstChecked
+					if err = saveIntegrationPreferences(dataDir, updatedIntegrations); err != nil {
+						errorBox(uiTextWith("settings.error.integrations", map[string]string{"error": err.Error()}))
+						return 0
+					}
 					updated := prefs
-					v, _, _ := procSendMessageW.Call(hCameraOn, bmGetcheck, 0, 0)
+					v, _, _ = procSendMessageW.Call(hCameraOn, bmGetcheck, 0, 0)
 					updated.CameraDisabled = v != bstChecked
 					v, _, _ = procSendMessageW.Call(hMicrophoneOn, bmGetcheck, 0, 0)
 					updated.MicrophoneDisabled = v != bstChecked
@@ -879,6 +896,12 @@ func runLauncherSettings(path, dataDir string, portable, launcher bool, beforeRe
 		procSendMessageW.Call(hFull, bmSetcheck, bstChecked, 0)
 	}
 	y += 30 + grow
+	hCaptureFriendly, grow = check(uiText("settings.display.capture_friendly"), left, y, 22, settingsCaptureFriendlyID)
+	if integrations.CaptureFriendly {
+		procSendMessageW.Call(hCaptureFriendly, bmSetcheck, bstChecked, 0)
+	}
+	y += 30 + grow
+	y = note(uiText("settings.display.capture_help"), left, y, clientW-2*left, 42, 48)
 	grow = fieldLabel(uiText("settings.display.fullscreen_display"), y, 20)
 	hFullscreenDisplay = mk("COMBOBOX", "", fieldX, y, fieldW, 180, 0x0003|wsVscroll|wsTabstop, settingsFullscreenDisplayID)
 	addDisplay := func(label, name string) {
@@ -1243,6 +1266,12 @@ func runLauncherSettings(path, dataDir string, portable, launcher bool, beforeRe
 	scroll.controls = nil
 	y = scroll.top
 	section(uiText("settings.section.apps"))
+	hDiscordRPC, grow = check(uiText("settings.apps.discord"), left, y, 22, settingsDiscordRPCID)
+	if integrations.DiscordRPC {
+		procSendMessageW.Call(hDiscordRPC, bmSetcheck, bstChecked, 0)
+	}
+	y += 30 + grow
+	y = note(uiText("settings.apps.discord_help"), left, y, clientW-2*left, 48, 54)
 	y = note(uiText("settings.apps.help"), left, y, clientW-2*left, 48, 52)
 	hApprovedApps = mk("LISTBOX", "", left, y, clientW-2*left, 240, wsBorder|wsVscroll|wsTabstop|0x0001, settingsAppListID) // LBS_NOTIFY
 	refreshApprovedApps = func() {

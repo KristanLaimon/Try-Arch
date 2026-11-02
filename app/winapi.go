@@ -217,6 +217,8 @@ func releaseQemuCursor() {
 // variables; only runTitleEnforcer's goroutine calls enforceDisplayWindows, so the
 // handoff needs no locking.
 type displayWindowState struct {
+	captureStyle   uintptr
+	captureActive  bool
 	index          int
 	last           *windowPlacement // the placement remembered for the window
 	target         *windowPlacement // where the window belongs (see nextPlacementStep)
@@ -288,6 +290,7 @@ func enumTitleProc(hwnd, _ uintptr) uintptr {
 			return 1
 		}
 		state = &displayWindowState{index: index}
+		state.captureStyle, _, _ = procGetWindowLongW.Call(hwnd, ^uintptr(15))
 		enumTitleWindows[hwnd] = state
 		if !enumTitleFullscreen {
 			placement := displayPlacement(enumTitleDir, index, enumTitleMonitorDetails)
@@ -302,13 +305,31 @@ func enumTitleProc(hwnd, _ uintptr) uintptr {
 				first, _ := selectedHostMonitor(enumTitleFullscreenDisplay, monitors)
 				m := monitors[(first+index)%len(monitors)].Bounds
 				if enumTitleCaptureFriendly {
-					applyCaptureFriendlyWindow(hwnd, m)
+					state.captureActive = applyCaptureFriendlyWindow(hwnd, m)
 				} else {
 					procSetWindowPos.Call(hwnd, 0, uintptr(m.Left), uintptr(m.Top), uintptr(m.width()), uintptr(m.height()), 0x0004|0x0010)
 				}
 			}
 		}
 		setTaskbarIdentity(hwnd)
+	}
+	if state.captureActive && !enumTitleFullscreen && capturePlacement(hwnd) != nil {
+		procSetWindowLongW.Call(hwnd, ^uintptr(15), state.captureStyle)
+		procSetWindowPos.Call(hwnd, 0, 0, 0, 0, 0, 0x0001|0x0002|0x0004|0x0010|0x0020)
+		placement := displayPlacement(enumTitleDir, state.index, enumTitleMonitorDetails)
+		if placement == nil || !applyPlacement(hwnd, placement) {
+			procShowWindow.Call(hwnd, swShowMaximized)
+		}
+		state.captureActive = false
+	}
+	if enumTitleCaptureFriendly && len(enumTitleMonitorDetails) > 0 && capturePlacement(hwnd) != nil {
+		first, _ := selectedHostMonitor(enumTitleFullscreenDisplay, enumTitleMonitorDetails)
+		monitor := enumTitleMonitorDetails[(first+state.index)%len(enumTitleMonitorDetails)].Bounds
+		var current screenRect
+		ok, _, _ := procGetWindowRect.Call(hwnd, uintptr(unsafe.Pointer(&current)))
+		if !state.captureActive || ok == 0 || current != captureFriendlyBounds(monitor) {
+			state.captureActive = applyCaptureFriendlyWindow(hwnd, monitor)
+		}
 	}
 	retitledDisplays.Store(hwnd, recordedDisplay{enumTitlePid, state.index})
 	if curtainUp.Load() {

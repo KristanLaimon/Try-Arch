@@ -98,6 +98,18 @@ func TestLauncherWindowKeyboard(t *testing.T) {
 			if settingsOnly {
 				value, _ := syscall.UTF16PtrFromString("1")
 				procSendMessageW.Call(target, wmSettext, 0, uintptr(unsafe.Pointer(value)))
+				capture := findSettingsControl(window, settingsCaptureFriendlyID)
+				discord := findSettingsControl(window, settingsDiscordRPCID)
+				if capture == 0 || discord == 0 {
+					t.Fatal("integration controls did not appear")
+				}
+				captureChecked, _, _ := procSendMessageW.Call(capture, 0x00f0, 0, 0)
+				discordChecked, _, _ := procSendMessageW.Call(discord, 0x00f0, 0, 0)
+				if captureChecked != 1 || discordChecked != 0 {
+					t.Fatalf("fresh integration defaults: capture=%d discord=%d", captureChecked, discordChecked)
+				}
+				procSendMessageW.Call(capture, 0x00f5, 0, 0)
+				procSendMessageW.Call(discord, 0x00f5, 0, 0)
 			}
 			procPostMessageW.Call(target, wmKeydown, 13, 0)
 			select {
@@ -113,6 +125,10 @@ func TestLauncherWindowKeyboard(t *testing.T) {
 				settings, err := loadSettings(settingsPath(dir))
 				if err != nil || settings.MemoryMiB != 1024 {
 					t.Fatalf("saved memory: %d, error: %v", settings.MemoryMiB, err)
+				}
+				integrations, err := loadIntegrationPreferences(dir)
+				if err != nil || integrations.CaptureFriendly || !integrations.DiscordRPC {
+					t.Fatalf("saved integrations: %+v, error: %v", integrations, err)
 				}
 			} else if _, err := os.Stat(settingsPath(dir)); !os.IsNotExist(err) {
 				t.Fatalf("Close unexpectedly wrote settings: %v", err)

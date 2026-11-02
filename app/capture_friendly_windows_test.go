@@ -7,18 +7,24 @@ import (
 	"testing"
 )
 
-func TestCaptureFriendlyMarkerIsOptIn(t *testing.T) {
+func TestCaptureFriendlyDefaultsAndStoredOptOut(t *testing.T) {
 	dir := t.TempDir()
-	if captureFriendlyEnabled(dir) {
-		t.Fatal("capture mode enabled without opt-in")
+	p, err := loadIntegrationPreferences(dir)
+	if err != nil || !p.CaptureFriendly {
+		t.Fatal("fresh install did not enable capture mode", err)
 	}
 	if err := os.WriteFile(filepath.Join(dir, captureFriendlyFilename), nil, 0600); err != nil {
 		t.Fatal(err)
 	}
-	if !captureFriendlyEnabled(dir) {
-		t.Fatal("capture mode ignored opt-in")
+	p.CaptureFriendly = false
+	if err := saveIntegrationPreferences(dir, p); err != nil {
+		t.Fatal(err)
 	}
-	if !backupNameAllowed(captureFriendlyFilename) {
+	p, err = loadIntegrationPreferences(dir)
+	if err != nil || p.CaptureFriendly {
+		t.Fatal("stored opt-out was overridden by legacy marker", err)
+	}
+	if !backupNameAllowed(integrationPreferencesFilename) {
 		t.Fatal("backup omits capture preference")
 	}
 }

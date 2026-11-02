@@ -83,6 +83,9 @@ func buildQemuArgs(cfg *config, cmdline string) []string {
 	if !cfg.useGpu {
 		render = "cpu"
 	}
+	if cfg.discordRPC {
+		cmdline += " tryarch.discord=1"
+	}
 	args = append(args,
 		"-drive", "file="+qemuOptionValue(cfg.disk)+",format="+cfg.diskFormat+",if=virtio",
 		"-kernel", filepath.Join(cfg.guestDir, "vmlinuz-linux"),

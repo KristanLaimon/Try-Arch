@@ -86,7 +86,23 @@ func hookCallback(nCode, wParam, lParam uintptr) uintptr {
 	// While runWinKeyHook swaps hooks, both are briefly installed and this
 	// one's CallNextHookEx can reach the other. Route each event once.
 	if int32(nCode) >= 0 && !hookChaining {
-		vk := *(*uint32)(unsafe.Pointer(lParam))  // KBDLLHOOKSTRUCT.vkCode
+		vk := *(*uint32)(unsafe.Pointer(lParam)) // KBDLLHOOKSTRUCT.vkCode
+		if vk == 'F' {
+			pid := qemuPid.Load()
+			control, _, _ := procGetAsyncKeyState.Call(vkControl)
+			alt, _, _ := procGetAsyncKeyState.Call(vkMenu)
+			rightAlt, _, _ := procGetAsyncKeyState.Call(0xA5)
+			toggle, swallow := captureShortcut.route(captureFriendlyShortcuts.Load(), pid != 0 && foregroundPid() == pid, control&0x8000 != 0, alt&0x8000 != 0, rightAlt&0x8000 != 0, wParam == wmKeydown || wParam == wmSyskeydown)
+			if toggle {
+				select {
+				case captureFullscreenToggle <- struct{}{}:
+				default:
+				}
+			}
+			if swallow {
+				return 1
+			}
+		}
 		if vk == vkF4 && wParam == wmSyskeydown { // Alt+F4 on the VM window
 			if pid := qemuPid.Load(); pid != 0 && foregroundPid() == pid {
 				requestQuitConfirm()
@@ -370,6 +386,8 @@ func runTitleEnforcer(dir string, fullscreen bool, fullscreenDisplay string, cap
 			wait = 250 * time.Millisecond
 		}
 		select {
+		case <-captureFullscreenToggle:
+			fullscreen = !fullscreen
 		case <-qemuWindowChanged:
 			// Let a burst of window events settle, then look once.
 			time.Sleep(30 * time.Millisecond)

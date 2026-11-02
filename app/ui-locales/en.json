@@ -692,5 +692,10 @@
   "setup.command.files": "ls",
   "setup.command.help": "ls --help",
   "setup.command.update": "passwd",
-  "setup.command.shutdown": "poweroff"
+  "setup.command.shutdown": "poweroff",
+  "settings.display.capture_friendly": "Recording-compatible Immersive (1-pixel bottom strip)",
+  "settings.display.capture_help": "Keeps GPU rendering. In OBS use Windows Graphics Capture with Capture Cursor off. Restart Arch after changing this.",
+  "settings.apps.discord": "Share supported Linux apps' activity with Windows Discord",
+  "settings.apps.discord_help": "Requires Windows Discord. Fresh guests include the bridge; older guests need the guest integration installer. Restart Arch after changing this.",
+  "settings.error.integrations": "Could not read or save integration preferences: {error}"
 }
