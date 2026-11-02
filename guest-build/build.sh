@@ -18,9 +18,9 @@ mkdir "$work/root"
 truncate -s 4G "$image"
 # The Docker base omits docs and pacman.conf; a normal VM must install them.
 sed '/^NoExtract/d' /etc/pacman.conf > "$work/pacman.conf"
-pacstrap -C "$work/pacman.conf" -c -K "$work/root" base linux linux-firmware btrfs-progs openssh sudo nano python socat wl-clipboard
+pacstrap -C "$work/pacman.conf" -c -K "$work/root" base linux linux-firmware btrfs-progs openssh sudo nano python socat wl-clipboard wf-recorder slurp
 cp -r --no-preserve=mode,ownership /src/guest-build/overlay/. "$work/root/"
-chmod 755 "$work/root/usr/local/bin/try-arch-setup" "$work/root/usr/local/bin/try-arch-share" "$work/root/usr/local/bin/try-arch-clipboard" "$work/root/usr/local/bin/try-arch-discord"
+chmod 755 "$work/root/usr/local/bin/try-arch-setup" "$work/root/usr/local/bin/try-arch-share" "$work/root/usr/local/bin/try-arch-clipboard" "$work/root/usr/local/bin/try-arch-discord" "$work/root/usr/local/bin/try-arch-record"
 install -m755 /src/scripts/guest/clipboard-bridge.sh "$work/root/usr/local/bin/clipboard-bridge"
 install -m755 /src/scripts/guest/clipboard-files /src/scripts/guest/file-transfer "$work/root/usr/local/bin/"
 printf 'tryarch\n' > "$work/root/etc/hostname"
@@ -36,7 +36,7 @@ arch-chroot "$work/root" locale-gen
 arch-chroot "$work/root" passwd -l root
 arch-chroot "$work/root" ln -sf /usr/share/zoneinfo/UTC /etc/localtime
 arch-chroot "$work/root" systemctl enable systemd-networkd systemd-resolved try-arch-setup try-arch-share
-arch-chroot "$work/root" systemctl --global enable try-arch-clipboard
+arch-chroot "$work/root" systemctl --global enable try-arch-clipboard try-arch-discord.socket
 ln -sf /run/systemd/resolve/stub-resolv.conf "$work/root/etc/resolv.conf"
 arch-chroot "$work/root" mkinitcpio -P
 # Recent Arch kernels keep the boot image in their module directory.

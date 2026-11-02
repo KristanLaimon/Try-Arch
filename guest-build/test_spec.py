@@ -32,7 +32,7 @@ class VanillaGuestTests(unittest.TestCase):
         source = Path(__file__).parent
         builder = (source / 'build.sh').read_text()
         packages = next(line for line in builder.splitlines() if line.startswith('pacstrap '))
-        self.assertEqual(packages.split('"$work/root" ')[1].split(), ['base', 'linux', 'linux-firmware', 'btrfs-progs', 'openssh', 'sudo', 'nano', 'python', 'socat', 'wl-clipboard'])
+        self.assertEqual(packages.split('"$work/root" ')[1].split(), ['base', 'linux', 'linux-firmware', 'btrfs-progs', 'openssh', 'sudo', 'nano', 'python', 'socat', 'wl-clipboard', 'wf-recorder', 'slurp'])
         self.assertNotIn('git clone', builder)
         self.assertNotIn('yay', builder)
         self.assertIn('-K "$work/root"', builder)

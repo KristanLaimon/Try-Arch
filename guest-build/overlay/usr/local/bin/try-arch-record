@@ -1,0 +1,59 @@
+#!/usr/bin/env python3
+"""Record a compatible Wayland desktop using CPU H.264, without a GPU encoder.
+
+Stop with Ctrl+C. Requires wf-recorder and FFmpeg with libx264 support.
+"""
+import argparse
+import os
+from pathlib import Path
+import re
+import shutil
+import subprocess
+import sys
+from datetime import datetime
+
+
+def recording_command(options, which=shutil.which, run=subprocess.run):
+    recorder = which('wf-recorder')
+    if not recorder:
+        raise ValueError('Install the recorder first: sudo pacman -S wf-recorder')
+    output = Path(options.output).expanduser() if options.output else Path.home() / 'Videos/Recordings' / (datetime.now().strftime('%Y-%m-%d_%H-%M-%S_') + str(os.getpid()) + '.mp4')
+    if output.exists():
+        raise ValueError(f'Refusing to overwrite an existing recording: {output}')
+    command = [recorder, '--no-dmabuf', '-c', 'libx264', '-p', 'preset=ultrafast', '-x', 'yuv420p', '-r', '30']
+    if options.region:
+        picker = which('slurp')
+        if not picker:
+            raise ValueError('Region selection requires slurp: sudo pacman -S slurp')
+        selected = run([picker], capture_output=True, text=True)
+        if selected.returncode:
+            return None
+        geometry = selected.stdout.strip()
+        if not re.fullmatch(r'-?\d+,-?\d+ \d+x\d+', geometry):
+            raise ValueError('Region picker returned invalid geometry')
+        command += ['-g', geometry]
+    if options.audio is not None:
+        command += ['--audio' + ('=' + options.audio if options.audio else '')]
+    output.parent.mkdir(parents=True, exist_ok=True)
+    return command + ['-f', str(output)]
+
+
+def main():
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument('--output', help='new output file; existing files are never overwritten')
+    parser.add_argument('--region', action='store_true', help='select a region with slurp')
+    parser.add_argument('--audio', nargs='?', const='', help='include audio, optionally from a named source')
+    options = parser.parse_args()
+    if not os.environ.get('WAYLAND_DISPLAY'):
+        parser.error('Run this inside a compatible Wayland desktop session.')
+    try:
+        command = recording_command(options)
+        if command:
+            print('Recording to ' + command[-1] + '; press Ctrl+C to save.', flush=True)
+            os.execv(command[0], command)
+    except (OSError, ValueError) as error:
+        sys.exit(f'Recording: {error}')
+
+
+if __name__ == '__main__':
+    main()

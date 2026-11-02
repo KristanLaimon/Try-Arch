@@ -1,5 +1,6 @@
 [Unit]
 Description=Discord Rich Presence for supported apps through Windows
+ConditionKernelCommandLine=tryarch.discord=1
 
 [Socket]
 ListenStream=%t/discord-ipc-0
