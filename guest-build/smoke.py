@@ -109,6 +109,7 @@ print('Discord guest socket roundtrip passed')
                     if not block:
                         break
                     transcript.extend(block)
+                    print(block.decode(errors='replace'), end='', flush=True)
                 if process.poll() is not None:
                     break
                 tail = bytes(transcript[-4096:])
