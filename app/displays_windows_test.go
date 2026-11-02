@@ -101,6 +101,28 @@ func TestNativeQEMUPrimaryWindow(t *testing.T) {
 	if qemuHwnd.Load() == 0 {
 		t.Fatal("no active display for tray")
 	}
+	hwnd := qemuHwnd.Load()
+	style, _, _ := procGetWindowLongW.Call(hwnd, ^uintptr(15))
+	for attempt := 0; attempt < 2; attempt++ {
+		enforceDisplayWindows(qemuPid.Load(), dir, true, "", 0, true)
+		_, monitor := selectedHostMonitor("", hostMonitors())
+		var bounds screenRect
+		procGetWindowRect.Call(hwnd, uintptr(unsafe.Pointer(&bounds)))
+		if bounds != captureFriendlyBounds(monitor.Bounds) {
+			t.Fatalf("capture mode bounds = %+v, monitor %+v", bounds, monitor.Bounds)
+		}
+		procShowWindow.Call(hwnd, swShowMinimized)
+		enforceDisplayWindows(qemuPid.Load(), dir, true, "", 0, true)
+		if capturePlacement(hwnd) != nil {
+			t.Fatal("capture enforcement restored a minimized window")
+		}
+		procShowWindow.Call(hwnd, swShowNormal)
+		enforceDisplayWindows(qemuPid.Load(), dir, false, "", 0, true)
+		restored, _, _ := procGetWindowLongW.Call(hwnd, ^uintptr(15))
+		if restored&0x00cf0000 != style&0x00cf0000 || enumTitleWindows[hwnd].captureActive {
+			t.Fatal("leaving capture mode did not restore the window frame")
+		}
+	}
 }
 
 // Secondary SDL windows appear when the guest activates their scanouts. Exercise
