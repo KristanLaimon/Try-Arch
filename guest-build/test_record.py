@@ -15,6 +15,7 @@ class RecordingTests(unittest.TestCase):
             options=argparse.Namespace(output=str(output),region=False,audio=None)
             command=recording_command(options,which=lambda name:'/usr/bin/'+name)
             self.assertIn('--no-dmabuf',command)
+            self.assertIn('--no-damage',command)
             self.assertEqual(command[command.index('-c')+1],'libx264')
             self.assertNotIn('-y',command)
             output.write_bytes(b'previous recording')

@@ -20,7 +20,8 @@ def recording_command(options, which=shutil.which, run=subprocess.run):
     output = Path(options.output).expanduser() if options.output else Path.home() / 'Videos/Recordings' / (datetime.now().strftime('%Y-%m-%d_%H-%M-%S_') + str(os.getpid()) + '.mp4')
     if output.exists():
         raise ValueError(f'Refusing to overwrite an existing recording: {output}')
-    command = [recorder, '--no-dmabuf', '-c', 'libx264', '-p', 'preset=ultrafast', '-x', 'yuv420p', '-r', '30']
+    # Keep frames flowing on idle desktops so stopping can finalize the video.
+    command = [recorder, '--no-dmabuf', '--no-damage', '-c', 'libx264', '-p', 'preset=ultrafast', '-x', 'yuv420p', '-r', '30']
     if options.region:
         picker = which('slurp')
         if not picker:
