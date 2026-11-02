@@ -23,3 +23,8 @@ and `pacman -Q` for official packages only.
 Old desktop-specific acceptance records were removed because they do not
 validate this vanilla image. Test Windows backup, restore, snapshots and reset
 against the new image before making a release claim.
+
+For Windows screen capture, record while the VM has focus and inspect decoded
+video frames. An unfocused screenshot is insufficient. The current host's
+[focused capture check](CAPTURE-VALIDATION.md) records the tested configuration
+and its limits.

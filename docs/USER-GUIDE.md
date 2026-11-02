@@ -37,3 +37,7 @@ service from `guest-build/overlay` installed once, then enabled with
 
 Guest desktop integrations are not installed. Create diagnostics
 from the tray when reporting problems and review the ZIP before sharing it.
+
+See [upgrading and optional Discord integration](UPGRADING.md) to keep an existing
+VM while updating the launcher, bridge supported apps to Windows Discord, or
+record a desktop whose virtual GPU is rejected by GPU Screen Recorder.
