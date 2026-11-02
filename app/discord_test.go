@@ -97,6 +97,33 @@ func TestDiscordPresenceRelay(t *testing.T) {
 	}
 }
 
+func TestDiscordActivityHidesGuestAccountInState(t *testing.T) {
+	data, err := discordActivityForHost([]byte(`{"cmd":"SET_ACTIVITY","args":{"pid":123,"activity":{"state":"In private-account from internal vm","details":"Playing a game","assets":{"large_image":"game"}}},"nonce":"7"}`))
+	if err != nil {
+		t.Fatal(err)
+	}
+	var request struct {
+		Nonce string `json:"nonce"`
+		Args  struct {
+			PID      int `json:"pid"`
+			Activity struct {
+				State   string            `json:"state"`
+				Details string            `json:"details"`
+				Assets  map[string]string `json:"assets"`
+			} `json:"activity"`
+		} `json:"args"`
+	}
+	if err := json.Unmarshal(data, &request); err != nil {
+		t.Fatal(err)
+	}
+	if bytes.Contains(data, []byte("private-account")) || request.Args.Activity.State != "In arch-linux" {
+		t.Fatalf("guest account exposed: %s", data)
+	}
+	if request.Nonce != "7" || request.Args.PID != os.Getpid() || request.Args.Activity.Details != "Playing a game" || request.Args.Activity.Assets["large_image"] != "game" {
+		t.Fatalf("app integration changed unexpectedly: %s", data)
+	}
+}
+
 func TestDiscordRejectsAccountCommandsAndBadFrames(t *testing.T) {
 	for _, command := range []string{"AUTHORIZE", "AUTHENTICATE", "GET_GUILDS", "SUBSCRIBE", "SELECT_VOICE_CHANNEL"} {
 		if validDiscordRequest(1, []byte(`{"cmd":"`+command+`"}`), false) {

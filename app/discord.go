@@ -86,6 +86,15 @@ func discordActivityForHost(data []byte) ([]byte, error) {
 	}
 	// A Linux PID does not identify a process on Windows.
 	args["pid"], _ = json.Marshal(os.Getpid())
+	var activity map[string]json.RawMessage
+	if raw := args["activity"]; len(raw) != 0 && !bytes.Equal(bytes.TrimSpace(raw), []byte("null")) {
+		if err := json.Unmarshal(raw, &activity); err != nil {
+			return nil, err
+		}
+		// Guest apps can put the Linux account name in their location/status.
+		activity["state"], _ = json.Marshal("In arch-linux")
+		args["activity"], _ = json.Marshal(activity)
+	}
 	request["args"], _ = json.Marshal(args)
 	return json.Marshal(request)
 }
