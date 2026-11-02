@@ -37,9 +37,10 @@ bash scripts/release/prepare-assets.sh artifacts/arch-guest
 ```
 
 The runtime assets are verified against `guest-build/runtime.lock.json`.
-The guest image has no public release pin yet. Serve or publish the built
-artifacts, compute the SHA256 of `SHA256SUMS`, and launch with that independent
-trust pin:
+Download the release executable for an embedded guest/runtime trust pin.
+Development builds disable guest downloads by default. To run a local guest
+build, serve the artifacts, compute the SHA256 of `SHA256SUMS`, and launch with
+that independent trust pin:
 
 For a local build, serve the artifacts in one terminal:
 
@@ -54,8 +55,8 @@ $pin = (Get-FileHash artifacts/arch-guest/SHA256SUMS -Algorithm SHA256).Hash.ToL
 .\TryArch.exe -release http://127.0.0.1:8765 -sums-sha256 $pin
 ```
 
-Default guest downloads and launcher updates are disabled until verified
-Try Arch releases are published. The launcher will never use the former
+Published release executables download their verified Try Arch assets;
+automatic launcher updates remain disabled. The launcher will never use the former
 distribution image as a fallback. Existing installations from that project
 are left in their original data directory; back them up separately.
 
