@@ -23,6 +23,7 @@ type config struct {
 	winqEmu, share              string
 	fresh, fullscreen, noGpu    bool
 	captureFriendly             bool
+	updateGuestPayload          bool
 	resetPayloadPrepared        bool
 	factoryVerifiedThisRun      bool
 	fullscreenDisplay           string

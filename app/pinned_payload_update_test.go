@@ -17,7 +17,7 @@ import (
 
 func TestOwnPayloadConvergenceEligibility(t *testing.T) {
 	dir := t.TempDir()
-	cfg := &config{dir: dir, guestDir: filepath.Join(dir, "guest")}
+	cfg := &config{dir: dir, guestDir: filepath.Join(dir, "guest"), updateGuestPayload: true}
 	pins := pinnedPayloadUpdate{"https://example.test/guest", testSHA256([]byte("guest")), "https://example.test/runtime", testSHA256([]byte("runtime"))}
 	writeReceipt := func(root, release, digest string, runtime bool) {
 		t.Helper()

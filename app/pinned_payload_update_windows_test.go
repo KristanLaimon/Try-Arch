@@ -26,7 +26,7 @@ func TestNativePinnedPayloadConvergesAfterLegacyHop(t *testing.T) {
 	for _, baseline := range []string{"v0.8.0", "v0.9.0"} {
 		t.Run(baseline, func(t *testing.T) {
 			dir := t.TempDir()
-			cfg := &config{dir: dir, guestDir: filepath.Join(dir, "guest"), vmDir: filepath.Join(dir, "vm"), disk: filepath.Join(dir, "vm", "disk.raw")}
+			cfg := &config{dir: dir, guestDir: filepath.Join(dir, "guest"), vmDir: filepath.Join(dir, "vm"), disk: filepath.Join(dir, "vm", "disk.raw"), updateGuestPayload: true}
 			os.MkdirAll(cfg.vmDir, 0700)
 			os.WriteFile(cfg.disk, append([]byte("user disk sentinel"), make([]byte, 1<<20)...), 0600)
 			cfg.desktop.AutomaticUpdatesDisabled = true

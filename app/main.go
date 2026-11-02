@@ -38,6 +38,7 @@ type config struct {
 	winqEmu, share              string
 	fresh, fullscreen, noGpu    bool
 	captureFriendly             bool
+	updateGuestPayload          bool
 	resetPayloadPrepared        bool
 	factoryVerifiedThisRun      bool
 	fullscreenDisplay           string
@@ -183,6 +184,7 @@ func main() {
 	diagnostics := flag.Bool("diagnostics", false, "write a zip of logs, settings, and machine facts for a bug report, then exit")
 	sshKeyPath := flag.String("ssh-key", "", "public key to authorize for the Arch account (default: your ~/.ssh/id_*.pub when -ssh is used)")
 	noUpdate := flag.Bool("no-update", false, "do not check the feed for newer releases")
+	flag.BoolVar(&cfg.updateGuestPayload, "update-guest-payload", false, "explicitly update installed guest boot assets; requires a matching kernel inside Linux")
 	discordRPC := flag.Bool("discord-rpc", false, "bridge supported Linux apps' Discord Rich Presence to Windows Discord")
 	updateURL := flag.String("update-url", defaultUpdateURL, "authenticated update manifest URL")
 	release := flag.String("release", defaultReleaseURL,

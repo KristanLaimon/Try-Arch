@@ -33,6 +33,10 @@ func (p pinnedPayloadUpdate) artifacts() []pinnedPayloadArtifacts {
 }
 
 func ownPayloadUpdate(cfg *config, complete, recovery bool, explicit map[string]bool, pins pinnedPayloadUpdate) *pinnedPayloadUpdate {
+	// Launcher upgrades must not pair a new factory kernel with an older user disk.
+	if !cfg.updateGuestPayload {
+		return nil
+	}
 	if !complete || cfg.fresh || recovery || cfg.portable || failedUpdateVersion(cfg.dir) == currentVersion {
 		return nil
 	}
