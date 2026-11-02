@@ -22,6 +22,7 @@ type config struct {
 	dir, hostDir, payloadDir    string
 	winqEmu, share              string
 	fresh, fullscreen, noGpu    bool
+	captureFriendly             bool
 	resetPayloadPrepared        bool
 	factoryVerifiedThisRun      bool
 	fullscreenDisplay           string

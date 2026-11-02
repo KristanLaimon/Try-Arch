@@ -158,7 +158,7 @@ func buildQemuArgs(cfg *config, cmdline string) []string {
 		// Stock QEMU for Windows ships no virtio-9p. main() selects the bundled
 		// runtime when possible and otherwise tells the user before continuing.
 	}
-	if cfg.fullscreen {
+	if cfg.fullscreen && !cfg.captureFriendly {
 		args = append(args, "-full-screen")
 	}
 	return args

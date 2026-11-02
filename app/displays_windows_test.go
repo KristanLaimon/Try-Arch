@@ -69,7 +69,7 @@ func TestNativeQEMUPrimaryWindow(t *testing.T) {
 	dir := t.TempDir()
 	deadline := time.Now().Add(15 * time.Second)
 	for {
-		enforceDisplayWindows(qemuPid.Load(), dir, false, "", 0)
+		enforceDisplayWindows(qemuPid.Load(), dir, false, "", 0, false)
 		if len(enumTitleWindows) == 1 {
 			break
 		}
@@ -148,7 +148,7 @@ func TestMultipleNativeDisplayWindowLifecycle(t *testing.T) {
 	}
 	qemuPid.Store(uint32(os.Getpid()))
 	dir := t.TempDir()
-	enforceDisplayWindows(qemuPid.Load(), dir, false, "", 0)
+	enforceDisplayWindows(qemuPid.Load(), dir, false, "", 0, false)
 	if len(enumTitleWindows) != 3 {
 		t.Fatalf("lost secondary display windows: %d", len(enumTitleWindows))
 	}
@@ -168,18 +168,18 @@ func TestMultipleNativeDisplayWindowLifecycle(t *testing.T) {
 	if capturePlacement(windows[1]).usable(monitors) {
 		t.Fatal("test window did not move offscreen")
 	}
-	enforceDisplayWindows(qemuPid.Load(), dir, false, "", 0)
+	enforceDisplayWindows(qemuPid.Load(), dir, false, "", 0, false)
 	if capturePlacement(windows[1]).usable(monitors) {
 		t.Fatal("moved a window without a topology change")
 	}
 	enumTitleMonitors = []screenRect{{30000, 30000, 32000, 32000}}
-	enforceDisplayWindows(qemuPid.Load(), dir, false, "", 0)
+	enforceDisplayWindows(qemuPid.Load(), dir, false, "", 0, false)
 	if !capturePlacement(windows[1]).usable(monitors) {
 		t.Fatal("lost output after monitor removal")
 	}
 	procDestroyWindow.Call(windows[2])
 	windows = windows[:2]
-	enforceDisplayWindows(qemuPid.Load(), dir, false, "", 0)
+	enforceDisplayWindows(qemuPid.Load(), dir, false, "", 0, false)
 	if len(enumTitleWindows) != 2 {
 		t.Fatal("retained a closed display window")
 	}

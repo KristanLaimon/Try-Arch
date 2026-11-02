@@ -37,6 +37,7 @@ type config struct {
 	dir, hostDir, payloadDir    string
 	winqEmu, share              string
 	fresh, fullscreen, noGpu    bool
+	captureFriendly             bool
 	resetPayloadPrepared        bool
 	factoryVerifiedThisRun      bool
 	fullscreenDisplay           string
@@ -146,6 +147,7 @@ func main() {
 	flag.BoolVar(&cfg.fresh, "fresh", false, "start over and retain the previous writable disk for recovery")
 	flag.IntVar(&cfg.displays, "displays", 1, "number of guest displays (1 to 16)")
 	flag.BoolVar(&cfg.fullscreen, "fullscreen", false, "start fullscreen (Immersive)")
+	flag.BoolVar(&cfg.captureFriendly, "capture-friendly", false, "use borderless Immersive with a one-pixel bottom strip for Windows capture")
 	flag.StringVar(&cfg.fullscreenDisplay, "fullscreen-display", "", "Windows display device for the first fullscreen output (empty: primary)")
 	flag.IntVar(&cfg.memOverrideMiB, "memory", 0, "guest RAM in MiB (default: sized to this PC)")
 	flag.IntVar(&cfg.cpuOverride, "cpus", 0, "guest CPUs (default: sized to this PC)")
@@ -493,6 +495,9 @@ func main() {
 	}
 	if !explicitFlags["discord-rpc"] {
 		*discordRPC = discordBridgeEnabled(cfg.dir)
+	}
+	if !explicitFlags["capture-friendly"] {
+		cfg.captureFriendly = captureFriendlyEnabled(cfg.dir)
 	}
 	resourcePrefs, err := loadResourcePreferences(cfg.dir)
 	if err != nil {
@@ -945,7 +950,7 @@ func main() {
 	go watchKeyboardPreferences(cfg.dir)
 	go runWinKeyHook()
 	go runWinKeyQmp()
-	go runTitleEnforcer(cfg.dir, cfg.fullscreen, cfg.fullscreenDisplay)
+	go runTitleEnforcer(cfg.dir, cfg.fullscreen, cfg.fullscreenDisplay, cfg.captureFriendly)
 	go runCursorReleaseGuard()
 	go runCloseGuard()
 	runClipboardBridge()

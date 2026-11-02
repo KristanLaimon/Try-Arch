@@ -243,6 +243,7 @@ var (
 	enumTitleIcon              uintptr
 	enumTitleDir               string
 	enumTitleFullscreen        bool
+	enumTitleCaptureFriendly   bool
 	enumTitleFullscreenDisplay string
 	enumTitleWindows           = map[uintptr]*displayWindowState{}
 	enumTitleSeen              = map[uintptr]bool{}
@@ -300,7 +301,11 @@ func enumTitleProc(hwnd, _ uintptr) uintptr {
 			if len(monitors) > 0 {
 				first, _ := selectedHostMonitor(enumTitleFullscreenDisplay, monitors)
 				m := monitors[(first+index)%len(monitors)].Bounds
-				procSetWindowPos.Call(hwnd, 0, uintptr(m.Left), uintptr(m.Top), uintptr(m.width()), uintptr(m.height()), 0x0004|0x0010)
+				if enumTitleCaptureFriendly {
+					applyCaptureFriendlyWindow(hwnd, m)
+				} else {
+					procSetWindowPos.Call(hwnd, 0, uintptr(m.Left), uintptr(m.Top), uintptr(m.width()), uintptr(m.height()), 0x0004|0x0010)
+				}
 			}
 		}
 		setTaskbarIdentity(hwnd)
@@ -345,6 +350,9 @@ func enumTitleProc(hwnd, _ uintptr) uintptr {
 			if current := (&windowPlacement{Normal: bounds}); !current.usable(enumTitleMonitors) {
 				first, _ := selectedHostMonitor(enumTitleFullscreenDisplay, enumTitleMonitorDetails)
 				m := enumTitleMonitorDetails[(first+state.index)%len(enumTitleMonitorDetails)].Bounds
+				if enumTitleCaptureFriendly {
+					m = captureFriendlyBounds(m)
+				}
 				if ok, _, _ := procSetWindowPos.Call(hwnd, 0, uintptr(m.Left), uintptr(m.Top), uintptr(m.width()), uintptr(m.height()), 0x0004|0x0010); ok == 0 {
 					return 1
 				}
@@ -368,7 +376,7 @@ func enumTitleProc(hwnd, _ uintptr) uintptr {
 	return 1
 }
 
-func enforceDisplayWindows(pid uint32, dir string, fullscreen bool, fullscreenDisplay string, icon uintptr) {
+func enforceDisplayWindows(pid uint32, dir string, fullscreen bool, fullscreenDisplay string, icon uintptr, captureFriendly bool) {
 	if pid != enumTitlePid {
 		enumTitleWindows = map[uintptr]*displayWindowState{}
 		enumTitleMonitors = nil
@@ -381,6 +389,7 @@ func enforceDisplayWindows(pid uint32, dir string, fullscreen bool, fullscreenDi
 		return true
 	})
 	enumTitlePid, enumTitleDir, enumTitleFullscreen, enumTitleFullscreenDisplay, enumTitleIcon = pid, dir, fullscreen, fullscreenDisplay, icon
+	enumTitleCaptureFriendly = fullscreen && captureFriendly
 	enumTitleSeen = map[uintptr]bool{}
 	details := hostMonitors()
 	monitors := make([]screenRect, 0, len(details))
