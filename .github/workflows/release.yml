@@ -18,8 +18,10 @@ jobs:
           sudo apt-get install -y qemu-system-x86 qemu-utils sway wf-recorder ffmpeg dbus-x11
           python3 guest-build/smoke.py artifacts/release
       - name: Record a real Wayland session with the CPU fallback
+        timeout-minutes: 3
         run: bash scripts/release/test-cpu-recording.sh artifacts/validation
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        if: always()
         with:
           name: CPU-recording-validation
           path: artifacts/validation/*

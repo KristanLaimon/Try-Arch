@@ -8,7 +8,14 @@ output=$(cd "$output" && pwd)
 work=$(mktemp -d /tmp/tryarch-cpu.XXXXXX)
 compositor=
 cleanup() {
-  if [[ -n $compositor ]]; then kill "$compositor" 2>/dev/null || true; wait "$compositor" 2>/dev/null || true; fi
+  result=$?
+  if [[ $result != 0 ]]; then cat "$output"/cpu-*.log 2>/dev/null || true; fi
+  if [[ -n $compositor ]]; then
+    kill -TERM -- "-$compositor" 2>/dev/null || true
+    sleep .2
+    kill -KILL -- "-$compositor" 2>/dev/null || true
+    wait "$compositor" 2>/dev/null || true
+  fi
   [[ $work == /tmp/tryarch-cpu.* ]] && rm -rf -- "$work"
 }
 trap cleanup EXIT
@@ -16,7 +23,7 @@ mkdir -m700 "$work/runtime"
 export XDG_RUNTIME_DIR="$work/runtime"
 export WLR_BACKENDS=headless WLR_RENDERER=pixman WLR_LIBINPUT_NO_DEVICES=1
 printf 'output HEADLESS-1 mode 640x480\noutput * bg #338866 solid_color\n' > "$work/sway.conf"
-dbus-run-session -- sway --unsupported-gpu -c "$work/sway.conf" > "$output/cpu-compositor.log" 2>&1 &
+setsid dbus-run-session -- sway --unsupported-gpu -c "$work/sway.conf" > "$output/cpu-compositor.log" 2>&1 &
 compositor=$!
 for ((attempt=0;attempt<100;attempt++)); do
   for candidate in "$XDG_RUNTIME_DIR"/wayland-*; do
@@ -27,7 +34,7 @@ for ((attempt=0;attempt<100;attempt++)); do
 done
 [[ -n ${WAYLAND_DISPLAY:-} ]]
 set +e
-timeout --signal=INT 5s python3 "$repo/guest-build/overlay/usr/local/bin/try-arch-record" --output "$output/cpu-recording.mkv" > "$output/cpu-recorder.log" 2>&1
+timeout --signal=INT --kill-after=5s 5s python3 "$repo/guest-build/overlay/usr/local/bin/try-arch-record" --output "$output/cpu-recording.mkv" > "$output/cpu-recorder.log" 2>&1
 status=$?
 set -e
 [[ $status == 0 || $status == 124 ]] || { cat "$output/cpu-recorder.log"; exit 1; }
