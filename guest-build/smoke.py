@@ -7,17 +7,49 @@ import socket
 import subprocess
 import sys
 import tempfile
+import threading
+import struct
 import time
 
 
 def main(directory):
     directory = Path(directory).resolve()
-    with tempfile.TemporaryDirectory(prefix='try-arch-smoke-') as temporary, socket.create_server(('127.0.0.1', 4450)) as lifecycle:
+    with tempfile.TemporaryDirectory(prefix='try-arch-smoke-') as temporary, socket.create_server(('127.0.0.1', 4450)) as lifecycle, socket.create_server(('127.0.0.1',4457)) as discord:
         disk = Path(temporary) / 'disk.qcow2'
         share = Path(temporary) / 'Smoke Shared'
         share.mkdir(mode=0o777)
         share.chmod(0o777)
         (share / 'from-host').write_text('host-to-guest')
+        discord_errors=[]
+        discord_done=threading.Event()
+        def discord_host():
+            try:
+                discord.settimeout(300)
+                connection,_=discord.accept()
+                with connection:
+                    connection.settimeout(10)
+                    incoming=connection.makefile('rb')
+                    opcode,size=struct.unpack('<II',incoming.read(8))
+                    assert opcode==0 and size<65536
+                    assert b'client_id' in incoming.read(size)
+                    payload=b'{"evt":"READY"}'
+                    connection.sendall(struct.pack('<II',1,len(payload))+payload)
+            except Exception as error:
+                discord_errors.append(str(error))
+            finally:
+                discord_done.set()
+        threading.Thread(target=discord_host,daemon=True).start()
+        (share/'check-discord.py').write_text('''import socket,struct
+with socket.socket(socket.AF_UNIX) as connection:
+ connection.settimeout(10)
+ connection.connect('/run/user/1000/discord-ipc-0')
+ payload=b'{"v":1,"client_id":"123456789012345678"}'
+ connection.sendall(struct.pack('<II',0,len(payload))+payload)
+ incoming=connection.makefile('rb')
+ opcode,size=struct.unpack('<II',incoming.read(8))
+ assert opcode==1 and b'READY' in incoming.read(size)
+print('Discord guest socket roundtrip passed')
+''')
         subprocess.run(['qemu-img', 'create', '-f', 'qcow2', '-F', 'raw', '-b',
                         str(directory / 'rootfs.ext4'), str(disk)], check=True)
         subprocess.run(['qemu-img', 'resize', str(disk), '16G'], check=True)
@@ -28,7 +60,7 @@ def main(directory):
             '-monitor', 'none', '-no-reboot', '-drive', f'file={disk},format=qcow2,if=virtio',
             '-kernel', str(directory / 'vmlinuz-linux'),
             '-initrd', str(directory / 'initramfs-linux.img'),
-            '-append', 'root=/dev/vda rw console=ttyS0 tryarch.instant=1 tryarch.sharename=' + base64.b64encode(share.name.encode()).decode(),
+            '-append', 'root=/dev/vda rw console=ttyS0 tryarch.instant=1 tryarch.discord=1 tryarch.sharename=' + base64.b64encode(share.name.encode()).decode(),
             # The Linux runner cannot chown host files to the guest's account.
             '-virtfs', f'local,path={share},mount_tag=hostshare,security_model=mapped-xattr',
             '-device', 'virtio-net-pci,netdev=n0', '-netdev', 'user,id=n0',
@@ -50,6 +82,9 @@ def main(directory):
             'test -x /usr/local/bin/clipboard-bridge; '
             'test -x /usr/local/bin/clipboard-files; '
             'test -x /usr/local/bin/file-transfer; '
+            'test -x /usr/local/bin/try-arch-discord; '
+            'test -x /usr/local/bin/try-arch-record; '
+            'ffmpeg -hide_banner -encoders 2>/dev/null | grep -q libx264; '
             'test "$(df --output=size / | tail -1)" -gt 8000000; '
             'passwd -S root | grep -q " L "; '
             'ssh-keygen -A; '
@@ -60,6 +95,8 @@ def main(directory):
             'test "$(readlink "/home/arch/Smoke Shared")" = /mnt/host; '
             'test "$(cat /mnt/host/from-host)" = host-to-guest; '
             'runuser -u arch -- touch "/home/arch/Smoke Shared/from-guest"; '
+            'runuser -u arch -- env XDG_RUNTIME_DIR=/run/user/1000 DBUS_SESSION_BUS_ADDRESS=unix:path=/run/user/1000/bus systemctl --user start try-arch-discord.socket; '
+            'runuser -u arch -- python /mnt/host/check-discord.py; '
             'systemctl is-active --quiet systemd-networkd systemd-resolved; '
             'test -f /usr/lib/modules/$(uname -r)/modules.dep.bin; '
             'pacman -Syu --noconfirm; '
@@ -97,7 +134,8 @@ def main(directory):
                 assert connection.recv(64) == b'ready\n', 'Guest did not report readiness'
             assert process.wait(timeout=20) == 0, 'QEMU did not shut down cleanly'
             assert (share / 'from-guest').is_file(), 'Guest file was not visible on host'
-            print('PASS: vanilla login, sudo, networking, shared-folder read/write, package update, root/SSH policy, kernel modules, disk growth and shutdown')
+            assert discord_done.wait(5) and not discord_errors, discord_errors
+            print('PASS: vanilla login, sudo, networking, shared-folder read/write, Discord user socket roundtrip, CPU encoder, package update, root/SSH policy, kernel modules, disk growth and shutdown')
         finally:
             selector.close()
             if process.poll() is None:

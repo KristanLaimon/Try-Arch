@@ -9,7 +9,9 @@ Updating the launcher does not reinstall Linux or update those packages.
 
 Use Settings → Backup for an independent VM backup before changing Linux.
 Do not use Reset, Uninstall or `-fresh` to upgrade. Keep the installed external
-kernel and initramfs matched to the guest; see [the user guide](USER-GUIDE.md).
+kernel and initramfs matched to the guest. Automatic factory boot-payload
+replacement is disabled for existing guests; `-update-guest-payload` is an
+explicit maintenance option, requiring a matching guest kernel and backup; see [the user guide](USER-GUIDE.md).
 
 # Existing apps' Discord integration
 
@@ -19,17 +21,27 @@ needs no new application ID, bot or Discord token. The original app supplies
 its application ID and activity. Account, authorization, subscription and voice
 control RPC commands are blocked. Join/invite callbacks are not supported.
 
-On an existing guest, run this from a copy of this repository as your Linux
-desktop user:
+Fresh installations include the guest bridge. On an older guest, download
+`tryarch-guest-integrations.tar.gz` from the release, extract it, and run as
+your Linux desktop user from the extracted directory:
 
 ```sh
-sh scripts/install-discord-bridge.sh
+sh scripts/install-guest-integrations.sh
 ```
 
-Start the Windows launcher with `-discord-rpc`. To enable it for ordinary
-shortcut launches, create an empty `discord-rpc-enabled` file inside the data
-directory. Remove that marker to disable it, or use `-discord-rpc=false` for
-one launch. Older launchers ignore the marker; their settings stay compatible.
+This installs per-user helpers and backs up any helper files it replaces.
+It does not replace your desktop, packages or VM disk. Install any missing
+recording dependencies with `sudo pacman -S wf-recorder slurp`.
+
+Enable **Settings ? Apps ? Discord Rich Presence** on Windows and restart
+Try Arch. It is off by default. `-discord-rpc` enables it for one launch;
+`-discord-rpc=false` disables it. Existing opt-in markers are migrated when
+no integration preferences have been saved. Preferences are stored separately
+from older launchers' settings for rollback compatibility.
+
+The bridge replaces every activity's status/location with `In arch-linux`,
+so this field cannot expose the Linux account name. The app still controls
+its other details, artwork and timestamps; review each app's own privacy settings.
 
 Open Windows Discord, enable its activity-sharing setting, then restart the
 Linux app. The guest exposes a private per-user `discord-ipc-0` Unix socket;
@@ -46,7 +58,7 @@ To disable the guest side:
 systemctl --user disable --now try-arch-discord.socket
 ```
 
-Future guest builds contain the helper and units but leave this feature off.
+The guest socket is gated by the Windows opt-in kernel flag `tryarch.discord=1`.
 
 # Recording a virtual GPU
 
@@ -58,7 +70,9 @@ Changing the launcher or reinstalling Mesa does not give it NVIDIA's encoder.
 Use CPU encoding with the installed Wayland recorder instead:
 
 ```sh
-wf-recorder --no-dmabuf -c libx264 -p preset=ultrafast -x yuv420p -r 30 -f recording.mp4
+try-arch-record
+# Optional: try-arch-record --region --audio
+# Optional: try-arch-record --output ~/Videos/new-recording.mp4
 ```
 
 Stop with Ctrl+C. This requires a running compatible Wayland compositor and
@@ -73,22 +87,20 @@ window or its display. Keep the VM visible while recording; minimizing a window
 can stop updates. These capture programs run on Windows and capture the VM
 display, rather than an individual Linux application's native window.
 
-If capture goes black only while the fullscreen VM is focused, start with
-`-fullscreen -capture-friendly` instead. This uses a borderless window that
-leaves one physical pixel of the Windows desktop visible at the bottom of the
-selected monitor, preventing exact fullscreen presentation. GPU acceleration
-remains enabled. In OBS Window Capture, select **Windows 10 (1903 and up)** and
-disable **Capture Cursor**; cursor capture also produced black frames on the
-affected host. The pointer remains usable in the VM but may be absent from the
-recording.
+Capture-friendly Immersive is enabled by default for new and upgraded launchers.
+It uses a borderless window that leaves one physical pixel visible at the
+bottom of the selected monitor, avoiding exact fullscreen presentation.
+GPU acceleration remains enabled. The Immersive checkbox and Ctrl+Alt+F both
+switch between this mode and a regular window.
 
-To enable this for normal launches, create an empty
-`capture-friendly-immersive` file in the installation data directory. The
-Immersive checkbox still controls whether it opens across the monitor. Use
-Settings to switch between windowed and Immersive in this mode; Ctrl+Alt+F
-enters SDL's regular fullscreen path and can bring the capture problem back.
-Remove the marker or pass `-capture-friendly=false` to return to regular
-fullscreen. The flag does not reinstall Linux or alter its files.
+In OBS Window Capture, select **Windows 10 (1903 and up)** and disable
+**Capture Cursor** if focused fullscreen capture goes black. The pointer stays
+usable in the VM but may be absent from the recording. Other users must select
+these settings in their own OBS; the launcher does not rewrite OBS profiles.
+
+Disable **Settings ? Display ? Capture-friendly Immersive** or pass
+`-capture-friendly=false` to use SDL's regular fullscreen. This may restore the
+black capture issue on affected drivers. These options do not alter Linux files.
 
 References: [Discord IPC and Rich Presence](https://github.com/discord/discord-api-docs/blob/main/developers/topics/rpc.mdx),
 [OBS Window Capture](https://obsproject.com/kb/window-capture-sources).

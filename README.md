@@ -61,5 +61,10 @@ are left in their original data directory; back them up separately.
 
 Read the [user guide](docs/USER-GUIDE.md), [guest build](guest-build/README.md),
 [testing instructions](docs/TESTING.md), and [release instructions](docs/RELEASING.md).
+See [upgrading and integrations](docs/UPGRADING.md) to update without replacing
+your VM, enable supported apps' Discord integration, and record a Wayland desktop.
+Capture-friendly Immersive is enabled by default; Discord Rich Presence is opt-in
+and uses `In arch-linux` for the activity status. Fresh guests include
+`try-arch-record` for CPU recording without a supported hardware encoder.
 The original launcher is MIT licensed; other components retain their own
 licenses. See [third-party notices](THIRD_PARTY_NOTICES.md).

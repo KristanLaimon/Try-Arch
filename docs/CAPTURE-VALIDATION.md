@@ -41,5 +41,6 @@ unsuccessful presentation-override experiment.
 
 This validates the current host and short recording. It does not establish
 Discord screen sharing, extended recordings, other GPUs or mixed-DPI displays.
-Use Settings for the Immersive toggle in this mode; Ctrl+Alt+F enters SDL's
-ordinary fullscreen path and may reintroduce the problem.
+This recording used the earlier opt-in build. The release now enables this
+mode by default and routes Ctrl+Alt+F through the same borderless toggle;
+shortcut routing is covered by regression tests.

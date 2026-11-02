@@ -15,15 +15,23 @@ jobs:
       - name: Boot the finished vanilla guest
         run: |
           sudo apt-get update
-          sudo apt-get install -y qemu-system-x86 qemu-utils
+          sudo apt-get install -y qemu-system-x86 qemu-utils sway wf-recorder ffmpeg dbus-x11
           python3 guest-build/smoke.py artifacts/release
+      - name: Record a real Wayland session with the CPU fallback
+        run: bash scripts/release/test-cpu-recording.sh artifacts/validation
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
+        with:
+          name: CPU-recording-validation
+          path: artifacts/validation/*
+          retention-days: 7
       - run: bash scripts/release/prepare-assets.sh artifacts/release
       - name: Assemble publishable guest assets
         run: |
           cp LICENSE THIRD_PARTY_NOTICES.md artifacts/release/
           tar -czf artifacts/release/tryarch-shared-folder-fix.tar.gz -C guest-build/overlay usr/local/bin/try-arch-share etc/systemd/system/try-arch-share.service
+          tar -czf artifacts/release/tryarch-guest-integrations.tar.gz scripts/install-guest-integrations.sh scripts/install-discord-bridge.sh guest-build/overlay/usr/local/bin/try-arch-discord guest-build/overlay/usr/local/bin/try-arch-record guest-build/overlay/usr/lib/systemd/user/try-arch-discord.socket guest-build/overlay/usr/lib/systemd/user/try-arch-discord@.service
           cd artifacts/release
-          sha256sum LICENSE THIRD_PARTY_NOTICES.md tryarch-shared-folder-fix.tar.gz >> SHA256SUMS
+          sha256sum LICENSE THIRD_PARTY_NOTICES.md tryarch-shared-folder-fix.tar.gz tryarch-guest-integrations.tar.gz >> SHA256SUMS
           rm rootfs.ext4 smoke.log
       - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02
         with:
