@@ -20,7 +20,7 @@ truncate -s 4G "$image"
 sed '/^NoExtract/d' /etc/pacman.conf > "$work/pacman.conf"
 pacstrap -C "$work/pacman.conf" -c -K "$work/root" base linux linux-firmware btrfs-progs openssh sudo nano python socat wl-clipboard
 cp -r --no-preserve=mode,ownership /src/guest-build/overlay/. "$work/root/"
-chmod 755 "$work/root/usr/local/bin/try-arch-setup" "$work/root/usr/local/bin/try-arch-share" "$work/root/usr/local/bin/try-arch-clipboard"
+chmod 755 "$work/root/usr/local/bin/try-arch-setup" "$work/root/usr/local/bin/try-arch-share" "$work/root/usr/local/bin/try-arch-clipboard" "$work/root/usr/local/bin/try-arch-discord"
 install -m755 /src/scripts/guest/clipboard-bridge.sh "$work/root/usr/local/bin/clipboard-bridge"
 install -m755 /src/scripts/guest/clipboard-files /src/scripts/guest/file-transfer "$work/root/usr/local/bin/"
 printf 'tryarch\n' > "$work/root/etc/hostname"

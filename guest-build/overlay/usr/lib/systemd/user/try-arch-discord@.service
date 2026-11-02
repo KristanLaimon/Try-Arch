@@ -1,0 +1,10 @@
+[Unit]
+Description=Relay a Linux app's Discord Rich Presence to Windows
+
+[Service]
+ExecStart=/usr/local/bin/try-arch-discord
+StandardInput=socket
+StandardError=journal
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=read-only

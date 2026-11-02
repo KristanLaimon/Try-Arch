@@ -15,4 +15,5 @@ const (
 	audioBridgePort    = 4454
 	helloBridgePort    = 4455
 	timeZoneBridgePort = 4456
+	discordBridgePort  = 4457
 )

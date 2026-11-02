@@ -181,6 +181,7 @@ func main() {
 	diagnostics := flag.Bool("diagnostics", false, "write a zip of logs, settings, and machine facts for a bug report, then exit")
 	sshKeyPath := flag.String("ssh-key", "", "public key to authorize for the Arch account (default: your ~/.ssh/id_*.pub when -ssh is used)")
 	noUpdate := flag.Bool("no-update", false, "do not check the feed for newer releases")
+	discordRPC := flag.Bool("discord-rpc", false, "bridge supported Linux apps' Discord Rich Presence to Windows Discord")
 	updateURL := flag.String("update-url", defaultUpdateURL, "authenticated update manifest URL")
 	release := flag.String("release", defaultReleaseURL,
 		"base URL the guest image is downloaded from on first run")
@@ -489,6 +490,9 @@ func main() {
 	}
 	if err := applySettings(cfg, userSettings, explicitFlags, &forwards, sshKeyPath); err != nil {
 		fatal(uiTextWith("fatal.settings.use", map[string]string{"error": err.Error()}))
+	}
+	if !explicitFlags["discord-rpc"] {
+		*discordRPC = discordBridgeEnabled(cfg.dir)
 	}
 	resourcePrefs, err := loadResourcePreferences(cfg.dir)
 	if err != nil {
@@ -947,6 +951,10 @@ func main() {
 	runClipboardBridge()
 	runCameraBridge(cfg.desktop)
 	runHelloBridge()
+	if *discordRPC {
+		stopDiscord := startDiscordBridge()
+		defer stopDiscord()
+	}
 	cfg.followHostTimeZone = *timeZoneFlag != "keep" && guestAcceptsTimeZone(spec)
 	if cfg.followHostTimeZone {
 		stopTimeZone := startTimeZoneBridge(func() string {
