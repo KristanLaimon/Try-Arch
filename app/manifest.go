@@ -17,7 +17,7 @@ const maxSumsBytes = 1 << 20
 // with -ldflags -X; the runtime-only defaults retain the verified QEMU fallback.
 var (
 	defaultReleaseURL        = ""
-	defaultSumsSHA256        = "d2559452ac69c9f4a8e3dc6efeceb62fcf8fa6f257596f24896fa984e830db39"
+	defaultSumsSHA256        = "673cd9cdfb920f3c43ddaefe4aa4d4c22e0aaa9faeddfa39627bb1e13898082f"
 	defaultRuntimeReleaseURL = "https://github.com/omacom/try-omarchy-windows/releases/download/v0.11.0"
 	defaultRuntimeSumsSHA256 = "db18064cb120a0820e8886fe68db2101d32a304fb3508418280a2cfa9a16a18e"
 )
