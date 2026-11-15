@@ -18,11 +18,12 @@ mkdir "$work/root"
 truncate -s 4G "$image"
 # The Docker base omits docs and pacman.conf; a normal VM must install them.
 sed '/^NoExtract/d' /etc/pacman.conf > "$work/pacman.conf"
-pacstrap -C "$work/pacman.conf" -c -K "$work/root" base linux linux-firmware btrfs-progs openssh sudo nano python socat wl-clipboard wf-recorder slurp
+pacstrap -C "$work/pacman.conf" -c -K "$work/root" base linux linux-firmware btrfs-progs openssh sudo nano python socat wl-clipboard xdg-user-dirs libnotify wf-recorder slurp
 cp -r --no-preserve=mode,ownership /src/guest-build/overlay/. "$work/root/"
 chmod 755 "$work/root/usr/local/bin/try-arch-setup" "$work/root/usr/local/bin/try-arch-share" "$work/root/usr/local/bin/try-arch-clipboard" "$work/root/usr/local/bin/try-arch-discord" "$work/root/usr/local/bin/try-arch-record"
 install -m755 /src/scripts/guest/clipboard-bridge.sh "$work/root/usr/local/bin/clipboard-bridge"
 install -m755 /src/scripts/guest/clipboard-files /src/scripts/guest/file-transfer "$work/root/usr/local/bin/"
+install -m755 /src/scripts/guest/try-arch-drop "$work/root/usr/local/bin/"
 printf 'tryarch\n' > "$work/root/etc/hostname"
 printf 'en_US.UTF-8 UTF-8\n' > "$work/root/etc/locale.gen"
 printf 'LANG=en_US.UTF-8\n' > "$work/root/etc/locale.conf"

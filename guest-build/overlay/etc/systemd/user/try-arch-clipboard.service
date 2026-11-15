@@ -1,7 +1,5 @@
 [Unit]
-Description=Clipboard bridge to the Windows host (Try Arch)
-After=graphical-session.target
-PartOf=graphical-session.target
+Description=Clipboard and file-drop bridge to Windows (Try Arch)
 
 [Service]
 ExecStart=/usr/local/bin/clipboard-bridge
@@ -9,4 +7,4 @@ Restart=always
 RestartSec=3
 
 [Install]
-WantedBy=graphical-session.target
+WantedBy=default.target
