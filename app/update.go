@@ -17,7 +17,7 @@ import (
 )
 
 const (
-	currentVersion         = "v0.1.3"
+	currentVersion         = "v0.1.4"
 	defaultUpdateURL       = ""
 	legacyReleaseBase      = "https://github.com/KristanLaimon/Try-Arch/releases/download/"
 	transferredReleaseBase = "https://github.com/KristanLaimon/Try-Arch/releases/download/"

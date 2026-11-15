@@ -1,5 +1,12 @@
 # Changelog
 
+## v0.1.4
+
+- Include the Windows file-drop receiver and its dependencies in new VM images.
+- Start the clipboard bridge at user login and wait for a compatible Wayland desktop.
+- Provide a desktop bridge installer for existing VMs, preserving personal files and backing up replaced helpers.
+- Include the installer in the guest integration archive and validate installation and reinstallation in CI.
+
 ## v0.1.1
 
 - Mount selected Windows shared folders automatically at `/mnt/host` and link them into the Linux account's home, including names with spaces.
