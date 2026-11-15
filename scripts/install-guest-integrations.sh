@@ -1,6 +1,7 @@
 #!/bin/sh
 set -eu
 repo=$(CDPATH= cd -- "$(dirname -- "$0")/.." && pwd)
+sh "$repo/scripts/install-desktop-bridge.sh" "$@"
 sh "$repo/scripts/install-discord-bridge.sh" "$@"
 destination="$HOME/.local/bin/try-arch-record"
 if [ -e "$destination" ] || [ -L "$destination" ]; then

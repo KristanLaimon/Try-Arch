@@ -42,7 +42,7 @@ jobs:
         run: |
           cp LICENSE THIRD_PARTY_NOTICES.md artifacts/release/
           tar -czf artifacts/release/tryarch-shared-folder-fix.tar.gz -C guest-build/overlay usr/local/bin/try-arch-share etc/systemd/system/try-arch-share.service
-          tar -czf artifacts/release/tryarch-guest-integrations.tar.gz scripts/install-guest-integrations.sh scripts/install-discord-bridge.sh guest-build/overlay/usr/local/bin/try-arch-discord guest-build/overlay/usr/local/bin/try-arch-record guest-build/overlay/usr/lib/systemd/user/try-arch-discord.socket guest-build/overlay/usr/lib/systemd/user/try-arch-discord@.service
+          tar -czf artifacts/release/tryarch-guest-integrations.tar.gz scripts/install-guest-integrations.sh scripts/install-desktop-bridge.sh scripts/install-discord-bridge.sh scripts/guest/clipboard-bridge.sh scripts/guest/clipboard-files scripts/guest/file-transfer scripts/guest/try-arch-drop guest-build/overlay/usr/local/bin/try-arch-discord guest-build/overlay/usr/local/bin/try-arch-record guest-build/overlay/usr/lib/systemd/user/try-arch-discord.socket guest-build/overlay/usr/lib/systemd/user/try-arch-discord@.service
           cd artifacts/release
           sha256sum LICENSE THIRD_PARTY_NOTICES.md tryarch-shared-folder-fix.tar.gz tryarch-guest-integrations.tar.gz >> SHA256SUMS
           rm rootfs.ext4 smoke.log

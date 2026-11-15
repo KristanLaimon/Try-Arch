@@ -13,6 +13,14 @@ kernel and initramfs matched to the guest. Automatic factory boot-payload
 replacement is disabled for existing guests; `-update-guest-payload` is an
 explicit maintenance option, requiring a matching guest kernel and backup; see [the user guide](USER-GUIDE.md).
 
+# Clipboard and file drops
+
+For clipboard sharing and Windows-to-guest file drops on an older Wayland VM,
+extract `tryarch-guest-integrations.tar.gz` and run
+`sh scripts/install-desktop-bridge.sh` as your desktop user. It backs up replaced
+helpers, installs missing dependencies and enables the user service without
+reinstalling Linux. New VM images already include and enable this bridge.
+
 # Existing apps' Discord integration
 
 The optional bridge relays Rich Presence from apps that already implement it

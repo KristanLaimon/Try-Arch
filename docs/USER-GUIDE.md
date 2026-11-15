@@ -35,7 +35,19 @@ from Windows and Arch. Older installations need the `try-arch-share` script and
 service from `guest-build/overlay` installed once, then enabled with
 `sudo systemctl enable --now try-arch-share`.
 
-Guest desktop integrations are not installed. Create diagnostics
+New VMs include a clipboard and file-drop bridge. It waits for a Wayland
+session with clipboard data-control support (including Hyprland). Text, images
+and copied files sync in both directions. Drop Windows files onto the VM to
+copy them to the guest's Downloads folder; supported file-manager destinations
+can receive them directly. Original Windows files are kept.
+
+For older VMs, extract `tryarch-guest-integrations.tar.gz` and run
+`sh scripts/install-desktop-bridge.sh` from a Linux desktop terminal, without
+sudo. The installer requests sudo only for missing dependencies and backs up
+replaced helpers. It preserves the VM disk, desktop and personal files.
+Check the service with `systemctl --user status try-arch-clipboard`.
+
+Create diagnostics
 from the tray when reporting problems and review the ZIP before sharing it.
 
 See [upgrading and optional Discord integration](UPGRADING.md) to keep an existing

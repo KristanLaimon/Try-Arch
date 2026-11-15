@@ -6,6 +6,7 @@ if [[ ${1:-} == --contract-only ]]; then
   for script in "$repo_root/guest-build/build.sh" "$repo_root/guest-build/overlay/usr/local/bin/try-arch-setup" "$repo_root/guest-build/overlay/usr/local/bin/try-arch-share" "$repo_root/scripts/guest/clipboard-bridge.sh"; do
     bash -n "$script"
   done
+  bash "$repo_root/scripts/test-install-desktop-bridge.sh"
   exit
 fi
 [[ ${1:-} == --output && -n ${2:-} && $# == 2 ]] || {
